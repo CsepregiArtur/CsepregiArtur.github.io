@@ -1,5 +1,3 @@
-# Artur Csepregi
-
 Head of Manufacturing Operations | Industrial Automation | Digital Transformation
 
 Welcome to my professional portfolio.
