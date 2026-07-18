@@ -8,230 +8,341 @@
 <title>Artur Csepregi</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-
-font-family:Arial,Helvetica,sans-serif;
-
-background:#0f172a;
-
-color:white;
-
-}
-
-.hero{
-
-display:flex;
-
-flex-direction:column;
-
-justify-content:center;
-
-align-items:center;
-
-height:100vh;
-
-text-align:center;
-
-padding:40px;
-
-}
-
-img{
-
-width:180px;
-
-height:180px;
-
-border-radius:50%;
-
-border:5px solid white;
-
-margin-bottom:30px;
-
-}
-
-h1{
-
-font-size:54px;
-
-margin-bottom:10px;
-
-}
-
-h2{
-
-font-size:22px;
-
-font-weight:300;
-
-color:#cbd5e1;
-
-margin-bottom:35px;
-
-}
-
-p{
-
-max-width:850px;
-
-line-height:1.8;
-
-font-size:20px;
-
-color:#d1d5db;
-
-margin-bottom:40px;
-
-}
-
-.skills{
-
-display:flex;
-
-gap:15px;
-
-flex-wrap:wrap;
-
-justify-content:center;
-
-margin-bottom:45px;
-
-}
-
-.skill{
-
-background:#1e293b;
-
-padding:12px 22px;
-
-border-radius:30px;
-
-font-size:16px;
-
-}
-
-.buttons{
-
-display:flex;
-
-gap:20px;
-
-flex-wrap:wrap;
-
-justify-content:center;
-
-}
-
-.button{
-
-background:#2563eb;
-
-padding:16px 32px;
-
-border-radius:8px;
-
-color:white;
-
-text-decoration:none;
-
-font-weight:bold;
-
-transition:0.3s;
-
-}
-
-.button:hover{
-
-background:#1d4ed8;
-
-}
-
-footer{
-
-padding:30px;
-
-text-align:center;
-
-color:#94a3b8;
-
-font-size:14px;
-
-}
-
-</style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --accent: #06b6d4;
+            --bg: #0a0f1e;
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated mesh background */
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        }
+        .bg-mesh::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.10) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(99,102,241,0.08) 0%, transparent 50%);
+            animation: meshFloat 20s ease-in-out infinite;
+        }
+        @keyframes meshFloat {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33%      { transform: translate(2%,-1%) rotate(1deg); }
+            66%      { transform: translate(-1%,2%) rotate(-1deg); }
+        }
+
+        /* Grid overlay */
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+        }
+        .particle {
+            position: absolute; border-radius: 50%;
+            animation: floatUp linear infinite; opacity: 0;
+        }
+        @keyframes floatUp {
+            0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* Hero */
+        .hero {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            min-height: 100vh; text-align: center; padding: 60px 30px;
+        }
+
+        /* Avatar with spinning ring */
+        .avatar-wrapper {
+            position: relative; margin-bottom: 30px;
+        }
+        .avatar-ring {
+            position: absolute; inset: -8px; border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
+            animation: ringSpin 4s linear infinite;
+            filter: blur(2px); opacity: 0.7;
+        }
+        @keyframes ringSpin { to { transform: rotate(360deg); } }
+
+        .avatar-wrapper img {
+            position: relative; width: 180px; height: 180px;
+            border-radius: 50%; object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.15); z-index: 1;
+            transition: transform 0.4s ease;
+        }
+        .avatar-wrapper:hover img { transform: scale(1.05); }
+
+        /* Status dot */
+        .status-dot {
+            position: absolute; bottom: 14px; right: 14px;
+            width: 16px; height: 16px; background: #22c55e;
+            border-radius: 50%; border: 3px solid var(--bg); z-index: 2;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+            50%      { box-shadow: 0 0 0 14px rgba(34,197,94,0); }
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block; padding: 6px 16px;
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 20px; font-size: 13px; font-weight: 500;
+            color: #93c5fd; letter-spacing: 0.5px; margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease both;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: clamp(40px, 7vw, 72px); font-weight: 800;
+            letter-spacing: -2px; margin-bottom: 8px;
+            animation: fadeInDown 0.6s 0.1s ease both;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #34d399, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: clamp(18px, 3vw, 24px); font-weight: 400;
+            color: #94a3b8; margin-bottom: 10px;
+            animation: fadeInDown 0.6s 0.2s ease both;
+        }
+
+        .email-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: #93c5fd; text-decoration: none; font-size: 16px;
+            font-weight: 400; margin-bottom: 30px;
+            transition: color 0.3s;
+            animation: fadeInDown 0.6s 0.25s ease both;
+        }
+        .email-link:hover { color: #60a5fa; }
+        .email-icon { width: 18px; height: 18px; }
+
+        /* Bio card (glassmorphism) */
+        .bio-card {
+            max-width: 700px; padding: 28px 32px;
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            margin-bottom: 36px;
+            animation: fadeInUp 0.6s 0.3s ease both;
+        }
+        .bio-card p {
+            font-size: 18px; line-height: 1.7; color: #cbd5e1; font-weight: 300;
+        }
+
+        /* Skills */
+        .skills {
+            display: flex; gap: 12px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 40px;
+            animation: fadeInUp 0.6s 0.4s ease both;
+        }
+        .skill {
+            padding: 10px 20px; background: var(--glass);
+            border: 1px solid var(--glass-border); border-radius: 30px;
+            font-size: 14px; font-weight: 500; color: #cbd5e1;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease; cursor: default;
+        }
+        .skill:hover {
+            background: rgba(59,130,246,0.15);
+            border-color: rgba(59,130,246,0.4);
+            color: #93c5fd; transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59,130,246,0.15);
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.6s 0.5s ease both;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 16px 30px; border-radius: 12px;
+            font-size: 16px; font-weight: 600;
+            text-decoration: none; transition: all 0.3s ease; cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--primary); color: white;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark); transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(59,130,246,0.5);
+        }
+        .btn-secondary {
+            background: var(--glass); color: white;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2);
+            transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .btn-icon { width: 20px; height: 20px; }
+
+        /* Footer */
+        footer {
+            position: relative; z-index: 1; padding: 30px;
+            text-align: center; color: #64748b; font-size: 13px;
+            font-weight: 400; border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 
 </head>
 
 <body>
 
-<section class="hero">
+    <!-- Background effects -->
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+    <div class="particles" id="particles"></div>
 
-<img src="https://avatars.githubusercontent.com/u/9919?v=4">
+    <!-- ========== HERO ========== -->
+    <section class="hero">
 
-<h1>Artur Csepregi</h1>
+        <!-- Avatar -->
+        <div class="avatar-wrapper">
+            <div class="avatar-ring"></div>
+            <img src="images/Csepregi_Artur.png" alt="Artur Csepregi">
+            <div class="status-dot" title="Available for opportunities"></div>
+        </div>
 
-<h2>
+        <!-- Badge -->
+        <div class="badge">Helping manufacturing companies solve operational challenges through automation, digital transformation and business development.</div>
 
-Head of Manufacturing Operations
+        <!-- Name -->
+        <h1><span class="gradient-text">Artur Csepregi</span></h1>
 
-</h2>
+        <!-- Title -->
+        <h2>Head of Manufacturing Operations</h2>
 
-<p>
+        <!-- Email -->
+        <a href="mailto:csepregi.arthur@gmail.com" class="email-link">
+            <svg class="email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="M22 4L12 13 2 4"/>
+            </svg>
+            csepregi.arthur@gmail.com
+        </a>
 
-Helping manufacturing companies improve productivity through Industrial Automation, Digital Transformation and Operational Excellence.
+        <!-- Bio card -->
+        <div class="bio-card">
+            <p>
+                Helping manufacturing companies improve productivity through
+                <strong style="color:#93c5fd;">Industrial Automation</strong>,
+                <strong style="color:#34d399;">Digital Transformation</strong> and
+                <strong style="color:#a78bfa;">Operational Excellence</strong>.
+            </p>
+        </div>
 
-</p>
+        <!-- Skills -->
+        <div class="skills">
+            <div class="skill">🏭 Manufacturing</div>
+            <div class="skill">⚙️ Industrial Automation</div>
+            <div class="skill">📊 Digital Transformation</div>
+            <div class="skill">🐍 Python</div>
+            <div class="skill">🗄️ SQL</div>
+            <div class="skill">🏗️ MES</div>
+            <div class="skill">📈 Business Development</div>
+        </div>
 
-<div class="skills">
+        <!-- Buttons -->
+        <div class="buttons">
+            <a href="https://www.linkedin.com/in/csepregi-artur" target="_blank" rel="noopener" class="btn btn-primary">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+                LinkedIn
+            </a>
+            <a href="mailto:csepregi.arthur@gmail.com" class="btn btn-secondary">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="M22 4L12 13 2 4"/>
+                </svg>
+                Contact Me
+            </a>
+            <a href="documents/Artur_Csepregi_Head_of_SMT_Operations.pdf" class="btn btn-secondary" download>
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <polyline points="9 15 12 18 15 15"/>
+                </svg>
+                Download CV
+            </a>
+        </div>
+    </section>
 
-<div class="skill">Manufacturing</div>
+    <!-- Footer -->
+    <footer>
+        © 2026 Artur Csepregi &nbsp;·&nbsp; Professional Portfolio
+    </footer>
 
-<div class="skill">Industrial Automation</div>
-
-<div class="skill">Digital Transformation</div>
-
-<div class="skill">Python</div>
-
-<div class="skill">SQL</div>
-
-<div class="skill">MES</div>
-
-<div class="skill">Business Development</div>
-
-</div>
-
-<div class="buttons">
-
-<a href="https://www.linkedin.com/in/csepregi-artur" class="button">
-
-LinkedIn
-
-</a>
-
-<a href="#" class="button">
-
-Download CV
-
-</a>
-
-</div>
-
-</section>
-
-<footer>
-
-© 2026 Artur Csepregi
-
-Professional Portfolio
-
-</footer>
+    <!-- Floating particles script -->
+    <script>
+        (function () {
+            var container = document.getElementById('particles');
+            var count = 40;
+            for (var i = 0; i < count; i++) {
+                var p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (8 + Math.random() * 16) + 's';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                var size = 1 + Math.random() * 2;
+                p.style.width  = size + 'px';
+                p.style.height = size + 'px';
+                var colors = ['#3b82f6', '#06b6d4', '#6366f1', '#34d399'];
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(p);
+            }
+        })();
+    </script>
 
 </body>
 
