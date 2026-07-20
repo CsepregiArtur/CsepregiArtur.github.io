@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MES Inventory Export Tool — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0f2f5;--panel:#fff;--text:#1a1a2e;--muted:#6b7280;--accent:#7c3aed;--green:#16a34a;--amber:#d97706;--red:#dc2626;--border:#e5e7eb;--r:12px;--hdr:#1e1b4b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+/* Title bar */
+.titlebar{background:var(--hdr);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.titlebar .app-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.titlebar .window-controls{display:flex;gap:6px}
+.titlebar .wc{width:14px;height:14px;border-radius:50%;cursor:pointer}
+.wc.close{background:#ef4444}.wc.min{background:#f59e0b}.wc.max{background:#16a34a}
+/* Toolbar */
+.toolbar{background:var(--panel);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;gap:8px;align-items:center}
+.toolbar button{padding:8px 16px;border:1px solid var(--border);border-radius:6px;background:var(--panel);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;display:flex;align-items:center;gap:6px}
+.toolbar button:hover{background:#f8fafc;border-color:#d1d5db}
+.toolbar button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toolbar button.primary:hover{background:#6d28d9}
+.toolbar .sep{width:1px;height:24px;background:var(--border);margin:0 4px}
+/* Content area */
+.content{max-width:1200px;margin:0 auto;padding:24px;display:grid;gap:20px}
+/* Config card */
+.config-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.config-card h3{font-size:14px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.config-field{display:grid;gap:4px}
+.config-field label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.5px}
+.config-field input,.config-field select{height:34px;border:1px solid var(--border);border-radius:6px;padding:0 10px;font-size:12px;background:#fff;color:var(--text)}
+.config-field input:focus,.config-field select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+.config-field .mono{font-family:'SF Mono',Consolas,monospace;font-size:11px}
+/* Status bar */
+.status-bar{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.status-bar .state{display:flex;align-items:center;gap:10px;font-weight:600}
+.status-bar .state .indicator{width:10px;height:10px;border-radius:50%}
+.status-bar .state .indicator.idle{background:var(--muted)}
+.status-bar .state .indicator.running{background:var(--accent);animation:pulse 1s infinite}
+.status-bar .state .indicator.done{background:var(--green)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* Progress */
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:8px 0 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);border-radius:4px;transition:width .5s ease;width:0%}
+/* Results table */
+.results-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.results-head{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#fafafa}
+.results-head h3{font-size:14px;font-weight:700}
+.results-head .meta{font-size:12px;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{background:#fafafa;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.5px;position:sticky;top:0;z-index:1}
+td.num{text-align:right;font-family:'SF Mono',Consolas,monospace}
+tr:hover td{background:#fafafe}
+/* Log */
+.log-box{background:#1e1b4b;color:#a5b4fc;border-radius:var(--r);padding:16px 20px;font-size:11px;font-family:'SF Mono',Consolas,monospace;max-height:140px;overflow-y:auto;line-height:1.7}
+.log-box .ts{color:#6b7280}.log-box .ok{color:#34d399}.log-box .warn{color:#fbbf24}.log-box .err{color:#f87171}
+/* Bottom bar */
+.bottom-bar{background:var(--panel);border-top:1px solid var(--border);padding:8px 20px;display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+@media(max-width:768px){.config-grid{grid-template-columns:1fr}.status-bar{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+
+<!-- Title Bar -->
+<div class="titlebar">
+    <div class="app-title">⚡ MES Inventory Export Tool <span style="font-size:11px;opacity:.6;font-weight:400">v5.5 · Demo</span></div>
+    <div class="window-controls"><div class="wc close"></div><div class="wc min"></div><div class="wc max"></div></div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <button class="primary" onclick="startExport()">▶ Run Export</button>
+    <button onclick="resetUI()">🔄 Reset</button>
+    <span class="sep"></span>
+    <span style="font-size:11px;color:var(--muted)">Sort:</span>
+    <button id="sortFIFO" style="background:#f5f3ff;border-color:#c4b5fd;color:var(--accent)">FIFO</button>
+    <button id="sortFEFO" onclick="toggleFEFO()">FEFO</button>
+    <span class="sep"></span>
+    <span style="font-size:11px;color:var(--muted)">Workers: <strong>10</strong></span>
+</div>
+
+<div class="content">
+    <!-- Configuration -->
+    <div class="config-card">
+        <h3>⚙ Configuration</h3>
+        <div class="config-grid">
+            <div class="config-field"><label>MES Server</label><input class="mono" value="mes-server-01:8090" readonly></div>
+            <div class="config-field"><label>User ID</label><input class="mono" value="USER-8842" readonly></div>
+            <div class="config-field"><label>Equipment ID</label><input class="mono" value="EQ-7711-004145" readonly></div>
+            <div class="config-field"><label>Export Type</label><select><option>Inventory Batches</option><option>Units</option><option>Step Info</option></select></div>
+            <div class="config-field"><label>Sort Method</label><select id="sortSelect"><option selected>FIFO (First-In-First-Out)</option><option>FEFO (First-Expired-First-Out)</option></select></div>
+            <div class="config-field"><label>Max Workers</label><input value="10" type="number" min="1" max="30"></div>
+            <div class="config-field"><label>Retry Attempts</label><input value="3" type="number" min="1" max="5"></div>
+            <div class="config-field"><label>Output Format</label><select><option selected>Excel (.xlsx)</option><option>CSV (.csv)</option></select></div>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar" id="statusBar">
+        <div class="state"><span class="indicator idle" id="statusDot"></span><span id="statusText">Ready — Press "Run Export" to start</span></div>
+        <div style="display:flex;gap:16px;font-size:12px;color:var(--muted)">
+            <span>Locations: <strong>20</strong></span>
+            <span>Session: <strong>Single-Login (v5.0+)</strong></span>
+        </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- Results -->
+    <div class="results-card" id="resultsCard" style="display:none">
+        <div class="results-head">
+            <h3>📊 Export Results</h3>
+            <div class="meta" id="resultsMeta"></div>
+        </div>
+        <div class="table-wrap"><table id="resultsTable"></table></div>
+    </div>
+
+    <!-- Log -->
+    <div class="log-box" id="logBox">
+        <div><span class="ts">[14:30:02]</span> <span class="ok">✓</span> Config loaded: 20 locations, 10 workers</div>
+        <div><span class="ts">[14:30:02]</span> <span class="ok">✓</span> .NET Runtime initialized (pythonnet)</div>
+        <div><span class="ts">[14:30:03]</span> <span class="ok">✓</span> Single Login: authenticated as USER-8842</div>
+        <div><span class="ts">[14:30:03]</span> Session established. Ready for parallel queries.</div>
+    </div>
+</div>
+
+<div class="bottom-bar">
+    <span>© 2026 Artur Csepregi · Demo · Anonymized Data</span>
+    <span>Python 3.12 · xlsxwriter · ThreadPoolExecutor · PyInstaller</span>
+</div>
+
+<script>
+/* Fake data */
+const locations=['LOC-001 Staging','LOC-002 Assembly-A','LOC-003 Assembly-B','LOC-004 Test','LOC-005 Quality','LOC-006 Rework','LOC-007 Warehouse-A','LOC-008 Warehouse-B','LOC-009 Shipping','LOC-010 Receiving','LOC-011 Kitting','LOC-012 Coating','LOC-013 Potting','LOC-014 Inspection','LOC-015 Burn-in','LOC-016 Packing','LOC-017 Buffer-A','LOC-018 Buffer-B','LOC-019 Tooling','LOC-020 Lab'];
+const materials=[
+    {sap:'8400123-01',desc:'Microcontroller IC, 32-bit, 64-pin',batch:'B-2026-0715-A',box:'C-12',idx:'03',qty:1250,uom:'PCS',exp:'2027-06-15',arr:'2026-07-15',status:'Available',loc:'LOC-001',supplier:'SMT Components Ltd',mpn:'STM32F407VGT6',msl:'3'},
+    {sap:'8400456-02',desc:'Ceramic Capacitor, 10µF, 25V, X7R',batch:'B-2026-0620-C',box:'A-04',idx:'12',qty:8500,uom:'PCS',exp:'2028-03-20',arr:'2026-06-20',status:'Available',loc:'LOC-002',supplier:'Passive Solutions GmbH',mpn:'C2012X7R1E106K',msl:'1'},
+    {sap:'8400789-01',desc:'Power Inductor, 47µH, 2A, SMD',batch:'B-2026-0710-B',box:'D-08',idx:'07',qty:3200,uom:'PCS',exp:'2027-12-10',arr:'2026-07-10',status:'Available',loc:'LOC-003',supplier:'CoilMaster Inc',mpn:'SRN6045-470M',msl:'1'},
+    {sap:'8400901-01',desc:'Voltage Regulator, 3.3V, 1A, SOT-223',batch:'B-2026-0505-A',box:'B-15',idx:'21',qty:980,uom:'PCS',exp:'2028-01-05',arr:'2026-05-05',status:'Reserved',loc:'LOC-004',supplier:'PowerChip Corp',mpn:'AMS1117-3.3',msl:'3'},
+    {sap:'8400234-03',desc:'Crystal Oscillator, 16MHz, ±10ppm',batch:'B-2026-0701-D',box:'E-03',idx:'01',qty:2100,uom:'PCS',exp:'2029-07-01',arr:'2026-07-01',status:'Available',loc:'LOC-005',supplier:'FreqTech AG',mpn:'ABM3-16.000MHZ',msl:'1'},
+    {sap:'8400567-01',desc:'MOSFET, N-Channel, 30V, 5A, SOT-23',batch:'B-2026-0615-E',box:'A-09',idx:'18',qty:4500,uom:'PCS',exp:'2028-06-15',arr:'2026-06-15',status:'Available',loc:'LOC-006',supplier:'SemiPower Ltd',mpn:'IRLML0030TRPBF',msl:'1'},
+    {sap:'8400111-02',desc:'USB Connector, Type-C, 16-pin, SMD',batch:'B-2026-0401-A',box:'C-22',idx:'05',qty:680,uom:'PCS',exp:'2027-09-01',arr:'2026-04-01',status:'Available',loc:'LOC-007',supplier:'ConnectPro GmbH',mpn:'USB4105-GF-A',msl:'2'},
+    {sap:'8400345-01',desc:'EEPROM, 256Kbit, I2C, SOIC-8',batch:'B-2026-0318-B',box:'B-07',idx:'14',qty:1500,uom:'PCS',exp:'2028-03-18',arr:'2026-03-18',status:'Available',loc:'LOC-008',supplier:'MemChip Inc',mpn:'AT24C256C-SSHL-T',msl:'3'},
+    {sap:'8400890-01',desc:'TVS Diode, 5V, 300W, SOD-323',batch:'B-2026-0720-C',box:'D-14',idx:'09',qty:6800,uom:'PCS',exp:'2028-07-20',arr:'2026-07-20',status:'Available',loc:'LOC-009',supplier:'ProtectElec s.r.o.',mpn:'PESD5V0S1BA',msl:'1'},
+    {sap:'8400459-01',desc:'Precision Resistor, 10kΩ, 0.1%, 0603',batch:'B-2026-0525-D',box:'A-01',idx:'02',qty:12000,uom:'PCS',exp:'2030-05-25',arr:'2026-05-25',status:'Available',loc:'LOC-010',supplier:'ResiTech GmbH',mpn:'ERA-3AEB103V',msl:'1'},
+];
+
+let running=false;let sortFIFO=true;
+
+function log(msg,type){
+    const lb=document.getElementById('logBox');
+    const icon=type==='ok'?'✓':type==='warn'?'⚠':type==='err'?'✗':'';
+    const cls=type==='ok'?'ok':type==='warn'?'warn':type==='err'?'err':'';
+    const ts=new Date().toLocaleTimeString('en-GB',{hour12:false});
+    lb.innerHTML+=`<div><span class="ts">[${ts}]</span> <span class="${cls}">${icon}</span> ${msg}</div>`;
+    lb.scrollTop=lb.scrollHeight;
+}
+
+function toggleFEFO(){sortFIFO=!sortFIFO;document.getElementById('sortFIFO').style.background=sortFIFO?'#f5f3ff':'#fff';document.getElementById('sortFIFO').style.borderColor=sortFIFO?'#c4b5fd':'var(--border)';document.querySelector('#sortFEFO').style.background=!sortFIFO?'#f5f3ff':'#fff';document.querySelector('#sortFEFO').style.borderColor=!sortFIFO?'#c4b5fd':'var(--border)';}
+
+async function startExport(){
+    if(running)return;running=true;
+    const dot=document.getElementById('statusDot');dot.className='indicator running';
+    document.getElementById('statusText').textContent='Authenticating...';
+    log('Starting export — 20 locations, parallel mode (10 workers)','');
+    await sleep(400);
+    document.getElementById('statusText').textContent='Single Login successful. Querying locations...';
+    log('Single Login: authenticated as USER-8842','ok');
+    await sleep(300);
+
+    const pb=document.getElementById('progressFill');
+    for(let i=1;i<=20;i++){
+        pb.style.width=(i*5)+'%';
+        document.getElementById('statusText').textContent=`Querying ${locations[i-1]} (${i}/20)...`;
+        log(`✓ ${locations[i-1]} — ${Math.floor(Math.random()*1200)+200} records`,'ok');
+        await sleep(80+Math.random()*120);
+    }
+
+    document.getElementById('statusText').textContent='Processing & sorting data...';
+    log(`${sortFIFO?'FIFO':'FEFO'} sort applied: ${materials.length*1200} records`,'ok');
+    await sleep(500);
+    pb.style.width='100%';
+    document.getElementById('statusText').textContent='Export complete!';
+    dot.className='indicator done';
+    log('Export complete: 53,820 records · 11.74s · 4,584 rec/s','ok');
+    log(`Output: inventory_batches_${sortFIFO?'FIFO':'FEFO'}_20260720_143011.xlsx`,'ok');
+
+    // Show results
+    document.getElementById('resultsCard').style.display='block';
+    document.getElementById('resultsMeta').textContent='53,820 records · 20 locations · 11.74s · FIFO sorted';
+    const tbody=materials.map((m,i)=>{
+        const sortKey=sortFIFO?m.box+m.idx:m.exp;
+        return{...m,_sort:sortKey,_batchIdx:materials.length-i};
+    }).sort((a,b)=>a._sort.localeCompare(b._sort)).map(m=>`<tr>
+        <td><span style="font-family:monospace;font-size:11px">${m.sap}</span></td>
+        <td>${m.desc}</td><td>${m.batch}</td><td>${m.box}</td><td class="num">${m.idx}</td>
+        <td class="num">${(m.qty*m._batchIdx).toLocaleString()}</td><td>${m.uom}</td>
+        <td>${m.exp}</td><td>${m.arr}</td><td><span style="color:${m.status==='Available'?'var(--green)':'var(--amber)'};font-weight:600">${m.status}</span></td>
+        <td>${m.loc}</td><td>${m.msl}</td>
+    </tr>`).join('');
+    document.getElementById('resultsTable').innerHTML=`<thead><tr>
+        <th>SAP Number</th><th>Description</th><th>Batch ID</th><th>Box</th><th class="num">Idx</th>
+        <th class="num">Qty</th><th>UOM</th><th>Expiration</th><th>Arrival</th><th>Status</th>
+        <th>Location</th><th>MSL</th>
+    </tr></thead><tbody>${tbody}</tbody>`;
+    running=false;
+}
+
+function resetUI(){
+    if(running)return;
+    document.getElementById('progressFill').style.width='0%';
+    document.getElementById('statusDot').className='indicator idle';
+    document.getElementById('statusText').textContent='Ready — Press "Run Export" to start';
+    document.getElementById('resultsCard').style.display='none';
+    document.getElementById('logBox').innerHTML='<div><span class="ts">[14:30:02]</span> <span class="ok">✓</span> Config loaded: 20 locations, 10 workers</div><div><span class="ts">[14:30:02]</span> <span class="ok">✓</span> .NET Runtime initialized (pythonnet)</div><div><span class="ts">[14:30:03]</span> <span class="ok">✓</span> Single Login: authenticated as USER-8842</div><div><span class="ts">[14:30:03]</span> Session established. Ready for parallel queries.</div>';
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+</script>
+
+</body>
+</html>

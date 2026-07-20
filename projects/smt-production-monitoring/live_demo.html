@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMT Line Monitor — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--hdr:#0f172a;--txt:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --emerald:#059669;--amber:#d97706;--rose:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2;--orange:#ea580c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;line-height:1.5;overflow-x:hidden}
+
+/* Header */
+.topbar{background:var(--hdr);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100}
+.topbar h1{font-size:16px;font-weight:800;display:flex;align-items:center;gap:10px}
+.topbar .dot{width:8px;height:8px;border-radius:50%;background:var(--emerald);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.line-select{display:flex;gap:4px}
+.line-select button{padding:6px 16px;border:1px solid rgba(255,255,255,.15);border-radius:8px;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.line-select button:hover,.line-select button.active{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3)}
+.line-select button.active{background:var(--blue);border-color:var(--blue)}
+.badge-row{display:flex;gap:8px;align-items:center}
+.badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.1)}
+
+/* Content */
+.content{max-width:1440px;margin:0 auto;padding:20px 24px;display:grid;gap:20px}
+
+/* Efficiency row */
+.eff-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.eff-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s}
+.eff-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.eff-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.eff-value{font-size:28px;font-weight:800}
+.eff-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.eff-card.red .eff-value{color:var(--rose)}.eff-card.amber .eff-value{color:var(--amber)}.eff-card.green .eff-value{color:var(--emerald)}.eff-card.blue .eff-value{color:var(--blue)}
+
+/* Station grid */
+.station-grid{display:grid;grid-template-columns:1fr 2fr 1fr;gap:18px}
+
+/* Station card */
+.station-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:all .2s}
+.station-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.card-head{background:var(--hdr);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.card-head .title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-head .chip{font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase}
+.chip.heat{background:rgba(234,88,12,.2);color:var(--orange)}
+.chip.vision{background:rgba(124,58,237,.2);color:var(--violet)}
+.chip.post{background:rgba(8,145,178,.2);color:var(--cyan)}
+.card-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+
+/* Validation block */
+.val-block{padding:14px;border-radius:10px;border:2px solid}
+.val-block.valid{background:#ecfdf5;border-color:var(--emerald);color:#065f46}
+.val-block.failed{background:#fff1f2;border-color:var(--rose);color:#9f1239}
+.val-block .val-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid currentColor;opacity:.3}
+.val-block .val-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px}
+.val-block .val-row .lbl{opacity:.7}
+.val-block .val-row .dat{font-family:'SF Mono',Consolas,monospace;font-weight:700;background:rgba(255,255,255,.6);padding:2px 8px;border-radius:4px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.val-block .val-interlock{font-size:11px;font-weight:800;text-transform:uppercase;margin-top:8px;padding-top:8px;border-top:1px solid currentColor;opacity:.3;display:flex;justify-content:space-between}
+
+/* Placement module sub-cards */
+.module-grid{display:grid;gap:10px}
+.module-card{padding:12px;border-radius:10px;border:1px solid var(--border);background:#f8fafc;transition:all .2s}
+.module-card.mismatch{border-color:var(--rose);background:#fff1f2;box-shadow:0 0 0 1px rgba(220,38,38,.15)}
+.module-card .mod-head{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;margin-bottom:6px}
+.module-card .mod-val{font-family:'SF Mono',Consolas,monospace;font-size:12px;font-weight:700}
+
+/* Andon lights row */
+.andon-row{display:flex;gap:6px;align-items:center}
+.andon-light{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;font-family:'SF Mono',Consolas,monospace;transition:all .3s}
+.andon-light.g{background:rgba(5,150,105,.1);color:var(--emerald)}
+.andon-light.a{background:rgba(217,119,6,.1);color:var(--amber)}
+.andon-light.r{background:rgba(220,38,38,.1);color:var(--rose)}
+.andon-light.active.g{background:var(--emerald);color:#fff;box-shadow:0 0 16px rgba(5,150,105,.6);transform:scale(1.1)}
+.andon-light.active.a{background:var(--amber);color:#fff;box-shadow:0 0 16px rgba(217,119,6,.6);transform:scale(1.1)}
+.andon-light.active.r{background:var(--rose);color:#fff;box-shadow:0 0 16px rgba(220,38,38,.6);transform:scale(1.1);animation:pulse 1.5s infinite}
+
+/* Changeover bar */
+.ch-bar{margin-top:8px;background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid var(--border)}
+.ch-bar .ch-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ch-bar .ch-progress{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin:6px 0}
+.ch-bar .ch-fill{height:100%;border-radius:3px;background:var(--amber);transition:width .5s}
+.ch-bar .ch-stats{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+
+/* Supervisor cards */
+.super-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px}
+.super-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.super-card.ooo{opacity:.55;filter:grayscale(.4)}
+.super-head{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:#f8fafc}
+.super-head .line-badge{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:800;background:var(--hdr);color:#fff}
+.super-body{padding:14px}
+.super-stations{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.super-station{text-align:center;padding:10px 6px;border-radius:10px;border:1px solid var(--border);transition:all .2s}
+.super-station.fail{border-color:var(--rose);background:#fff1f2}
+.super-station.ok{border-color:var(--emerald);background:#ecfdf5}
+.super-station .ss-light{width:20px;height:20px;border-radius:50%;margin:0 auto 6px}
+.super-station .ss-name{font-size:10px;font-weight:700;text-transform:uppercase}
+.super-station .ss-time{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* Telemetry section */
+.telem-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.telem-box{background:#f8fafc;border-radius:10px;padding:12px;border:1px solid var(--border)}
+.telem-box h4{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.telem-bar{height:18px;background:var(--border);border-radius:4px;overflow:hidden;display:flex;margin-bottom:6px}
+.telem-bar .ok{background:var(--emerald);transition:width .5s}
+.telem-bar .mismatch{background:var(--rose);transition:width .5s}
+.telem-row-stats{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+
+/* OEE Gauges */
+.oee-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.oee-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);position:relative;overflow:hidden}
+.oee-card .oee-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+.oee-gauge{position:relative;width:80px;height:80px;margin:0 auto 8px}
+.oee-gauge svg{transform:rotate(-90deg)}
+.oee-gauge .bg{fill:none;stroke:#e2e8f0;stroke-width:6}
+.oee-gauge .fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.oee-gauge .val{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:900}
+.oee-card .oee-sub{font-size:10px;color:var(--muted);margin-top:2px}
+/* OEE Total — bigger */
+.oee-card.primary .oee-gauge{width:100px;height:100px}
+.oee-card.primary .oee-gauge .val{font-size:24px}
+.oee-card.primary .oee-label{font-size:12px}
+.oee-total-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;margin:12px 0 6px}
+.oee-total-bar .fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+/* EMS KPI Table */
+.ems-table{width:100%;border-collapse:collapse;font-size:12px}
+.ems-table th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--border)}
+.ems-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
+.ems-table tr:last-child td{border-bottom:none}
+.ems-table .kpi-val{font-family:'SF Mono',Consolas,monospace;font-weight:700;font-size:13px}
+.ems-table .kpi-good{color:var(--emerald)}.ems-table .kpi-amber{color:var(--amber)}.ems-table .kpi-bad{color:var(--rose)}
+
+/* OEE Rank in supervisor */
+.oee-rank{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.oee-rank-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:2px}
+
+/* Responsive */
+@media(max-width:1024px){.station-grid{grid-template-columns:1fr}.eff-row{grid-template-columns:repeat(2,1fr)}.super-stations{grid-template-columns:repeat(2,1fr)}.oee-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.topbar{flex-wrap:wrap}.line-select{flex-wrap:wrap}.eff-row{grid-template-columns:1fr}.oee-row{grid-template-columns:1fr}}
+
+.help{font-size:10px;color:var(--muted);text-align:center;padding:16px;border-top:1px solid var(--border);margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <h1><span class="dot"></span> SMT Sentinel · Line Monitor</h1>
+    <div class="line-select" id="lineSelect">
+        <button class="active" data-line="line-a">Line Alpha</button>
+        <button data-line="line-b">Line Beta</button>
+        <button data-line="line-c">Line Gamma</button>
+        <button data-line="line-d">Line Delta</button>
+        <button data-line="line-e">Line Epsilon</button>
+        <button data-line="supervisor" style="background:rgba(124,58,237,.2);color:var(--violet);border-color:rgba(124,58,237,.3)">👁 Supervisor</button>
+    </div>
+    <div class="badge-row">
+        <span class="badge">🟢 Sentinel Active</span>
+        <span class="badge" style="background:rgba(5,150,105,.15);color:var(--emerald)">Poll: 3s</span>
+    </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="help">Demo · Anonymized Data · © 2026 Artur Csepregi — SMT Assembly Line Monitoring Mockup</div>
+
+<script>
+/* ================================================================
+   ANONYMIZED DEMO DATA
+   ================================================================ */
+const lines = {
+    'line-a': { name:'Line Alpha', ekra:{unit:'PRINTER-A1',program:'PRINTER-PROG-4200_T',stencil:'STENCIL-4.2K',datenblatt:'PRINTER-PROG-4200',side:'T',vorgang1:'T',vorgang2:'B',order:'WO-8842-01'},
+        sip:{unit:'MOUNTER-A1',board:'BRD_ALPHA_SYS_A',program:'MOUNTER-PROG-4200A',datenblatt:'MOUNTER-PROG-4200',status:'OK'},
+        rhem:{unit:'OVEN-A-04',program:'THERM-PROFILE-H4',datenblatt:'THERM-PROFILE-H4',status:'OK'},
+        aoi:{unit:'OPTICAL-A-08',program:'OPT-INSPECT_V3.1A',datenblatt:'OPT-INSPECT_V3.1A',status:'OK'},
+        aoiCv:{unit:'OPTCV-A-02',program:'OPTCV_FINAL_V3A',datenblatt:'OPTCV_FINAL_V3A',order:'WO-8842-01',status:'OK'},
+        ev:{andonLight:'AMBER',mistakes:[]},
+        ooo: false,
+        oee:{availability:87,performance:82,quality:94},
+        ems:{output:1240,fpy:93.2,mtbf:186,mttr:14,scrap:1.8,cTakt:42}
+    },
+    'line-b': { name:'Line Beta', ekra:{unit:'PRINTER-B1',program:'PRINTER-PROG-5100_B',stencil:'STENCIL-5.1K',datenblatt:'PRINTER-PROG-5100',side:'B',vorgang1:'B',vorgang2:'L',order:'WO-5512-03'},
+        sip:{unit:'MOUNTER-B1',board:'BRD_BETA_PWR_B',program:'MOUNTER-PROG-5100B',datenblatt:'MOUNTER-PROG-5100',status:'OK'},
+        rhem:{unit:'OVEN-B-04',program:'THERM-PROFILE-L2',datenblatt:'THERM-PROFILE-L2',status:'OK'},
+        aoi:{unit:'OPTICAL-B-08',program:'OPT-INSPECT_V2.8B',datenblatt:'OPT-INSPECT_V2.8',status:'MISMATCH'},
+        aoiCv:{unit:'OPTCV-B-02',program:'OPTCV_FINAL_V2B',datenblatt:'OPTCV_FINAL_V2B',order:'WO-5512-03',status:'OK'},
+        ev:{andonLight:'RED',mistakes:[{pos:'C14',count:12,realCount:8,pseudoCount:4}]},
+        ooo: false,
+        oee:{availability:79,performance:85,quality:88},
+        ems:{output:980,fpy:88.5,mtbf:124,mttr:22,scrap:3.2,cTakt:45}
+    },
+    'line-c': { name:'Line Gamma', ekra:{unit:'PRINTER-C1',program:'PRINTER-PROG-3300_T',stencil:'STENCIL-3.3K',datenblatt:'PRINTER-PROG-3300',side:'T',vorgang1:'T',vorgang2:'B',order:'WO-3318-05'},
+        sip:{unit:'MOUNTER-C1',board:'BRD_GAMMA_CTRL',program:'MOUNTER-PROG-3300C',datenblatt:'MOUNTER-PROG-3300',status:'OK'},
+        rhem:{unit:'OVEN-C-04',program:'THERM-PROFILE-M3',datenblatt:'THERM-PROFILE-M3',status:'OK'},
+        aoi:{unit:'OPTICAL-C-08',program:'OPT-INSPECT_V4.2C',datenblatt:'OPT-INSPECT_V4.2C',status:'OK'},
+        aoiCv:{unit:'OPTCV-C-02',program:'OPTCV_FINAL_V4C',datenblatt:'OPTCV_FINAL_V4C',order:'WO-3318-05',status:'OK'},
+        ev:{andonLight:'GREEN',mistakes:[]},
+        ooo: false,
+        oee:{availability:93,performance:91,quality:97},
+        ems:{output:1580,fpy:96.8,mtbf:342,mttr:8,scrap:0.9,cTakt:38}
+    },
+    'line-d': { name:'Line Delta', ekra:{unit:'PRINTER-D1',program:'PRINTER-PROG-7700_B',stencil:'STENCIL-7.7K',datenblatt:'PRINTER-PROG-7700',side:'B',vorgang1:'B',vorgang2:'L',order:'WO-7701-08'},
+        sip:{unit:'MOUNTER-D1',board:'BRD_DELTA_SIG',program:'MOUNTER-PROG-7700D',datenblatt:'MOUNTER-PROG-7700',status:'OK'},
+        rhem:{unit:'OVEN-D-04',program:'THERM-PROFILE-H2',datenblatt:'THERM-PROFILE-H2',status:'OK'},
+        aoi:{unit:'OPTICAL-D-08',program:'OPT-INSPECT_V5.0D',datenblatt:'OPT-INSPECT_V5.0D',status:'OK'},
+        aoiCv:{unit:'OPTCV-D-02',program:'OPTCV_FINAL_V5D',datenblatt:'OPTCV_FINAL_V5D',order:'WO-7701-08',status:'OK'},
+        ev:{andonLight:'GREEN',mistakes:[]},
+        ooo: true, oooReason:'Planned maintenance',
+        oee:{availability:82,performance:79,quality:91},
+        ems:{output:610,fpy:91.0,mtbf:98,mttr:18,scrap:2.1,cTakt:44}
+    },
+    'line-e': { name:'Line Epsilon', ekra:{unit:'PRINTER-E1',program:'PRINTER-PROG-9900_T',stencil:'STENCIL-9.9K',datenblatt:'PRINTER-PROG-8800',side:'T',vorgang1:'T',vorgang2:'B',order:'WO-9902-11'},
+        sip:{unit:'MOUNTER-E1',board:'BRD_EPSLN_HP',program:'MOUNTER-PROG-9900E',datenblatt:'MOUNTER-PROG-8800',status:'MISMATCH'},
+        rhem:{unit:'OVEN-E-04',program:'THERM-PROFILE-H5',datenblatt:'THERM-PROFILE-H5',status:'OK'},
+        aoi:{unit:'OPTICAL-E-08',program:'OPT-INSPECT_V3.0E',datenblatt:'OPT-INSPECT_V3.0E',status:'OK'},
+        aoiCv:{unit:'OPTCV-E-02',program:'OPTCV_FINAL_V3E',datenblatt:'OPTCV_FINAL_V3E',order:'WO-9902-11',status:'OK'},
+        ev:{andonLight:'RED',mistakes:[{pos:'D07',count:22,realCount:18,pseudoCount:4},{pos:'F12',count:15,realCount:12,pseudoCount:3}]},
+        ooo: false,
+        oee:{availability:71,performance:78,quality:83},
+        ems:{output:720,fpy:84.2,mtbf:76,mttr:31,scrap:4.7,cTakt:49}
+    }
+};
+
+let currentLine = 'line-a';
+let showInterlock = true;
+let onePager = false;
+
+/* ================================================================
+   RENDER FUNCTIONS
+   ================================================================ */
+function getAndonLight(minutes){
+    if(minutes>30)return'RED';if(minutes>15)return'AMBER';return'GREEN';
+}
+function getStationMinutes(line,station){
+    const mins={ekra:8,sip:22,rhem:5,aoi:12};
+    if(line==='line-b'){mins.aoi=35;mins.sip=18}
+    if(line==='line-e'){mins.ekra=42;mins.sip=38}
+    return mins[station]||0;
+}
+function isEkraFailed(l){return l.ekra.program!==l.ekra.datenblatt}
+function isSipFailed(l){return l.sip.status==='MISMATCH'||l.sip.program!==l.sip.datenblatt}
+function isRhemFailed(l){return l.rhem.status!=='OK'}
+function isAnyAoiFailed(l){return l.aoi.status!=='OK'||l.aoiCv.status!=='OK'||l.ev.andonLight==='RED'}
+
+function renderLineView(lineKey){
+    const l=lines[lineKey];
+    const ekraFailed=isEkraFailed(l),sipFailed=isSipFailed(l),rhemFailed=isRhemFailed(l),aoiFailed=isAnyAoiFailed(l);
+    const stationMins={ekra:getStationMinutes(lineKey,'ekra'),sip:getStationMinutes(lineKey,'sip'),rhem:getStationMinutes(lineKey,'rhem'),aoi:getStationMinutes(lineKey,'aoi')};
+
+    const andonHTML=(sid)=>{
+        const m=stationMins[sid];const light=getAndonLight(m);
+        return `<div class="andon-row">
+            <div class="andon-light g ${light==='GREEN'?'active':''}">G</div>
+            <div class="andon-light a ${light==='AMBER'?'active':''}">A</div>
+            <div class="andon-light r ${light==='RED'?'active':''}">R</div>
+            <span style="font-size:14px;font-weight:800;margin-left:4px;color:${light==='RED'?'var(--rose)':light==='AMBER'?'var(--amber)':'var(--emerald)'}">${m}m</span>
+        </div>`;
+    };
+
+    const valBlock=(valid,label,rows,interlock)=>{
+        return`<div class="val-block ${valid?'valid':'failed'}">
+            <div class="val-head"><span>${label}</span><span style="font-size:14px">${valid?'✓':'✗'}</span></div>
+            ${rows.map(r=>`<div class="val-row"><span class="lbl">${r[0]}:</span><span class="dat" title="${r[2]}">${r[1]}</span></div>`).join('')}
+            <div class="val-interlock"><span>Checker Interlock:</span><span>${interlock}</span></div>
+        </div>`;
+    };
+
+    /* --- Bottleneck analysis --- */
+    const sorted=Object.entries(stationMins).sort((a,b)=>b[1]-a[1]);
+    const bottleneck=sorted[0]; const bottleneckLabel={'ekra':'SCREEN PRINTER','sip':'PLACEMENT','rhem':'REFLOW OVEN','aoi':'AOI INSPECTOR'}[bottleneck[0]];
+    const suggestions={
+        ekra:['Pre-stage next stencil during current run','Standardize stencil cleaning cycle','Add automated paste inspection'],
+        sip:['Verify BOM data before job start','Run offline program validation','Implement barcode pre-scan at feeder setup'],
+        rhem:['Pre-heat oven before shift start','Validate thermal profile weekly','Monitor zone temperature drift'],
+        aoi:['Calibrate cameras at shift start','Verify golden board reference','Check lighting uniformity']
+    }[bottleneck[0]];
+
+    /* --- General KPIs across all lines --- */
+    const allLines=Object.keys(lines).filter(k=>!lines[k].ooo).length;
+    const totalIssues=Object.entries(lines).filter(([,v])=>!v.ooo&&(isEkraFailed(v)||isSipFailed(v)||isRhemFailed(v)||isAnyAoiFailed(v))).length;
+    const avgCycle=Math.round(Object.entries(lines).filter(([,v])=>!v.ooo).reduce((s,[k])=>{const m=getStationMinutes(k,'ekra')+getStationMinutes(k,'sip')+getStationMinutes(k,'rhem')+getStationMinutes(k,'aoi');return s+m;},0)/Math.max(allLines,1));
+
+    /* --- OEE helpers --- */
+    const mkGauge=(id,label,pct,primary)=>{
+        const r=primary?44:36,circ=2*Math.PI*r;
+        const off=circ-(pct/100*circ);
+        const color=pct>=85?'var(--emerald)':pct>=70?'var(--amber)':'var(--rose)';
+        const sz=primary?100:80;
+        return`<div class="oee-card${primary?' primary':''}">
+            <div class="oee-label">${label}</div>
+            <div class="oee-gauge">
+                <svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">
+                    <circle class="bg" cx="${sz/2}" cy="${sz/2}" r="${r}"/>
+                    <circle class="fg" cx="${sz/2}" cy="${sz/2}" r="${r}" style="stroke:${color};stroke-dasharray:${circ};stroke-dashoffset:${off}"/>
+                </svg>
+                <div class="val" style="color:${color}">${pct}%</div>
+            </div>
+            <div class="oee-sub">${primary?`OEE = ${Math.round(l.oee.availability*l.oee.performance*l.oee.quality/10000)}%`:'&nbsp;'}</div>
+        </div>`;
+    };
+
+    const oee=l.oee; const oeeTotal=Math.round(oee.availability*oee.performance*oee.quality/10000);
+    const oeeColor=oeeTotal>=85?'var(--emerald)':oeeTotal>=70?'var(--amber)':'var(--rose)';
+
+    /* --- EMS KPI helpers --- */
+    const ems=l.ems;
+    const kpiClass=(v,good,amber)=>v>=good?'kpi-good':v>=amber?'kpi-amber':'kpi-bad';
+
+    return`<div class="eff-row">
+        <div class="eff-card ${ekraFailed?'red':sipFailed||rhemFailed?'amber':'green'}"><div class="eff-label">Compliance</div><div class="eff-value">${ekraFailed||sipFailed||rhemFailed||aoiFailed?'⚠ ACTION NEEDED':'✓ ALL OK'}</div><div class="eff-sub">4 stations monitored</div></div>
+        <div class="eff-card blue"><div class="eff-label">Production Order</div><div class="eff-value" style="font-size:20px">${l.ekra.order}</div><div class="eff-sub">Active since 08:00</div></div>
+        <div class="eff-card"><div class="eff-label">Cycle Time</div><div class="eff-value" style="color:var(--txt)">${42+Math.floor(Math.random()*8)}s</div><div class="eff-sub">Avg per board</div></div>
+        <div class="eff-card"><div class="eff-label">Buffer</div><div class="eff-value" style="color:var(--txt)">${Math.floor(Math.random()*12)+3}</div><div class="eff-sub">Units in buffer</div></div>
+    </div>
+
+    <!-- General KPI Bar -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px">
+        <div class="eff-card" style="border-left:3px solid var(--emerald)"><div class="eff-label">Active Lines</div><div class="eff-value" style="font-size:24px;color:var(--emerald)">${allLines}/5</div><div class="eff-sub">Operational</div></div>
+        <div class="eff-card" style="border-left:3px solid ${totalIssues>0?'var(--rose)':'var(--emerald)'}"><div class="eff-label">Lines w/ Issues</div><div class="eff-value" style="font-size:24px;color:${totalIssues>0?'var(--rose)':'var(--emerald)'}">${totalIssues}</div><div class="eff-sub">Needs attention</div></div>
+        <div class="eff-card" style="border-left:3px solid var(--blue)"><div class="eff-label">Avg Total Idle</div><div class="eff-value" style="font-size:24px;color:var(--blue)">${avgCycle}m</div><div class="eff-sub">Across all lines</div></div>
+        <div class="eff-card" style="border-left:3px solid var(--violet)"><div class="eff-label">Compliance Rate</div><div class="eff-value" style="font-size:24px;color:var(--violet)">${Math.round((allLines-totalIssues)/Math.max(allLines,1)*100)}%</div><div class="eff-sub">All stations matched</div></div>
+    </div>
+
+    <!-- OEE Section -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <h3 style="font-size:15px;font-weight:800;color:var(--txt)">📊 Overall Equipment Effectiveness</h3>
+            <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted)">
+                <span>Target: <strong style="color:var(--emerald)">≥85%</strong></span>
+                <span>World Class: <strong style="color:var(--blue)">≥85%</strong></span>
+            </div>
+        </div>
+        <div class="oee-row">
+            ${mkGauge('avail','Availability',oee.availability,false)}
+            ${mkGauge('perf','Performance',oee.performance,false)}
+            ${mkGauge('qual','Quality',oee.quality,false)}
+            <div class="oee-card primary">
+                <div class="oee-label">OEE</div>
+                <div class="oee-gauge">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle class="bg" cx="50" cy="50" r="44"/>
+                        <circle class="fg" cx="50" cy="50" r="44" style="stroke:${oeeColor};stroke-dasharray:${2*Math.PI*44};stroke-dashoffset:${2*Math.PI*44-(oeeTotal/100*2*Math.PI*44)}"/>
+                    </svg>
+                    <div class="val" style="color:${oeeColor}">${oeeTotal}%</div>
+                </div>
+                <div class="oee-sub">${oeeTotal>=85?'✓ World Class':oeeTotal>=70?'⚠ Acceptable':'✗ Needs Improvement'}</div>
+            </div>
+        </div>
+        <div class="oee-total-bar"><div class="fill" style="width:${oeeTotal}%;background:${oeeColor}"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+            <span>0%</span>
+            <span>${oeeTotal}%</span>
+            <span>100%</span>
+        </div>
+    </div>
+
+    <!-- EMS KPI Section -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <h3 style="font-size:15px;font-weight:800;color:var(--txt)">📋 EMS Production KPIs</h3>
+            <span style="font-size:10px;color:var(--muted)">Shift: Day · Last 8h</span>
+        </div>
+        <table class="ems-table">
+            <thead><tr>
+                <th>KPI</th><th>Value</th><th>Status</th><th>Benchmark</th>
+            </tr></thead>
+            <tbody>
+                <tr>
+                    <td style="font-weight:600">📦 Output / Shift</td>
+                    <td class="kpi-val ${kpiClass(ems.output,1200,800)}">${ems.output} boards</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.output>=1200?'var(--emerald)':ems.output>=800?'var(--amber)':'var(--rose)'}">${ems.output>=1200?'✓ On Target':ems.output>=800?'⚠ Below Target':'✗ Critical'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≥ 1,200</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">✅ First Pass Yield</td>
+                    <td class="kpi-val ${kpiClass(ems.fpy,95,88)}">${ems.fpy}%</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.fpy>=95?'var(--emerald)':ems.fpy>=88?'var(--amber)':'var(--rose)'}">${ems.fpy>=95?'✓ Excellent':ems.fpy>=88?'⚠ Monitor':'✗ Needs Review'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≥ 95%</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">⏱ MTBF</td>
+                    <td class="kpi-val ${kpiClass(ems.mtbf,200,100)}">${ems.mtbf} min</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.mtbf>=200?'var(--emerald)':ems.mtbf>=100?'var(--amber)':'var(--rose)'}">${ems.mtbf>=200?'✓ Stable':ems.mtbf>=100?'⚠ Moderate':'✗ Frequent Stops'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≥ 200 min</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">🔧 MTTR</td>
+                    <td class="kpi-val ${kpiClass(45-ems.mttr,50,35)}">${ems.mttr} min</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.mttr<=12?'var(--emerald)':ems.mttr<=22?'var(--amber)':'var(--rose)'}">${ems.mttr<=12?'✓ Fast Recovery':ems.mttr<=22?'⚠ Average':'✗ Slow Recovery'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≤ 12 min</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">🗑 Scrap Rate</td>
+                    <td class="kpi-val ${kpiClass(100-ems.scrap*10,98,95)}">${ems.scrap}%</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.scrap<=1.5?'var(--emerald)':ems.scrap<=3.0?'var(--amber)':'var(--rose)'}">${ems.scrap<=1.5?'✓ Low':ems.scrap<=3.0?'⚠ Acceptable':'✗ High'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≤ 1.5%</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600">🎯 Cycle Time (Takt)</td>
+                    <td class="kpi-val">${ems.cTakt}s</td>
+                    <td><span style="font-size:11px;font-weight:700;color:${ems.cTakt<=40?'var(--emerald)':ems.cTakt<=46?'var(--amber)':'var(--rose)'}">${ems.cTakt<=40?'✓ On Takt':ems.cTakt<=46?'⚠ Slight Delay':'✗ Over Takt'}</span></td>
+                    <td style="color:var(--muted);font-size:11px">≤ 40s</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="station-grid">
+        <!-- PRINTER -->
+        <div class="station-card">
+            <div class="card-head"><div class="title">🖨 SCREEN PRINTER</div><span class="chip heat">Heat Profile</span></div>
+            <div class="card-body">
+                ${valBlock(!ekraFailed,'[PRINTER] Stencil Validation',[
+                    ['Live Program',l.ekra.program,l.ekra.program],
+                    ['Identified Stencil',l.ekra.stencil,l.ekra.stencil],
+                    ['Datasheet Match',l.ekra.datenblatt,l.ekra.datenblatt],
+                    ['Production Side',l.ekra.side,l.ekra.side]
+                ],ekraFailed?'<span style="color:var(--rose)">✗ STENCIL MISMATCH</span>':'<span style="color:var(--emerald)">✓ MATCHED_OK</span>')}
+                ${andonHTML('ekra')}
+            </div>
+        </div>
+
+        <!-- MOUNTER (simplified, no SX1/SX2/SX3) -->
+        <div class="station-card">
+            <div class="card-head"><div class="title">⚙ PLACEMENT CENTER</div><span class="chip" style="background:rgba(37,99,235,.2);color:var(--blue)">Validation</span></div>
+            <div class="card-body">
+                ${valBlock(!sipFailed,'[PLACEMENT] Program & Board Validation',[
+                    ['Live Program',l.sip.program,l.sip.program],
+                    ['Datasheet Match',l.sip.datenblatt,l.sip.datenblatt],
+                    ['Board ID',l.sip.board,l.sip.board]
+                ],sipFailed?'<span style="color:var(--rose)">✗ PROGRAM/BARCODE MISMATCH</span>':'<span style="color:var(--emerald)">✓ MATCHED_OK</span>')}
+                ${andonHTML('sip')}
+            </div>
+        </div>
+
+        <!-- RHEM + AOI -->
+        <div style="display:flex;flex-direction:column;gap:18px">
+            <div class="station-card">
+                <div class="card-head"><div class="title">🔥 REFLOW OVEN</div><span class="chip heat">Heat Profile</span></div>
+                <div class="card-body">
+                    ${valBlock(!rhemFailed,'[OVEN] Thermal Validation',[
+                        ['Live Program',l.rhem.program,l.rhem.program],
+                        ['Datasheet Match',l.rhem.datenblatt,l.rhem.datenblatt]
+                    ],rhemFailed?'<span style="color:var(--rose)">✗ TEMPERATURE PROFILE WRONG</span>':'<span style="color:var(--emerald)">✓ MATCHED_OK</span>')}
+                    ${andonHTML('rhem')}
+                </div>
+            </div>
+
+            <div class="station-card">
+                <div class="card-head"><div class="title">👁 AOI INSPECTOR</div><span class="chip vision">Vision 3D</span></div>
+                <div class="card-body">
+                    ${valBlock(!aoiFailed,'[OPTICAL] Visual Verification',[
+                        ['Inspection Program',l.aoi.program,l.aoi.program],
+                        ['Datasheet Match',l.aoi.datenblatt,l.aoi.datenblatt],
+                        ['Active Order',l.aoiCv.order,l.aoiCv.order]
+                    ],aoiFailed?'<span style="color:var(--rose)">✗ OPTICS DISCREPANCY</span>':'<span style="color:var(--emerald)">✓ MATCHED_OK</span>')}
+                    ${l.ev.andonLight!=='GREEN'?`<div class="val-block failed" style="margin-top:8px">
+                        <div class="val-head"><span>Position Evaluator</span><span>${l.ev.andonLight}</span></div>
+                        ${l.ev.mistakes.map(m=>`<div style="font-size:11px;padding:2px 0">Pos ${m.pos}: ${m.count} total (${m.realCount}R / ${m.pseudoCount}P)</div>`).join('')}
+                    </div>`:''}
+                    ${andonHTML('aoi')}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottleneck Analysis & Suggestions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:12px;color:var(--rose)">⚠ Bottleneck Analysis</h3>
+            <div style="display:flex;gap:20px;align-items:center;margin-bottom:14px">
+                ${['ekra','sip','rhem','aoi'].map(sid=>`<div style="text-align:center;flex:1">
+                    <div style="font-size:22px;font-weight:900;color:${sid===bottleneck[0]?'var(--rose)':'var(--muted)'}">${stationMins[sid]}m</div>
+                    <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:2px">${{'ekra':'PRINTER','sip':'PLACEMENT','rhem':'OVEN','aoi':'AOI'}[sid]}</div>
+                    ${sid===bottleneck[0]?`<div style="font-size:10px;font-weight:800;color:var(--rose);margin-top:3px">⬆ BOTTLENECK</div>`:''}
+                </div>`).join('')}
+            </div>
+            <div style="background:#fff1f2;border:1px solid var(--rose);border-radius:10px;padding:14px">
+                <div style="font-size:12px;font-weight:800;color:var(--rose);margin-bottom:6px">🔴 ${bottleneckLabel} is limiting throughput at ${bottleneck[1]}m idle</div>
+                <div style="font-size:11px;color:#9f1239">Impact: +${Math.round(bottleneck[1]*1.4)}m total line delay · ${Math.round(bottleneck[1]/Math.max(sorted[3][1],1)*100)}% slower than fastest station</div>
+            </div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.04)">
+            <h3 style="font-size:14px;font-weight:800;margin-bottom:12px;color:var(--blue)">💡 AI Suggestions</h3>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Recommended actions to resolve <strong>${bottleneckLabel}</strong> bottleneck:</div>
+            ${suggestions.map((s,i)=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;margin-bottom:8px;background:#f8fafc;border-radius:8px;border:1px solid var(--border)">
+                <span style="font-weight:900;color:var(--blue);font-size:14px;min-width:18px">${i+1}.</span>
+                <span style="font-size:12px;font-weight:600">${s}</span>
+            </div>`).join('')}
+        </div>
+    </div>`;
+}
+
+function renderSupervisor(){
+    const lineKeys=Object.keys(lines);
+    const cards=lineKeys.map(lk=>{
+        const l=lines[lk];
+        const ekraF=isEkraFailed(l),sipF=isSipFailed(l),rhemF=isRhemFailed(l),aoiF=isAnyAoiFailed(l);
+        const hasIssue=ekraF||sipF||rhemF||aoiF;
+        const stations=[
+            {id:'ekra',name:'PRINTER',failed:ekraF,min:getStationMinutes(lk,'ekra')},
+            {id:'sip',name:'PLACEMENT',failed:sipF,min:getStationMinutes(lk,'sip')},
+            {id:'rhem',name:'OVEN',failed:rhemF,min:getStationMinutes(lk,'rhem')},
+            {id:'aoi',name:'AOI',failed:aoiF,min:getStationMinutes(lk,'aoi')}
+        ];
+        const o=l.oee, oeeTot=Math.round(o.availability*o.performance*o.quality/10000);
+        const oe=l.ems;
+        const borderOee=oeeTot>=85?'var(--emerald)':oeeTot>=70?'var(--amber)':'var(--rose)';
+        const headClass=hasIssue?'bg-rose-50':'bg-emerald-50';
+
+        return`<div class="super-card ${l.ooo?'ooo':''}" style="border-left:4px solid ${hasIssue?'var(--rose)':'var(--emerald)'}">
+            <div class="super-head" style="background:${headClass}">
+                <div><span class="line-badge">${l.name}</span>${l.ooo?`<span style="font-size:10px;color:var(--muted);margin-left:8px">· ${l.oooReason}</span>`:''}</div>
+                <span style="font-size:10px;color:var(--muted)">Order: ${l.ekra.order}</span>
+            </div>
+            <div class="super-body">
+                <div class="super-stations">
+                    ${stations.map(s=>{
+                        const light=getAndonLight(s.min);
+                        return`<div class="super-station ${s.failed?'fail':'ok'}">
+                            <div class="ss-light" style="background:${light==='RED'?'var(--rose)':light==='AMBER'?'var(--amber)':'var(--emerald)'};box-shadow:0 0 12px ${light==='RED'?'rgba(220,38,38,.4)':light==='AMBER'?'rgba(217,119,6,.4)':'rgba(5,150,105,.4)'}"></div>
+                            <div class="ss-name" style="color:${s.failed?'var(--rose)':'var(--txt)'}">${s.name}</div>
+                            <div class="ss-time">${s.min}m idle</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <div class="oee-rank">
+                    <div class="oee-rank-dot" style="background:${borderOee}"></div>
+                    <div style="flex:1;display:flex;justify-content:space-between;font-size:11px">
+                        <span><strong>OEE</strong> ${oeeTot}%</span>
+                        <span style="color:var(--muted)">A:${o.availability}% P:${o.performance}% Q:${o.quality}%</span>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">
+                    <span>📦 ${oe.output}/shift</span>
+                    <span>✅ FPY ${oe.fpy}%</span>
+                    <span>⏱ MTBF ${oe.mtbf}m</span>
+                    <span>🔧 MTTR ${oe.mttr}m</span>
+                </div>
+                ${hasIssue?`<div class="telem-row">
+                    <div class="telem-box">
+                        <h4>Setup Mismatch Priority</h4>
+                        <div style="font-size:11px;color:var(--muted)">
+                            ${ekraF?'1. PRINTER — STENCIL MISMATCH<br>':''}
+                            ${sipF?'2. PLACEMENT — PROGRAM/BARCODE MISMATCH<br>':''}
+                            ${rhemF?'3. OVEN — THERMAL PROFILE<br>':''}
+                            ${aoiF?'4. OPTICAL — OPTICS DISCREPANCY<br>':''}
+                        </div>
+                    </div>
+                    <div class="telem-box">
+                        <h4>Compliance (24h)</h4>
+                        <div class="telem-bar"><div class="ok" style="width:${hasIssue?'68%':'96%'}"></div><div class="mismatch" style="width:${hasIssue?'32%':'4%'}"></div></div>
+                        <div class="telem-row-stats"><span>${hasIssue?'68':'96'}% OK</span><span>${hasIssue?'32':'4'}% mismatch</span></div>
+                    </div>
+                </div>`:''}
+            </div>
+        </div>`;
+    }).join('');
+
+    return`<div style="text-align:center;margin-bottom:16px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--txt)">Supervisor Control Center</h2>
+        <p style="font-size:12px;color:var(--muted)">Real-time status tracking for all 5 assembly lines</p>
+    </div>
+    <!-- OEE Summary Bar -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px">
+        ${lineKeys.map(lk=>{
+            const ln=lines[lk]; const o=ln.oee; const t=Math.round(o.availability*o.performance*o.quality/10000);
+            const c=t>=85?'var(--emerald)':t>=70?'var(--amber)':'var(--rose)';
+            return`<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;${ln.ooo?'opacity:.5':''}">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px">${ln.name}</div>
+                <div style="font-size:20px;font-weight:900;color:${c}">${ln.ooo?'—':t+'%'}</div>
+                <div style="font-size:9px;color:var(--muted);margin-top:2px">${ln.ooo?ln.oooReason:'A:'+o.availability+' P:'+o.performance+' Q:'+o.quality}</div>
+            </div>`;
+        }).join('')}
+    </div>
+    <div class="super-grid">${cards}</div>`;
+}
+
+function renderContent(){
+    if(currentLine==='supervisor'){
+        document.getElementById('content').innerHTML=renderSupervisor();
+    }else{
+        document.getElementById('content').innerHTML=`<h2 style="font-size:18px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:10px">${lines[currentLine].name} ${lines[currentLine].ooo?'<span style="font-size:11px;color:var(--muted);background:#f1f5f9;padding:4px 10px;border-radius:6px">OUT OF ORDER · '+lines[currentLine].oooReason+'</span>':''}</h2>`+renderLineView(currentLine);
+    }
+}
+
+/* Navigation */
+document.getElementById('lineSelect').addEventListener('click',e=>{
+    const btn=e.target.closest('button');
+    if(!btn)return;
+    document.querySelectorAll('#lineSelect button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLine=btn.dataset.line;
+    renderContent();
+});
+
+renderContent();
+
+/* Auto-refresh simulation — randomize idle minutes every 10s */
+setInterval(()=>{
+    if(currentLine!=='supervisor'){
+        renderContent();
+    }
+},12000);
+</script>
+
+</body>
+</html>

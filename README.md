@@ -60,7 +60,7 @@ Full specifications: `documents/TECHNICAL_SPECIFICATION.md`
 ## Contact
 
 - 📧 csepregi.arthur@gmail.com
-- 💼 [linkedin.com/in/artur-csepregi](https://linkedin.com/in/artur-csepregi)
-- 💻 [github.com/CsepregiArtur](https://github.com/CsepregiArtur)
+- 💼 [linkedin.com/in/csepregi-artur](https://www.linkedin.com/in/csepregi-artur)
+- 🌐 [CsepregiArtur.github.io](https://csepregiartur.github.io)
 
 © 2026 Artur Csepregi

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIVE WMS — Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--honey:#D97706;--gold:#F59E0B;--dark:#1F2937;--pale:#FFFBEB;--bg:#FFFBEB;--card:#fff;--txt:#1F2937;--muted:#6B7280;--border:#FDE68A;--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5}
+.topbar{background:var(--dark);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:sticky;top:0;z-index:100}
+.topbar .brand{font-size:18px;font-weight:800;display:flex;align-items:center;gap:10px}
+.topbar .brand .bee{font-size:24px;animation:bounce 1.5s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.topbar .status{font-size:11px;padding:4px 12px;border-radius:100px;background:rgba(5,150,105,.2);color:#34d399;font-weight:600}
+.topbar .status .dot{width:6px;height:6px;border-radius:50%;background:#34d399;display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.content{max-width:1400px;margin:0 auto;padding:24px;display:grid;gap:24px}
+
+/* KPI Grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;transition:all .25s;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.kpi-card .hex{position:absolute;top:-12px;right:-12px;width:48px;height:48px;opacity:.06;font-size:40px}
+.kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+.kpi-value{font-size:32px;font-weight:800;color:var(--honey)}
+.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Main grid */
+.main-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+
+/* Warehouse Map */
+.map-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.map-card h3{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.map-card h3 .icon{font-size:20px}
+.warehouse-svg{width:100%;max-width:500px;margin:0 auto;display:block}
+
+/* Alert Panel */
+.alert-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.03);display:flex;flex-direction:column;gap:16px}
+.alert-panel h3{font-size:15px;font-weight:700}
+.alert-item{padding:12px 14px;border-radius:10px;border-left:4px solid;font-size:13px;animation:slideIn .3s ease}
+.alert-item.critical{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+.alert-item.warning{background:#fffbeb;border-color:var(--gold);color:#92400e}
+.alert-item.info{background:#f0f9ff;border-color:#0ea5e9;color:#075985}
+.alert-item .time{font-size:10px;opacity:.6;margin-top:4px}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+
+/* Import Feed */
+.feed-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.feed-card h3{font-size:15px;font-weight:700;margin-bottom:12px}
+.feed-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.feed-item:last-child{border:none}
+.feed-item .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+.feed-item .info{flex:1;min-width:0}
+.feed-item .info .file{font-weight:600;color:var(--txt)}
+.feed-item .info .time{color:var(--muted);font-size:10px;margin-top:2px}
+.feed-item .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat-mini{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center}
+.stat-mini .num{font-size:22px;font-weight:800;color:var(--honey)}
+.stat-mini .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+@media(max-width:1024px){.kpi-grid{grid-template-columns:repeat(3,1fr)}.main-grid{grid-template-columns:1fr}.stats-row{grid-template-columns:repeat(2,1fr)}.demo-tabs{flex-wrap:wrap}}
+@media(max-width:640px){.kpi-grid{grid-template-columns:repeat(2,1fr)}.stats-row{grid-template-columns:1fr}}
+
+/* Demo Tabs */
+.demo-tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:0}
+.demo-tabs button{padding:10px 20px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s}
+.demo-tabs button:hover{background:#fff7ed;color:var(--honey)}
+.demo-tabs button.active{background:var(--honey);color:#fff}
+.demo-panel{display:none}
+.demo-panel.active{display:block}
+
+/* ML cards */
+.ml-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.ml-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;border-top:4px solid var(--honey);transition:all .2s}
+.ml-box:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.ml-box .ml-model{font-size:10px;font-weight:800;color:var(--honey);text-transform:uppercase;letter-spacing:1px}
+.ml-box .ml-name{font-size:14px;font-weight:700;color:var(--txt);margin:6px 0}
+.ml-box .ml-algo{font-size:11px;color:var(--muted)}
+.ml-box .ml-result{font-size:20px;font-weight:800;color:var(--honey);margin-top:10px}
+.ml-box .ml-result span{font-size:11px;font-weight:400;color:var(--muted)}
+
+/* Pipeline steps */
+.pipe-steps{display:flex;align-items:center;gap:0;flex-wrap:wrap;justify-content:center;margin:20px 0}
+.pipe-step{text-align:center;padding:16px 12px;min-width:120px}
+.pipe-step .num{width:40px;height:40px;border-radius:50%;background:var(--honey);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;margin:0 auto 8px}
+.pipe-step .lbl{font-size:12px;font-weight:600;color:var(--txt)}
+.pipe-step .desc{font-size:10px;color:var(--muted);margin-top:2px}
+.pipe-arrow{font-size:20px;color:var(--honey);font-weight:700;padding:0 4px}
+
+/* Schema explorer */
+.schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.schema-box{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.schema-box .sch-head{padding:12px 16px;font-weight:700;font-size:14px;border-bottom:1px solid var(--border)}
+.schema-box .sch-head.core{background:#fff7ed;color:var(--honey)}
+.schema-box .sch-head.ml{background:#f0f9ff;color:#0ea5e9}
+.schema-box .sch-head.analytics{background:#f0fdf4;color:#16a34a}
+.schema-box .sch-body{padding:14px 16px;font-size:12px;line-height:2.2}
+.schema-box .sch-body code{background:#f8fafc;padding:2px 8px;border-radius:4px;font-size:11px;color:var(--muted)}
+
+/* Animation for pipeline */
+@keyframes flowPulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="brand"><span class="bee">🐝</span> HIVE WMS · Live Demo</div>
+    <div style="display:flex;align-items:center;gap:16px">
+        <span class="status"><span class="dot"></span> Connected · Demo Mode</span>
+        <span style="font-size:11px;color:rgba(255,255,255,.5)">DB: hive_wms_demo</span>
+    </div>
+</div>
+
+<div class="content">
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Active Orders</div><div class="kpi-value">24</div><div class="kpi-sub">+3 since last hour</div></div>
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Pending Jobs</div><div class="kpi-value">18</div><div class="kpi-sub">4 high priority</div></div>
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Active Lifts</div><div class="kpi-value">5/6</div><div class="kpi-sub">1 in maintenance</div></div>
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Inventory Items</div><div class="kpi-value">4,827</div><div class="kpi-sub">98.2% accuracy</div></div>
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Pick Accuracy</div><div class="kpi-value">99.7%</div><div class="kpi-sub">Last 24h</div></div>
+        <div class="kpi-card"><div class="hex">⬡</div><div class="kpi-label">Avg Cycle Time</div><div class="kpi-value">4.2m</div><div class="kpi-sub">Per pick job</div></div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+        <div class="stat-mini"><div class="num">142</div><div class="lbl">Jobs Today</div></div>
+        <div class="stat-mini"><div class="num">8,942</div><div class="lbl">Items Picked</div></div>
+        <div class="stat-mini"><div class="num">3.2s</div><div class="lbl">Avg Response</div></div>
+        <div class="stat-mini"><div class="num">0</div><div class="lbl">Errors (24h)</div></div>
+    </div>
+
+    <!-- Main Grid: Map + Alerts -->
+    <div class="main-grid">
+        <div class="map-card">
+            <h3><span class="icon">🗺️</span> Warehouse Map — Live Positions</h3>
+            <svg class="warehouse-svg" viewBox="0 0 500 320">
+                <!-- Background -->
+                <rect width="500" height="320" fill="#FFFBEB" rx="12"/>
+                <rect x="10" y="10" width="130" height="300" fill="#FEF3C7" rx="8" stroke="#FDE68A" stroke-width="1"/>
+                <rect x="155" y="10" width="200" height="300" fill="#FFF7ED" rx="8" stroke="#FED7AA" stroke-width="1"/>
+                <rect x="370" y="10" width="120" height="300" fill="#F0FDF4" rx="8" stroke="#BBF7D0" stroke-width="1"/>
+                <!-- Labels -->
+                <text x="75" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#92400E">📦 Receiving</text>
+                <text x="255" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#9A3412">🏗 The Comb</text>
+                <text x="430" y="38" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">🚚 Shipping</text>
+                <!-- Lift positions -->
+                <rect x="30" y="70" width="90" height="45" rx="6" fill="#fff" stroke="#D97706" stroke-width="2"/>
+                <text x="75" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">LIFT A-1</text>
+                <rect x="30" y="130" width="90" height="45" rx="6" fill="#fff" stroke="#D97706" stroke-width="2"/>
+                <text x="75" y="157" text-anchor="middle" font-size="11" font-weight="700" fill="#D97706">LIFT A-2</text>
+                <rect x="30" y="240" width="90" height="45" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="2"/>
+                <text x="75" y="267" text-anchor="middle" font-size="11" font-weight="700" fill="#ef4444">LIFT A-3 ⚠</text>
+                <text x="75" y="282" text-anchor="middle" font-size="9" fill="#ef4444">Maintenance</text>
+                <!-- Comb storage slots -->
+                <rect x="170" y="65" width="170" height="18" rx="4" fill="#fff" stroke="#fdba74" stroke-width="1"/>
+                <rect x="170" y="90" width="170" height="18" rx="4" fill="#fff" stroke="#fdba74" stroke-width="1"/>
+                <rect x="170" y="115" width="170" height="18" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <rect x="170" y="140" width="170" height="18" rx="4" fill="#fff" stroke="#fdba74" stroke-width="1"/>
+                <rect x="170" y="165" width="170" height="18" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <rect x="170" y="190" width="170" height="18" rx="4" fill="#ffedd5" stroke="#fdba74" stroke-width="1"/>
+                <rect x="170" y="215" width="170" height="18" rx="4" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+                <rect x="170" y="240" width="170" height="18" rx="4" fill="#fff" stroke="#fdba74" stroke-width="1"/>
+                <text x="255" y="280" text-anchor="middle" font-size="10" fill="#9A3412">🟢 = Occupied · 🟡 = Reserved · ⬜ = Empty</text>
+                <!-- Shipping lifts -->
+                <rect x="385" y="70" width="90" height="45" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2"/>
+                <text x="430" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#16A34A">LIFT B-1</text>
+                <rect x="385" y="130" width="90" height="45" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2"/>
+                <text x="430" y="157" text-anchor="middle" font-size="11" font-weight="700" fill="#16A34A">LIFT B-2</text>
+            </svg>
+        </div>
+
+        <!-- Alerts -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="alert-panel">
+                <h3>🔔 Live Alerts</h3>
+                <div class="alert-item critical">
+                    <strong>LIFT A-3 Maintenance Required</strong>
+                    <div>Cycle count exceeded threshold (45,200 cycles). Schedule inspection.</div>
+                    <div class="time">🕐 2 minutes ago</div>
+                </div>
+                <div class="alert-item warning">
+                    <strong>Low Stock Alert: MAT-5501</strong>
+                    <div>Power Regulator Assembly below reorder point (42 units remaining).</div>
+                    <div class="time">🕐 18 minutes ago</div>
+                </div>
+                <div class="alert-item info">
+                    <strong>MES Sync Complete</strong>
+                    <div>Inventory synchronized: 4,827 items, 0 discrepancies.</div>
+                    <div class="time">🕐 32 minutes ago</div>
+                </div>
+                <div class="alert-item info">
+                    <strong>Job #142 Completed</strong>
+                    <div>Pick list for WO-5512 finished. 234 items picked in 3.8 min.</div>
+                    <div class="time">🕐 45 minutes ago</div>
+                </div>
+            </div>
+
+            <!-- Import Feed -->
+            <div class="feed-card">
+                <h3>📥 Recent Imports</h3>
+                <div class="feed-item">
+                    <div class="dot"></div>
+                    <div class="info"><div class="file">MES_Inventory_Sync_2026-07-20.xml</div><div class="time">Imported 14:30 · 4,827 records</div></div>
+                    <span class="badge" style="background:#dcfce7;color:#166534">✓ Success</span>
+                </div>
+                <div class="feed-item">
+                    <div class="dot"></div>
+                    <div class="info"><div class="file">Setup_File_Line-B_2026-07-20.xml</div><div class="time">Processed 14:15 · 156 components</div></div>
+                    <span class="badge" style="background:#dcfce7;color:#166534">✓ Success</span>
+                </div>
+                <div class="feed-item">
+                    <div class="dot"></div>
+                    <div class="info"><div class="file">SAP_BOM_Export_2026-07-20.csv</div><div class="time">Processed 13:45 · 892 materials</div></div>
+                    <span class="badge" style="background:#dcfce7;color:#166534">✓ Success</span>
+                </div>
+                <div class="feed-item">
+                    <div class="dot"></div>
+                    <div class="info"><div class="file">Hanel_Lift_Log_2026-07-20.log</div><div class="time">Imported 12:00 · 1,245 events</div></div>
+                    <span class="badge" style="background:#fef3c7;color:#92400e">⚠ Warning</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Tabs -->
+    <div class="demo-tabs" style="margin-top:8px">
+        <button class="active" onclick="switchDemo('ml')">🧠 ML Predictions</button>
+        <button onclick="switchDemo('pipeline')">⚡ Job Pipeline</button>
+        <button onclick="switchDemo('schema')">🗄️ DB Schema</button>
+    </div>
+
+    <!-- ML Predictions Panel -->
+    <div class="demo-panel active" id="panel-ml">
+        <div style="text-align:center;margin-bottom:16px">
+            <h3 style="font-size:18px;font-weight:700">7 ML Models — Live Predictions</h3>
+            <p style="font-size:12px;color:var(--muted)">Models trained on anonymized warehouse data. Refresh every 30s.</p>
+        </div>
+        <div class="ml-row">
+            <div class="ml-box"><div class="ml-model">Model A</div><div class="ml-name">Travel Time Prediction</div><div class="ml-algo">LightGBM · Gradient Boosting</div><div class="ml-result" id="ml-a">3.2<span> min</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model B</div><div class="ml-name">Demand Forecast (7-day)</div><div class="ml-algo">Prophet · Time Series</div><div class="ml-result" id="ml-b">+12%<span> vs last week</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model C</div><div class="ml-name">Job Duration Prediction</div><div class="ml-algo">RandomForest · Ensemble</div><div class="ml-result" id="ml-c">4.8<span> min estimated</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model D</div><div class="ml-name">Anomaly Detection</div><div class="ml-algo">IsolationForest · Unsupervised</div><div class="ml-result" id="ml-d" style="color:#16a34a">0<span> anomalies (24h)</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model E</div><div class="ml-name">Zone Congestion</div><div class="ml-algo">Real-Time Analysis</div><div class="ml-result" id="ml-e">LOW<span> congestion</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model F</div><div class="ml-name">KPI Forecast (30-day)</div><div class="ml-algo">Prophet · Trend Analysis</div><div class="ml-result" id="ml-f">+8.4%<span> throughput ↑</span></div></div>
+            <div class="ml-box"><div class="ml-model">Model G</div><div class="ml-name">Lift Maintenance Score</div><div class="ml-algo">Custom · Cycle Analysis</div><div class="ml-result" id="ml-g" style="color:#ef4444">LIFT A-3: 94%<span> — action needed</span></div></div>
+        </div>
+    </div>
+
+    <!-- Job Pipeline Panel -->
+    <div class="demo-panel" id="panel-pipeline">
+        <div style="text-align:center;margin-bottom:16px">
+            <h3 style="font-size:18px;font-weight:700">Job Creation Pipeline — Interactive Demo</h3>
+            <p style="font-size:12px;color:var(--muted)">Click "Run Pipeline" to simulate setup→BOM→pick list generation</p>
+        </div>
+        <div class="pipe-steps" id="pipeSteps">
+            <div class="pipe-step"><div class="num">1</div><div class="lbl">Load Setup</div><div class="desc">Siplace Pro XML</div></div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-step"><div class="num">2</div><div class="lbl">Load BOM</div><div class="desc">SAP BOM CSV</div></div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-step"><div class="num">3</div><div class="lbl">Match Items</div><div class="desc">Cross-reference</div></div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-step"><div class="num">4</div><div class="lbl">Resolve Locations</div><div class="desc">Zone → Slot</div></div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-step"><div class="num">5</div><div class="lbl">Optimize Route</div><div class="desc">Min distance</div></div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-step"><div class="num">6</div><div class="lbl">Generate Pick List</div><div class="desc">Multi-format</div></div>
+        </div>
+        <div style="text-align:center;margin:12px 0" id="pipelineResult" hidden>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px;display:inline-block;text-align:left;min-width:380px">
+                <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:8px">✅ Pick List Generated</div>
+                <div style="font-size:12px;color:var(--muted);line-height:1.8" id="pipelineDetail">
+                    <div>📋 Order: <strong>WO-5512-03</strong> · 156 components matched</div>
+                    <div>📍 Route optimized: 42m travel → <strong style="color:#16a34a">28m optimized</strong> (33% reduction)</div>
+                    <div>📦 8 storage locations across 3 zones</div>
+                    <div>⏱️ Estimated pick time: <strong>3.8 min</strong></div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align:center">
+            <button class="btn-primary" onclick="runPipeline()" style="padding:12px 32px;border:none;border-radius:10px;background:var(--honey);color:#fff;font-size:14px;font-weight:700;cursor:pointer;margin-top:12px">▶ Run Pipeline</button>
+        </div>
+    </div>
+
+    <!-- DB Schema Panel -->
+    <div class="demo-panel" id="panel-schema">
+        <div style="text-align:center;margin-bottom:16px">
+            <h3 style="font-size:18px;font-weight:700">PostgreSQL 15 — 3-Schema Design</h3>
+            <p style="font-size:12px;color:var(--muted)">Database: hive_wms_demo · 12+ tables across 3 schemas</p>
+        </div>
+        <div class="schema-grid">
+            <div class="schema-box">
+                <div class="sch-head core">📦 hive_core — Operations (8 tables)</div>
+                <div class="sch-body">
+                    <code>materials</code> — Component master data<br>
+                    <code>inventory</code> — Real-time stock levels<br>
+                    <code>storage_locations</code> — Physical positions<br>
+                    <code>lifts</code> — Automated lift config<br>
+                    <code>jobs</code> — Warehouse picking jobs<br>
+                    <code>system_configuration</code> — Runtime settings<br>
+                    <code>audit_log</code> — Operational audit trail<br>
+                    <code>mes_sync_history</code> — MES sync log
+                </div>
+            </div>
+            <div class="schema-box">
+                <div class="sch-head ml">🧠 hive_ml — ML Registry (3 tables)</div>
+                <div class="sch-body">
+                    <code>model_registry</code> — Trained model storage<br>
+                    <span style="font-size:11px;color:var(--muted)">7 models: LightGBM, Prophet, RF, GBM, IsolationForest</span><br>
+                    <code>feature_groups</code> — Feature definitions<br>
+                    <code>feature_values</code> — Training/inference data<br>
+                    <span style="font-size:11px;color:var(--muted)">Auto-refresh: daily training, hourly predictions</span>
+                </div>
+            </div>
+            <div class="schema-box">
+                <div class="sch-head analytics">📊 hive_analytics — KPIs (2 tables)</div>
+                <div class="sch-body">
+                    <code>kpi_definitions</code> — Formulas & metadata<br>
+                    <code>kpi_observations</code> — Historical measurements<br>
+                    <span style="font-size:11px;color:var(--muted)">30-day KPI forecasting via Prophet (Model F)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align:center;padding:24px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:8px">
+    🐝 HIVE WMS · Demo · Anonymized Data · © 2026 Artur Csepregi
+</div>
+
+<script>
+function switchDemo(panel){
+    document.querySelectorAll('.demo-tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.demo-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+panel).classList.add('active');
+    const btn=document.querySelector(`.demo-tabs button[onclick*="${panel}"]`);
+    if(btn)btn.classList.add('active');
+}
+
+function runPipeline(){
+    const steps=document.querySelectorAll('#pipeSteps .pipe-step .num');
+    const result=document.getElementById('pipelineResult');
+    result.hidden=true;
+    steps.forEach(s=>{s.style.background='var(--honey)';s.style.animation=''});
+    
+    [1,2,3,4,5,6].forEach((i,idx)=>{
+        setTimeout(()=>{
+            steps[i-1].style.background='#16a34a';
+            steps[i-1].style.animation='flowPulse 0.5s ease 3';
+        },idx*500);
+    });
+    
+    setTimeout(()=>{
+        result.hidden=false;
+        result.style.animation='slideIn .3s ease';
+    },3000);
+}
+
+// Refresh ML predictions periodically
+setInterval(()=>{
+    const models=['ml-a','ml-b','ml-c','ml-d','ml-e','ml-f','ml-g'];
+    const vals=[
+        (2.8+Math.random()*1.2).toFixed(1)+'<span> min</span>',
+        (Math.random()>0.5?'+':'-')+(5+Math.random()*15).toFixed(0)+'%<span> vs last week</span>',
+        (3.5+Math.random()*3).toFixed(1)+'<span> min estimated</span>',
+        (Math.random()>0.8?Math.floor(Math.random()*3)+1:0)+'<span> anomalies (24h)</span>',
+        ['LOW','MEDIUM','HIGH'][Math.floor(Math.random()*3)]+'<span> congestion</span>',
+        (Math.random()>0.5?'+':'-')+(3+Math.random()*12).toFixed(1)+'%<span> throughput '+(Math.random()>0.5?'↑':'↓')+'</span>',
+        'LIFT '+['A-1','A-2','A-3','B-1','B-2'][Math.floor(Math.random()*5)]+': '+(82+Math.random()*16).toFixed(0)+'%<span> — '+(Math.random()>0.5?'OK':'monitor')+'</span>'
+    ];
+    models.forEach((id,i)=>{
+        const el=document.getElementById(id);if(el)el.innerHTML=vals[i];
+        if(i===6&&vals[i].includes('A-3'))document.getElementById(id).style.color='#ef4444';
+        else if(i===3&&parseInt(vals[i])>0)document.getElementById(id).style.color='#ef4444';
+        else if(i===3)document.getElementById(id).style.color='#16a34a';
+    });
+},15000);
+</script>
+
+</body>
+</html>

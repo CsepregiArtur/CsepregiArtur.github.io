@@ -29,6 +29,7 @@
 
     .summary-grid { grid-template-columns: 1fr; }
 
+
     .case-study {
         grid-template-columns: 1fr;
         gap: var(--space-lg);
@@ -82,6 +83,13 @@
     .cards-grid {
         grid-template-columns: 1fr 1fr;
     }
+
+    .leadership-cycle { gap: 8px; }
+    .cycle-step { grid-template-columns: 38px 1fr; gap: 10px; padding: 16px; }
+    .cycle-step p { grid-column: 2; }
+    .leadership-principles-grid { grid-template-columns: 1fr; }
+    .leadership-principles-title { font-size: 24px; }
+    .leadership-quote { font-size: 18px; padding: 20px; }
 
     .stats-inner {
         grid-template-columns: 1fr; gap: var(--space-lg);
