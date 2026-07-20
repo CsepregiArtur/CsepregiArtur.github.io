@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://csepregiartur.github.io/sitemap.xml

@@ -1,24 +1,66 @@
-Head of Manufacturing Operations | Industrial Automation | Digital Transformation
+# Artur Csepregi — Executive Portfolio
 
-Welcome to my professional portfolio.
+**Manufacturing Leader | Operational Excellence | Digital Transformation**
 
-This repository contains selected projects and case studies demonstrating my experience in:
-
-- Manufacturing Operations
-- Industrial Automation
-- Digital Transformation
-- Python Development
-- Manufacturing Analytics
-- MES Integration
-- Business Process Optimization
-
-The portfolio is currently under development.
-
-More projects and technical case studies will be published soon.
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-blue)](https://csepregiartur.github.io/)
 
 ---
 
-## Connect with me
+## About
 
-- LinkedIn
-- Email
+Executive portfolio website showcasing 15+ years of manufacturing leadership, digital transformation, and operational excellence in electronics and automotive manufacturing.
+
+Built with semantic HTML5, CSS3 (custom properties, Flexbox, Grid), and vanilla JavaScript. Hosted on GitHub Pages.
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/CsepregiArtur/CsepregiArtur.github.io.git
+open index.html
+```
+
+---
+
+## Project Structure
+
+```
+├── index.html              # Production home page
+├── wireframe.html           # Interactive wireframe prototype
+├── css/
+│   ├── variables.css        # Design system variables
+│   ├── style.css            # Main styles (components, layout)
+│   └── responsive.css       # Mobile/tablet breakpoints
+├── js/
+│   ├── navigation.js        # Header, mobile menu, smooth scroll
+│   ├── animations.js        # Scroll-triggered animations
+│   └── main.js              # App initialization, utilities
+├── images/                  # Photo and image assets
+├── assets/                  # Favicon, OG images
+├── documents/               # Strategy docs, CV PDF
+├── projects/                # 4 project case studies
+├── sitemap.xml / robots.txt # SEO
+└── showcase/                # Portfolio overview page
+```
+
+---
+
+## Tech Stack
+
+- **HTML5** — Semantic elements, ARIA labels
+- **CSS3** — Custom properties, Flexbox, CSS Grid
+- **Vanilla JS** — Modular, no frameworks
+- **GitHub Pages** — Zero-cost hosting
+
+Full specifications: `documents/TECHNICAL_SPECIFICATION.md`
+
+---
+
+## Contact
+
+- 📧 csepregi.arthur@gmail.com
+- 💼 [linkedin.com/in/artur-csepregi](https://linkedin.com/in/artur-csepregi)
+- 💻 [github.com/CsepregiArtur](https://github.com/CsepregiArtur)
+
+© 2026 Artur Csepregi

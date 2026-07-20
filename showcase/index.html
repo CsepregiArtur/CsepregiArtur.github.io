@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manufacturing Solutions Portfolio — Artur Csepregi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F172A;
+            --secondary: #1E3A8A;
+            --accent: #2563EB;
+            --success: #16A34A;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #111827;
+            --text-secondary: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px; height: 72px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-logo { font-size: 20px; font-weight: 700; color: var(--primary); }
+        .header-nav { display: flex; gap: 32px; align-items: center; }
+        .header-nav a { color: var(--text-secondary); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
+        .header-nav a:hover { color: var(--accent); }
+
+        /* Hero */
+        .hero {
+            padding: 160px 32px 80px;
+            text-align: center; max-width: 900px; margin: 0 auto;
+        }
+        .hero-subtitle { font-size: 16px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+        .hero-title { font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1.15; margin-bottom: 24px; }
+        .hero-desc { font-size: 20px; color: var(--text-secondary); max-width: 640px; margin: 0 auto 32px; line-height: 1.6; }
+        .hero-stats { display: flex; justify-content: center; gap: 48px; margin-top: 48px; }
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-size: 36px; font-weight: 700; color: var(--accent); }
+        .hero-stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+        /* Projects Grid */
+        .projects-section {
+            max-width: 1200px; margin: 0 auto; padding: 0 32px 80px;
+        }
+        .section-label {
+            font-size: 14px; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 36px; font-weight: 700; color: var(--primary);
+            text-align: center; margin-bottom: 48px;
+        }
+
+        .project-card {
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: default;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.10);
+        }
+
+        .project-card-inner {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+        }
+
+        .project-card-visual {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 48px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; min-height: 340px;
+        }
+        .project-card-visual .emoji { font-size: 64px; margin-bottom: 20px; }
+        .project-card-visual h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .project-card-visual .status {
+            font-size: 13px; font-weight: 500;
+            background: rgba(255,255,255,0.18); padding: 4px 14px; border-radius: 100px;
+            margin-bottom: 20px;
+        }
+
+        .project-card-content { padding: 48px; display: flex; flex-direction: column; justify-content: center; }
+        .project-card-content h2 { font-size: 28px; font-weight: 700; color: var(--primary); margin-bottom: 16px; }
+        .project-card-content .desc { font-size: 16px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+
+        .impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .impact-item { display: flex; align-items: flex-start; gap: 10px; }
+        .impact-item .icon { color: var(--success); font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+        .impact-item span { font-size: 15px; color: var(--text); font-weight: 500; }
+
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tech-tag {
+            font-size: 13px; font-weight: 500; color: var(--accent);
+            background: #F0F5FF; padding: 4px 12px; border-radius: 6px;
+        }
+
+        .project-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--accent); font-weight: 600; font-size: 15px;
+            text-decoration: none; margin-top: 20px;
+            transition: gap 0.2s;
+        }
+        .project-link:hover { gap: 12px; }
+
+        /* Contact */
+        .contact-section {
+            background: var(--primary); color: white;
+            text-align: center; padding: 80px 32px;
+        }
+        .contact-section h2 { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
+        .contact-section p { font-size: 18px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
+        .contact-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600;
+            text-decoration: none; transition: all 0.25s ease;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+        /* Footer */
+        .footer {
+            background: var(--primary); border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center; padding: 32px; color: rgba(255,255,255,0.5); font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .project-card-inner { grid-template-columns: 1fr; }
+            .project-card-visual { min-height: auto; padding: 40px; }
+            .project-card-content { padding: 32px; }
+            .hero-title { font-size: 36px; }
+            .hero-stats { gap: 32px; }
+            .header-nav { display: none; }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title { font-size: 28px; }
+            .hero-desc { font-size: 16px; }
+            .hero-stats { flex-direction: column; gap: 20px; }
+            .impact-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-logo">AC</div>
+    <nav class="header-nav">
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+        <a href="https://github.com/CsepregiArtur">GitHub</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-subtitle">Manufacturing Solutions Portfolio</div>
+    <h1 class="hero-title">Transforming Manufacturing Through Digital Innovation</h1>
+    <p class="hero-desc">
+        Four production-grade systems that solved real operational challenges in electronics manufacturing — from real-time production monitoring to intelligent warehouse management.
+    </p>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <div class="hero-stat-num">4</div>
+            <div class="hero-stat-label">Production Systems</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-num">15+</div>
+            <div class="hero-stat-label">Years Experience</div>
+        </div>
+        <div class="hero-stat">
+            <div class="hero-stat-num">100%</div>
+            <div class="hero-stat-label">Production Deployed</div>
+        </div>
+    </div>
+</section>
+
+<section class="projects-section" id="projects">
+    <div class="section-label">Case Studies</div>
+    <h2 class="section-title">Featured Projects</h2>
+
+    <!-- Project 1: Manufacturing Dashboard -->
+    <article class="project-card">
+        <div class="project-card-inner">
+            <div class="project-card-visual">
+                <div class="emoji">📊</div>
+                <h3>Production Dashboard</h3>
+                <div class="status">Production-Ready</div>
+            </div>
+            <div class="project-card-content">
+                <h2>Manufacturing Operations Dashboard</h2>
+                <p class="desc">
+                    Real-time production planning and monitoring system that consolidates fragmented ERP data into operational intelligence. Features KPI dashboards, Gantt timelines, 9-type change tracking, and automated planning imports.
+                </p>
+                <div class="impact-grid">
+                    <div class="impact-item"><span class="icon">✓</span><span>Real-time operational decisions</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Automatic change detection (9 types)</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>10 specialized dashboard views</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>4,057 automated audit checks</span></div>
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Flask</span>
+                    <span class="tech-tag">SQLite</span>
+                    <span class="tech-tag">ApexCharts</span>
+                    <span class="tech-tag">Waitress</span>
+                </div>
+                <a href="../projects/manufacturing-dashboard/README.md" class="project-link">View Full Case Study →</a>
+            </div>
+        </div>
+    </article>
+
+    <!-- Project 2: SMT Line Monitor -->
+    <article class="project-card">
+        <div class="project-card-inner">
+            <div class="project-card-visual" style="background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);">
+                <div class="emoji">🟢</div>
+                <h3>SMT Line Monitor</h3>
+                <div class="status">Production-Ready</div>
+            </div>
+            <div class="project-card-content">
+                <h2>Assembly Line Monitoring & Verification</h2>
+                <p class="desc">
+                    Real-time SMT line monitoring system that continuously validates machine programs against master specifications. Andon-light dashboard with 5-channel alerting catches mismatches in seconds — before defective boards are built.
+                </p>
+                <div class="impact-grid">
+                    <div class="impact-item"><span class="icon">✓</span><span>5 production lines monitored simultaneously</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Verification every 3 seconds</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>5 notification channels</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Self-healing with watchdog monitoring</span></div>
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Flask</span>
+                    <span class="tech-tag">Socket.IO</span>
+                    <span class="tech-tag">React</span>
+                    <span class="tech-tag">TypeScript</span>
+                    <span class="tech-tag">C#/.NET</span>
+                </div>
+                <a href="../projects/smt-production-monitoring/README.md" class="project-link">View Full Case Study →</a>
+            </div>
+        </div>
+    </article>
+
+    <!-- Project 3: HIVE WMS -->
+    <article class="project-card">
+        <div class="project-card-inner">
+            <div class="project-card-visual" style="background: linear-gradient(135deg, #92400E 0%, #D97706 100%);">
+                <div class="emoji">🐝</div>
+                <h3>HIVE WMS</h3>
+                <div class="status">Advanced Prototype</div>
+            </div>
+            <div class="project-card-content">
+                <h2>Intelligent Warehouse Management System</h2>
+                <p class="desc">
+                    Next-generation WMS for electronics manufacturing with MES integration, route-optimized pick lists, and a 7-model machine learning subsystem for predictive analytics. Modern full-stack architecture with React, FastAPI, and PostgreSQL.
+                </p>
+                <div class="impact-grid">
+                    <div class="impact-item"><span class="icon">✓</span><span>7 ML models for predictive operations</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Real-time WebSocket dashboard</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Route-optimized pick lists</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>MES-to-warehouse synchronization</span></div>
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">FastAPI</span>
+                    <span class="tech-tag">React 19</span>
+                    <span class="tech-tag">TypeScript</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">LightGBM</span>
+                    <span class="tech-tag">Prophet</span>
+                </div>
+                <a href="../projects/hive-wms/README.md" class="project-link">View Full Case Study →</a>
+            </div>
+        </div>
+    </article>
+
+    <!-- Project 4: Inventory Export -->
+    <article class="project-card">
+        <div class="project-card-inner">
+            <div class="project-card-visual" style="background: linear-gradient(135deg, #14532D 0%, #16A34A 100%);">
+                <div class="emoji">⚡</div>
+                <h3>Inventory Tool</h3>
+                <div class="status">Production-Ready</div>
+            </div>
+            <div class="project-card-content">
+                <h2>Automated MES Inventory Data Extraction</h2>
+                <p class="desc">
+                    High-performance tool connecting to MES via .NET interop for parallel inventory extraction. Processes 53,000+ records from 20 locations in ~11 seconds with FIFO/FEFO sorting and standardized Excel output.
+                </p>
+                <div class="impact-grid">
+                    <div class="impact-item"><span class="icon">✓</span><span>53,820 records in 11 seconds</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>20 parallel location queries</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Single-session optimization (v5.0)</span></div>
+                    <div class="impact-item"><span class="icon">✓</span><span>Automated FIFO/FEFO compliance</span></div>
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">.NET Interop</span>
+                    <span class="tech-tag">ThreadPoolExecutor</span>
+                    <span class="tech-tag">xlsxwriter</span>
+                    <span class="tech-tag">pandas</span>
+                </div>
+                <a href="../projects/inventory-export/README.md" class="project-link">View Full Case Study →</a>
+            </div>
+        </div>
+    </article>
+</section>
+
+<section class="contact-section" id="contact">
+    <h2>Let's Build Better Manufacturing Together</h2>
+    <p>I welcome conversations about manufacturing leadership, operational excellence, and digital transformation.</p>
+    <div class="contact-buttons">
+        <a href="https://www.linkedin.com/in/arturcsepregi" class="btn btn-primary">Connect on LinkedIn</a>
+        <a href="https://github.com/CsepregiArtur" class="btn btn-secondary">View GitHub</a>
+        <a href="#" class="btn btn-secondary">Download CV</a>
+    </div>
+</section>
+
+<footer class="footer">
+    © 2026 Artur Csepregi · Manufacturing Solutions Portfolio · v1.0
+</footer>
+
+</body>
+</html>

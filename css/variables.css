@@ -1,0 +1,65 @@
+/* ================================================================
+   DESIGN SYSTEM VARIABLES — per DESIGN_SYSTEM.md
+   ================================================================ */
+:root {
+    /* Color Palette */
+    --primary: #0F172A;
+    --secondary: #1E3A8A;
+    --accent: #2563EB;
+    --success: #16A34A;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --border: #E5E7EB;
+
+    /* Shadows */
+    --shadow-sm: 0 4px 20px rgba(0,0,0,0.06);
+    --shadow-md: 0 8px 30px rgba(0,0,0,0.10);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.14);
+
+    /* Border Radius */
+    --radius-card: 20px;
+    --radius-btn: 12px;
+    --radius-chip: 100px;
+    --radius-sm: 8px;
+
+    /* Layout */
+    --max-width: 1200px;
+    --header-height: 72px;
+
+    /* Spacing (8px system) */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+    --space-3xl: 64px;
+    --space-4xl: 100px;
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    --font-hero: 56px;
+    --font-section: 36px;
+    --font-subtitle: 24px;
+    --font-body: 18px;
+    --font-small: 16px;
+    --font-xs: 14px;
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+
+    /* Animations */
+    --transition-fast: 200ms ease;
+    --transition: 250ms ease;
+    --transition-slow: 300ms ease;
+
+    /* Mobile Breakpoints (reference) */
+    --bp-tablet: 768px;
+    --bp-desktop: 1024px;
+    --bp-wide: 1440px;
+}

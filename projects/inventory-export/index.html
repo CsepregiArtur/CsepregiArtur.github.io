@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automated MES Inventory Export — Project Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {--pri:#0F172A;--sec:#1E3A8A;--acc:#2563EB;--suc:#16A34A;--bg:#F8FAFC;--card:#FFF;--txt:#111827;--t2:#6B7280;--brd:#E5E7EB;--r:20px;--tr:250ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:18px;font-weight:700;color:var(--pri)}
+.header-back{font-size:14px;font-weight:500;color:var(--acc);text-decoration:none}
+.header-back:hover{text-decoration:underline}
+.hero{background:linear-gradient(135deg,var(--sec) 0%,#7C3AED 100%);color:#fff;padding:80px 32px;text-align:center}
+.hero-badge{display:inline-block;font-size:13px;font-weight:600;background:rgba(255,255,255,0.15);padding:4px 16px;border-radius:100px;margin-bottom:20px}
+.hero h1{font-size:42px;font-weight:800;margin-bottom:16px;letter-spacing:-0.5px}
+.hero p{font-size:18px;opacity:0.85;max-width:700px;margin:0 auto;line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:0 32px}
+.section{padding:64px 0}
+.section-label{font-size:13px;font-weight:600;color:#7C3AED;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--pri);margin-bottom:24px}
+.section-desc{font-size:16px;color:var(--t2);line-height:1.7;margin-bottom:32px}
+
+/* Architecture Flow */
+.arch-flow{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:32px}
+.arch-row-box{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.arch-box{background:var(--card);border:2px solid var(--brd);border-radius:14px;padding:16px 24px;font-size:14px;font-weight:600;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05)}
+.arch-box.purple{background:#F5F3FF;border-color:#DDD6FE;color:#7C3AED}
+.arch-box.blue{background:#F0F5FF;border-color:#BFDBFE;color:var(--acc)}
+.arch-box.green{background:#F0FDF4;border-color:#BBF7D0;color:var(--suc)}
+.arch-arrow{font-size:24px;color:var(--t2)}
+
+/* Performance cards */
+.perf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-bottom:32px}
+.perf-card{background:var(--card);border-radius:var(--r);padding:32px;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05);transition:transform var(--tr),box-shadow var(--tr)}
+.perf-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.perf-num{font-size:42px;font-weight:800;color:#7C3AED;margin-bottom:4px}
+.perf-label{font-size:15px;color:var(--t2)}
+.perf-sub{font-size:12px;color:var(--t2);opacity:0.7;margin-top:4px}
+
+/* Version evolution */
+.ver-timeline{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+.ver-chip{background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;text-align:center;transition:all var(--tr)}
+.ver-chip:hover{border-color:#7C3AED}
+.ver-chip .ver{font-size:18px;display:block;color:#7C3AED}
+.ver-chip .desc{font-size:11px;color:var(--t2);font-weight:400;margin-top:4px}
+.ver-arrow{color:var(--t2);font-size:18px}
+
+/* Feature grid */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.feat-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:0 3px 16px rgba(0,0,0,0.05);transition:transform var(--tr),box-shadow var(--tr)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.feat-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.feat-card p{font-size:14px;color:var(--t2);line-height:1.6}
+.feat-icon{font-size:36px;margin-bottom:12px}
+
+/* Before/After */
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:32px}
+.compare-table th,.compare-table td{padding:16px;text-align:left;font-size:14px;border-bottom:1px solid var(--brd)}
+.compare-table th{background:#F8FAFC;font-weight:600;color:var(--t2);font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.compare-table .before{color:#EF4444}
+.compare-table .after{color:var(--suc);font-weight:500}
+
+/* Export schema */
+.schema-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:32px}
+.schema-chip{background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:14px;font-size:13px;text-align:center}
+.schema-chip .col{font-weight:600;color:var(--acc)}
+.schema-chip .src{font-size:11px;color:var(--t2);margin-top:2px}
+
+.tech-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.tech-pill{font-size:13px;font-weight:500;color:#7C3AED;background:#F5F3FF;padding:6px 14px;border-radius:6px}
+
+footer{background:var(--pri);color:rgba(255,255,255,0.5);text-align:center;padding:32px;font-size:14px;margin-top:64px}
+footer a{color:var(--acc);text-decoration:none}
+
+@media(max-width:768px){.hero h1{font-size:28px}.container{padding:0 20px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-logo">Project Showcase</div>
+    <a href="../../showcase/index.html" class="header-back">← Back to Portfolio</a>
+</header>
+
+<section class="hero">
+    <div class="hero-badge">Production-Ready · v5.5</div>
+    <h1>Automated MES Inventory Data Extraction</h1>
+    <p>High-performance tool connecting to MES via .NET interop. 53,000+ records from 20 locations in ~11 seconds — transforming manual data extraction into a single-click operation.</p>
+</section>
+
+<div class="container">
+
+    <!-- Performance Benchmarks -->
+    <div class="section">
+        <div class="section-label">Performance</div>
+        <div class="section-title">Benchmarks</div>
+        <div class="perf-grid">
+            <div class="perf-card"><div class="perf-num">53,820</div><div class="perf-label">Records Processed</div><div class="perf-sub">Single run · 20 locations</div></div>
+            <div class="perf-card"><div class="perf-num">11.07s</div><div class="perf-label">1 Location</div><div class="perf-sub">Single-thread reference</div></div>
+            <div class="perf-card"><div class="perf-num">11.74s</div><div class="perf-label">20 Locations (Parallel)</div><div class="perf-sub">94.3% parallel efficiency</div></div>
+            <div class="perf-card"><div class="perf-num">4,861</div><div class="perf-label">Records/Second</div><div class="perf-sub">Sustained throughput</div></div>
+        </div>
+    </div>
+
+    <!-- Architecture Flow -->
+    <div class="section">
+        <div class="section-label">Data Flow</div>
+        <div class="section-title">Single-Session Parallel Architecture</div>
+        <div class="arch-flow">
+            <div class="arch-row-box">
+                <div class="arch-box purple">config.json</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box blue">Python .NET Interop</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box purple">Single Login</div>
+            </div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row-box">
+                <div class="arch-box green">ThreadPoolExecutor<br><small>max_workers: 10</small></div>
+            </div>
+            <div class="arch-row-box" style="gap:8px">
+                <div class="arch-box" style="font-size:12px;padding:10px 14px">📍 Loc 1</div>
+                <div class="arch-box" style="font-size:12px;padding:10px 14px">📍 Loc 2</div>
+                <div class="arch-box" style="font-size:12px;padding:10px 14px">📍 Loc 3</div>
+                <span style="font-size:13px;color:var(--t2)">...</span>
+                <div class="arch-box" style="font-size:12px;padding:10px 14px">📍 Loc N</div>
+            </div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row-box">
+                <div class="arch-box purple">Data Processor</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box blue">FIFO / FEFO Sort</div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-box green">Excel Export</div>
+            </div>
+            <div class="arch-arrow">↓</div>
+            <div class="arch-row-box">
+                <div class="arch-box" style="font-size:13px;padding:10px 18px">📊 xlsxwriter (primary)</div>
+                <div class="arch-box" style="font-size:13px;padding:10px 18px">🐼 pandas (fallback)</div>
+                <div class="arch-box" style="font-size:13px;padding:10px 18px">📄 CSV (emergency)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Version Evolution -->
+    <div class="section">
+        <div class="section-label">Iterative Development</div>
+        <div class="section-title">8 Versions of Continuous Improvement</div>
+        <div class="ver-timeline">
+            <div class="ver-chip"><span class="ver">v1.0</span><span class="desc">Basic extraction</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip"><span class="ver">v2.0</span><span class="desc">Multi-location</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip"><span class="ver">v3.0</span><span class="desc">Excel formatting</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip"><span class="ver">v4.0</span><span class="desc">Refactored arch</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip" style="border-color:#7C3AED;background:#F5F3FF"><span class="ver">v5.0 ⚡</span><span class="desc">Single-session!</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip"><span class="ver">v5.1</span><span class="desc">Timestamped output</span></div>
+            <div class="ver-arrow">→</div>
+            <div class="ver-chip"><span class="ver">v5.5 🎯</span><span class="desc">Perf monitoring</span></div>
+        </div>
+        <div class="section-desc" style="text-align:center;font-size:14px;padding:16px;background:#F5F3FF;border-radius:12px;color:#7C3AED;font-weight:500">
+            ⚡ v5.0 was the breakthrough: Single Login → Parallel Queries → Single Logout<br>
+            Eliminated N−1 redundant authentication cycles. Enabled true parallel processing.
+        </div>
+    </div>
+
+    <!-- Before / After -->
+    <div class="section">
+        <div class="section-label">Impact</div>
+        <div class="section-title">Before vs. After</div>
+        <div style="overflow-x:auto">
+        <table class="compare-table">
+            <thead><tr><th>Activity</th><th style="text-align:center">Before</th><th style="text-align:center">After</th></tr></thead>
+            <tbody>
+                <tr><td>Extraction time (20 locations)</td><td class="before" style="text-align:center">10–15 minutes</td><td class="after" style="text-align:center">~12 seconds</td></tr>
+                <tr><td>Manual steps</td><td class="before" style="text-align:center">8</td><td class="after" style="text-align:center">1 (click Run)</td></tr>
+                <tr><td>Output consistency</td><td class="before" style="text-align:center">Variable formats</td><td class="after" style="text-align:center">Standardized 19 columns</td></tr>
+                <tr><td>FIFO/FEFO compliance</td><td class="before" style="text-align:center">Manual, error-prone</td><td class="after" style="text-align:center">Automated, guaranteed</td></tr>
+                <tr><td>IT involvement</td><td class="before" style="text-align:center">Python setup required</td><td class="after" style="text-align:center">None (single .exe)</td></tr>
+                <tr><td>Error handling</td><td class="before" style="text-align:center">None</td><td class="after" style="text-align:center">3 retries + CSV fallback</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <!-- 19-Column Export Schema -->
+    <div class="section">
+        <div class="section-label">Output</div>
+        <div class="section-title">Standardized 19-Column Excel Schema</div>
+        <div class="schema-grid">
+            <div class="schema-chip"><div class="col">SAP Number</div><div class="src">Formatted XXXXXXX-XX</div></div>
+            <div class="schema-chip"><div class="col">Material Description</div><div class="src">MES material master</div></div>
+            <div class="schema-chip"><div class="col">Batch ID</div><div class="src">MES batch identifier</div></div>
+            <div class="schema-chip"><div class="col">Storage Box</div><div class="src">Physical location</div></div>
+            <div class="schema-chip"><div class="col">Storage Index</div><div class="src">Position in box</div></div>
+            <div class="schema-chip"><div class="col">Quantity</div><div class="src">Available quantity</div></div>
+            <div class="schema-chip"><div class="col">Unit of Measure</div><div class="src">PCS, M, KG</div></div>
+            <div class="schema-chip"><div class="col">Expiration Date</div><div class="src">Material expiry</div></div>
+            <div class="schema-chip"><div class="col">Arrival Date</div><div class="src">Date received</div></div>
+            <div class="schema-chip"><div class="col">Status</div><div class="src">Available/Reserved</div></div>
+            <div class="schema-chip"><div class="col">Location</div><div class="src">Production station</div></div>
+            <div class="schema-chip"><div class="col">Location Name</div><div class="src">Resolved name</div></div>
+            <div class="schema-chip"><div class="col">Last Movement</div><div class="src">Last transaction</div></div>
+            <div class="schema-chip"><div class="col">Supplier Batch</div><div class="src">Supplier identifier</div></div>
+            <div class="schema-chip"><div class="col">Manufacturer</div><div class="src">Component mfr</div></div>
+            <div class="schema-chip"><div class="col">MPN</div><div class="src">Manufacturer P/N</div></div>
+            <div class="schema-chip"><div class="col">Storage Type</div><div class="src">Classification</div></div>
+            <div class="schema-chip"><div class="col">MSL</div><div class="src">Moisture Sensitivity</div></div>
+            <div class="schema-chip"><div class="col">Notes</div><div class="src">Additional info</div></div>
+        </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="section">
+        <div class="section-label">Capabilities</div>
+        <div class="section-title">Key Features</div>
+        <div class="feat-grid">
+            <div class="feat-card"><div class="feat-icon">🔐</div><h3>Single-Session Optimization</h3><p>One authentication, all location queries in parallel, one logout. Eliminates N−1 redundant login cycles. Major v5.0 breakthrough.</p></div>
+            <div class="feat-card"><div class="feat-icon">⚡</div><h3>Parallel Processing</h3><p>ThreadPoolExecutor with configurable workers (tested at 10). 20 locations process in nearly the same time as 1.</p></div>
+            <div class="feat-card"><div class="feat-icon">📊</div><h3>Dual Export Engine</h3><p>xlsxwriter primary (formatting) + pandas fallback (robust) + CSV emergency (permission-safe). Never fails on Excel issues.</p></div>
+            <div class="feat-card"><div class="feat-icon">🔄</div><h3>Retry Logic</h3><p>3 retry attempts with configurable delay per location. Handles transient MES connection issues gracefully.</p></div>
+            <div class="feat-card"><div class="feat-icon">📋</div><h3>FIFO/FEFO Sorting</h3><p>Automated compliance sorting for regulated manufacturing. FIFO by storage box/index or FEFO by expiration date.</p></div>
+            <div class="feat-card"><div class="feat-icon">📦</div><h3>Self-Contained .EXE</h3><p>Single 31.3 MB executable. Zero Python or DLL dependencies for end users. Code-signed distribution.</p></div>
+        </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="section">
+        <div class="section-label">Technology</div>
+        <div class="section-title">Tech Stack</div>
+        <div class="tech-strip">
+            <span class="tech-pill">Python 3.12</span><span class="tech-pill">pythonnet (clr)</span><span class="tech-pill">.NET DLL Interop</span>
+            <span class="tech-pill">ThreadPoolExecutor</span><span class="tech-pill">xlsxwriter</span><span class="tech-pill">pandas</span>
+            <span class="tech-pill">PyInstaller</span><span class="tech-pill">Newtonsoft.Json</span>
+        </div>
+        <div class="section-desc">
+            <strong>Architecture:</strong> Python ↔ .NET interop via pythonnet for MES API access. Single-session singleton pattern for thread-safe parallel queries.<br><br>
+            <strong>Export:</strong> Dual-engine Excel generation with 19-column standardized schema. FIFO/FEFO sorting for inventory compliance.<br><br>
+            <strong>Distribution:</strong> PyInstaller single-file .exe (31.3 MB) with embedded Python runtime, .NET DLL, and configuration template. Code-signed for enterprise deployment.
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Artur Csepregi · <a href="../../documents/README.md">Documentation</a> · <a href="https://github.com/CsepregiArtur/Inventory_export">Source Repository</a>
+</footer>
+
+</body>
+</html>

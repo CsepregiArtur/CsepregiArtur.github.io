@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SMT Line Monitoring & Verification — Project Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {--pri:#0F172A;--sec:#1E3A8A;--acc:#2563EB;--suc:#16A34A;--bg:#F8FAFC;--card:#FFF;--txt:#111827;--t2:#6B7280;--brd:#E5E7EB;--r:20px;--tr:250ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:18px;font-weight:700;color:var(--pri)}
+.header-back{font-size:14px;font-weight:500;color:var(--acc);text-decoration:none}
+.header-back:hover{text-decoration:underline}
+.hero{background:linear-gradient(135deg,#14532D 0%,#16A34A 100%);color:#fff;padding:80px 32px;text-align:center}
+.hero-badge{display:inline-block;font-size:13px;font-weight:600;background:rgba(255,255,255,0.15);padding:4px 16px;border-radius:100px;margin-bottom:20px}
+.hero h1{font-size:42px;font-weight:800;margin-bottom:16px;letter-spacing:-0.5px}
+.hero p{font-size:18px;opacity:0.85;max-width:700px;margin:0 auto;line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:0 32px}
+.section{padding:64px 0}
+.section-label{font-size:13px;font-weight:600;color:var(--acc);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--pri);margin-bottom:24px}
+.section-desc{font-size:16px;color:var(--t2);line-height:1.7;margin-bottom:32px}
+
+/* Architecture */
+.arch-diagram{background:var(--card);border-radius:var(--r);padding:40px;box-shadow:0 4px 20px rgba(0,0,0,0.06);margin-bottom:32px;overflow-x:auto}
+.arch-flow{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.arch-box{background:#F0FDF4;border:2px solid #BBF7D0;border-radius:12px;padding:14px 22px;font-size:14px;font-weight:600;color:var(--suc);text-align:center}
+.arch-box.blue{background:#F0F5FF;border-color:#BFDBFE;color:var(--acc)}
+.arch-box.dark{background:var(--pri);border-color:var(--pri);color:#fff}
+.arch-box.orange{background:#FFF7ED;border-color:#FED7AA;color:#EA580C}
+.arch-arr{font-size:20px;color:var(--t2);font-weight:300}
+
+/* Andon lights */
+.andon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:32px}
+.andon-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:0 3px 16px rgba(0,0,0,0.05);border-left:6px solid #16A34A;transition:all var(--tr)}
+.andon-card.amber{border-left-color:#F59E0B}
+.andon-card.red{border-left-color:#EF4444}
+.andon-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.andon-card h3{font-size:18px;font-weight:600;margin-bottom:4px}
+.andon-card .role{font-size:13px;color:var(--t2);margin-bottom:12px}
+.andon-card .rules{font-size:14px;color:var(--t2);line-height:1.6}
+
+/* Feature grid */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.feat-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:0 3px 16px rgba(0,0,0,0.05);transition:transform var(--tr),box-shadow var(--tr)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.feat-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.feat-card p{font-size:14px;color:var(--t2);line-height:1.6}
+.feat-icon{font-size:36px;margin-bottom:12px}
+
+/* Notification channels */
+.chan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:32px}
+.chan-chip{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:20px;text-align:center;font-size:15px;font-weight:500;transition:all var(--tr)}
+.chan-chip:hover{border-color:var(--acc)}
+.chan-chip .icon{font-size:28px;display:block;margin-bottom:8px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:32px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:28px;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05)}
+.stat-num{font-size:36px;font-weight:800;color:var(--suc);margin-bottom:4px}
+.stat-label{font-size:14px;color:var(--t2)}
+
+.tech-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.tech-pill{font-size:13px;font-weight:500;color:var(--acc);background:#F0F5FF;padding:6px 14px;border-radius:6px}
+
+/* Validation table */
+.val-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:32px}
+.val-table th,.val-table td{padding:14px 16px;text-align:left;font-size:14px}
+.val-table th{background:#F8FAFC;font-weight:600;color:var(--t2);font-size:12px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--brd)}
+.val-table td{border-bottom:1px solid var(--brd);color:var(--txt)}
+.val-table .check{color:var(--suc);font-weight:600}
+.val-table .fail{color:#EF4444;font-weight:600}
+
+footer{background:var(--pri);color:rgba(255,255,255,0.5);text-align:center;padding:32px;font-size:14px;margin-top:64px}
+footer a{color:var(--acc);text-decoration:none}
+
+@media(max-width:768px){.hero h1{font-size:28px}.container{padding:0 20px}.arch-flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-logo">Project Showcase</div>
+    <a href="../../showcase/index.html" class="header-back">← Back to Portfolio</a>
+</header>
+
+<section class="hero">
+    <div class="hero-badge">Production-Ready · v3.0+</div>
+    <h1>SMT Assembly Line Monitoring & Verification</h1>
+    <p>Real-time quality assurance system that continuously validates machine programs against master specifications across 5 production lines — catching mismatches in seconds before defective boards are built.</p>
+</section>
+
+<div class="container">
+
+    <!-- Architecture Flow -->
+    <div class="section">
+        <div class="section-label">Data Flow</div>
+        <div class="section-title">System Architecture</div>
+        <div class="arch-diagram">
+            <div class="arch-flow">
+                <div class="arch-box dark">SMT Machines</div>
+                <div class="arch-arr">→</div>
+                <div class="arch-box">XML Telemetry</div>
+                <div class="arch-arr">→</div>
+                <div class="arch-box blue">SMB Poller (3s)</div>
+            </div>
+            <div style="text-align:center;margin:12px 0;font-size:20px;color:var(--t2)">↓</div>
+            <div class="arch-flow">
+                <div class="arch-box orange">.NET Bridge<br><small>port 5001 · x86</small></div>
+                <div class="arch-arr">←→</div>
+                <div class="arch-box blue">Validation Engine<br><small>4 check types</small></div>
+                <div class="arch-arr">←→</div>
+                <div class="arch-box dark">Flask API :5000<br><small>30+ endpoints</small></div>
+            </div>
+            <div style="text-align:center;margin:12px 0;font-size:20px;color:var(--t2)">↓</div>
+            <div class="arch-flow">
+                <div class="arch-box">React Dashboard</div>
+                <div class="arch-box" style="background:#FFF7ED;border-color:#FED7AA;color:#EA580C">Email Alerts</div>
+                <div class="arch-box" style="background:#F5F3FF;border-color:#DDD6FE;color:#7C3AED">Webhook<br><small>Slack/Teams</small></div>
+                <div class="arch-box blue">File Share</div>
+                <div class="arch-box">Browser Push</div>
+                <div class="arch-box" style="background:#FFF1F2;border-color:#FECDD3;color:#E11D48">Audio Alarm</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Stats -->
+    <div class="section">
+        <div class="section-label">Scale</div>
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Production Lines</div></div>
+            <div class="stat-card"><div class="stat-num">30</div><div class="stat-label">XML Data Sources</div></div>
+            <div class="stat-card"><div class="stat-num">3s</div><div class="stat-label">Polling Interval</div></div>
+            <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Alert Channels</div></div>
+            <div class="stat-card"><div class="stat-num">30+</div><div class="stat-label">API Endpoints</div></div>
+        </div>
+    </div>
+
+    <!-- Andon Light System -->
+    <div class="section">
+        <div class="section-label">Visual Management</div>
+        <div class="section-title">Andon Light Dashboard</div>
+        <div class="andon-grid">
+            <div class="andon-card green">
+                <h3>🟢 GREEN — Normal</h3>
+                <div class="role">Station idle &lt; 15 min</div>
+                <div class="rules">All validations passing. Station is actively producing or recently produced. No action needed.</div>
+            </div>
+            <div class="andon-card amber">
+                <h3>🟡 AMBER — Warning</h3>
+                <div class="role">Station idle &gt; 15 min</div>
+                <div class="rules">Station has been idle or data is stale. Supervisor should investigate. Alert dispatched to notification channels.</div>
+            </div>
+            <div class="andon-card red">
+                <h3>🔴 RED — Critical</h3>
+                <div class="role">Idle &gt; 30 min OR validation failed</div>
+                <div class="rules">Program mismatch detected or extended idle time. Immediate supervisor action required. All 5 alert channels activated.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validation Rules -->
+    <div class="section">
+        <div class="section-label">Quality Assurance</div>
+        <div class="section-title">Validation Rules Per Station</div>
+        <div style="overflow-x:auto">
+        <table class="val-table">
+            <thead><tr><th>Station</th><th>Machine Type</th><th>Validation</th><th>Failure Mode</th></tr></thead>
+            <tbody>
+                <tr><td style="font-weight:600">EKRA</td><td>Solder Paste Printer</td><td class="check">Program name match</td><td>Wrong stencil → solder defects</td></tr>
+                <tr><td style="font-weight:600">EKRA</td><td>Solder Paste Printer</td><td class="check">Stencil ID match</td><td>Stencil mismatch → incorrect paste</td></tr>
+                <tr><td style="font-weight:600">SIPLACE SX1</td><td>Pick-and-Place</td><td class="check">Order barcode match</td><td>Wrong order → wrong components</td></tr>
+                <tr><td style="font-weight:600">SIPLACE SX2</td><td>Pick-and-Place</td><td class="check">Order barcode match</td><td>Wrong order → wrong components</td></tr>
+                <tr><td style="font-weight:600">SIPLACE SX3</td><td>Pick-and-Place</td><td class="check">Order barcode match</td><td>Wrong order → wrong components</td></tr>
+                <tr><td style="font-weight:600">RHEM</td><td>Reflow Oven</td><td class="check">Thermal profile match</td><td>Wrong profile → cold joints</td></tr>
+                <tr><td style="font-weight:600">AOI</td><td>Optical Inspection</td><td class="check">Program prefix + variant</td><td>Wrong inspection → missed defects</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+    <!-- Notification Channels -->
+    <div class="section">
+        <div class="section-label">Alerting</div>
+        <div class="section-title">5 Independent Notification Channels</div>
+        <div class="chan-grid">
+            <div class="chan-chip"><span class="icon">📧</span>Email (SMTP)</div>
+            <div class="chan-chip"><span class="icon">🔗</span>Webhook<br><small>Slack / Teams</small></div>
+            <div class="chan-chip"><span class="icon">📁</span>File Share<br><small>JSON + LOG</small></div>
+            <div class="chan-chip"><span class="icon">🔔</span>Browser Push</div>
+            <div class="chan-chip"><span class="icon">🔊</span>Audio Alarm<br><small>Web Audio API</small></div>
+        </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="section">
+        <div class="section-label">Capabilities</div>
+        <div class="section-title">Key Features</div>
+        <div class="feature-grid">
+            <div class="feat-card"><div class="feat-icon">🔄</div><h3>Continuous Polling</h3><p>SMB network share polling every 3 seconds across 30 XML data sources. Pattern matching with deduplication.</p></div>
+            <div class="feat-card"><div class="feat-icon">🌉</div><h3>.NET Legacy Bridge</h3><p>C# .NET 9 x86 service bridges Python 64-bit to legacy 32-bit DLL for master datasheet queries. HTTP on port 5001.</p></div>
+            <div class="feat-card"><div class="feat-icon">🛡️</div><h3>Watchdog Monitor</h3><p>Thread health monitoring, auto-restart of crashed orchestrator, 7-day rolling incident log. Self-healing architecture.</p></div>
+            <div class="feat-card"><div class="feat-icon">😴</div><h3>Weekend Mode</h3><p>Auto-pauses folder polling on Sat/Sun after 3h inactivity. Resumes Monday 07:00 automatically. Per-line independent.</p></div>
+            <div class="feat-card"><div class="feat-icon">💾</div><h3>Crash Recovery</h3><p>Full runtime state persisted to JSON every ~90 seconds. On restart, loads last saved state and resumes monitoring.</p></div>
+            <div class="feat-card"><div class="feat-icon">🧪</div><h3>Simulation Mode</h3><p>Built-in XML telemetry generator for offline testing, training, and demonstrations. 5 test cohorts for validation logic.</p></div>
+            <div class="feat-card"><div class="feat-icon">📊</div><h3>Efficiency Analytics</h3><p>Per-station efficiency charts, bottleneck detection, Pareto defect aggregation, and idle time tracking.</p></div>
+            <div class="feat-card"><div class="feat-icon">📋</div><h3>CSV Export</h3><p>Validation and telemetry reports in CSV format. Audit-ready documentation of station health and program compliance.</p></div>
+        </div>
+    </div>
+
+    <!-- React Frontend -->
+    <div class="section">
+        <div class="section-label">Frontend</div>
+        <div class="section-title">React Dashboard Components</div>
+        <div class="feature-grid">
+            <div class="feat-card"><h3>EkraCard</h3><p>Printer status with program name, stencil ID, idle time counter, and Andon light indicator.</p></div>
+            <div class="feat-card"><h3>SiplaceHub</h3><p>3 pick-and-place modules (SX1/SX2/SX3) with barcode display and changeover progress tracker.</p></div>
+            <div class="feat-card"><h3>OvenAoiHub</h3><p>Reflow oven thermal profile display + AOI inspection program with evaluation lights.</p></div>
+            <div class="feat-card"><h3>SupervisorDashboard</h3><p>All 5 lines at once with Out-of-Order management and one-pager condensed view mode.</p></div>
+            <div class="feat-card"><h3>NotificationCenter</h3><p>Alert rule configuration, channel management, test dispatch, and historical alert ledger.</p></div>
+            <div class="feat-card"><h3>ControlSimulator</h3><p>Scenario injection for testing — toggle between nominal, mismatch, and edge case states.</p></div>
+        </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="section">
+        <div class="section-label">Technology</div>
+        <div class="section-title">Tech Stack</div>
+        <div class="tech-strip">
+            <span class="tech-pill">Python 3</span><span class="tech-pill">Flask</span><span class="tech-pill">Socket.IO</span>
+            <span class="tech-pill">React 18</span><span class="tech-pill">TypeScript</span><span class="tech-pill">TailwindCSS</span>
+            <span class="tech-pill">Vite</span><span class="tech-pill">C# .NET 9</span><span class="tech-pill">PyInstaller</span>
+            <span class="tech-pill">Web Audio API</span><span class="tech-pill">Lucide Icons</span>
+        </div>
+        <div class="section-desc">
+            <strong>Backend:</strong> Flask + Socket.IO with multi-threaded file polling, validation engine, and watchdog monitoring.<br><br>
+            <strong>Frontend:</strong> React 18 + TypeScript + Vite + TailwindCSS + Lucide Icons. WebSocket real-time updates with auto-reconnect.<br><br>
+            <strong>Bridge:</strong> C# .NET 9 x86 service bridging Python 64-bit to legacy 32-bit DLL for SAP datasheet queries.<br><br>
+            <strong>Distribution:</strong> PyInstaller single-file .exe with obfuscated source, license SDK, and embedded frontend build.
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Artur Csepregi · <a href="../../documents/README.md">Documentation</a> · <a href="https://github.com/CsepregiArtur/SMT-Line-Monitor-Verification">Source Repository</a>
+</footer>
+
+</body>
+</html>

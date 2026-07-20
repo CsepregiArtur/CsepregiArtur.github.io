@@ -1,59 +1,494 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artur Csepregi — Manufacturing Leader | Wireframe Prototype v1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   DESIGN SYSTEM VARIABLES — per DESIGN_SYSTEM.md
+   ================================================================ */
+:root {
+    --primary: #0F172A;
+    --secondary: #1E3A8A;
+    --accent: #2563EB;
+    --success: #16A34A;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text: #111827;
+    --text-secondary: #6B7280;
+    --border: #E5E7EB;
+    --shadow-sm: 0 4px 20px rgba(0,0,0,0.06);
+    --shadow-md: 0 8px 30px rgba(0,0,0,0.10);
+    --radius-card: 20px;
+    --radius-btn: 12px;
+    --max-width: 1200px;
+    --transition: 250ms ease;
+    --font-hero: 56px;
+    --font-section: 36px;
+    --font-subtitle: 24px;
+    --font-body: 18px;
+    --font-small: 16px;
+    --spacing-section: 100px;
+}
 
-    <!-- SEO -->
-    <title>Artur Csepregi — Manufacturing Leader | Operational Excellence &amp; Digital Transformation</title>
-    <meta name="description" content="Manufacturing Leader with 15+ years of experience in operational excellence, Lean Manufacturing, Industrial Automation and Industry 4.0.">
-    <meta name="author" content="Artur Csepregi">
-    <link rel="canonical" href="https://csepregiartur.github.io/">
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Artur Csepregi — Manufacturing Leader">
-    <meta property="og:description" content="Leading Manufacturing Through Operational Excellence and Digital Innovation.">
-    <meta property="og:image" content="https://csepregiartur.github.io/assets/og-image.svg">
-    <meta property="og:url" content="https://csepregiartur.github.io/">
-    <meta property="og:type" content="website">
+/* ================================================================
+   HEADER — per COMPONENT_LIBRARY.md #1
+   ================================================================ */
+.header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    height: 72px; display: flex; align-items: center;
+    padding: 0 32px; transition: background 300ms ease, box-shadow 300ms ease;
+    background: transparent;
+}
+.header.scrolled {
+    background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--border);
+}
+.header-inner {
+    max-width: var(--max-width); width: 100%; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.header-logo {
+    font-size: 20px; font-weight: 700; color: var(--primary);
+    flex-shrink: 0;
+}
+.header-nav { display: flex; gap: 8px; align-items: center; }
+.header-nav a {
+    font-size: var(--font-small); font-weight: 500; color: var(--text-secondary);
+    text-decoration: none; padding: 8px 16px; border-radius: 8px;
+    transition: color var(--transition), background var(--transition);
+}
+.header-nav a:hover { color: var(--primary); background: rgba(0,0,0,0.04); }
+.header-cta {
+    font-size: 14px; font-weight: 600; color: var(--accent);
+    text-decoration: none; padding: 8px 20px; border: 2px solid var(--accent);
+    border-radius: var(--radius-btn); transition: all var(--transition);
+    flex-shrink: 0; margin-left: 16px;
+}
+.header-cta:hover { background: var(--accent); color: white; }
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Artur Csepregi — Manufacturing Leader">
-    <meta name="twitter:description" content="Leading Manufacturing Through Operational Excellence and Digital Innovation.">
-    <meta name="twitter:image" content="https://csepregiartur.github.io/assets/og-image.svg">
+/* Mobile hamburger */
+.hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 8px;
+}
+.hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--primary); border-radius: 2px; transition: all var(--transition);
+}
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+/* Mobile overlay */
+.mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: var(--bg); flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+    font-size: 22px; font-weight: 600; color: var(--primary);
+    text-decoration: none; padding: 12px 24px;
+}
+.mobile-menu .close-btn {
+    position: absolute; top: 24px; right: 32px;
+    font-size: 28px; background: none; border: none; cursor: pointer; color: var(--text);
+}
+.mobile-menu .mobile-cta {
+    margin-top: 24px; font-size: 16px; font-weight: 600; color: white;
+    background: var(--accent); padding: 14px 32px; border-radius: var(--radius-btn);
+    text-decoration: none;
+}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+/* ================================================================
+   HERO — per WIREFRAMES.md + UI_UX_GUIDELINES.md #4
+   ================================================================ */
+.hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 120px 32px 80px; position: relative; overflow: hidden;
+    background: linear-gradient(180deg, #F0F4FF 0%, var(--bg) 100%);
+}
+.hero-inner {
+    max-width: var(--max-width); width: 100%; margin: 0 auto;
+    display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: center;
+}
+/* Avatar */
+.avatar-wrapper {
+    position: relative; width: 180px; height: 180px; flex-shrink: 0;
+}
+.avatar-ring {
+    position: absolute; inset: -8px; border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--accent), var(--secondary), var(--accent));
+    animation: ringSpin 6s linear infinite; opacity: 0.6;
+}
+@keyframes ringSpin { to { transform: rotate(360deg); } }
+.avatar {
+    position: relative; width: 180px; height: 180px; border-radius: 50%;
+    border: 4px solid white; z-index: 1;
+    background: linear-gradient(135deg, #E2E8F0, #CBD5E1);
+}
+.hero-content { display: flex; flex-direction: column; gap: 20px; }
+.hero-subtitle {
+    font-size: 16px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 2px;
+}
+.hero-title {
+    font-size: 48px; font-weight: 800; color: var(--primary);
+    line-height: 1.12; letter-spacing: -0.5px;
+}
+.hero-desc {
+    font-size: var(--font-body); color: var(--text-secondary);
+    line-height: 1.7; max-width: 560px;
+}
+.hero-ctas {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;
+}
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+/* ================================================================
+   BUTTONS — per COMPONENT_LIBRARY.md #2
+   ================================================================ */
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: var(--radius-btn);
+    font-size: var(--font-small); font-weight: 600;
+    text-decoration: none; cursor: pointer;
+    transition: all var(--transition); border: none;
+}
+.btn-primary {
+    background: var(--accent); color: white;
+}
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); }
+.btn-secondary {
+    background: transparent; color: var(--accent);
+    border: 2px solid var(--accent);
+}
+.btn-secondary:hover { background: rgba(37,99,235,0.06); }
+.btn-ghost {
+    background: transparent; color: var(--text-secondary);
+    padding: 12px 24px;
+}
+.btn-ghost:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Artur Csepregi",
-      "jobTitle": "Manufacturing Leader",
-      "url": "https://csepregiartur.github.io",
-      "sameAs": [
-        "https://linkedin.com/in/artur-csepregi",
-        "https://github.com/CsepregiArtur"
-      ],
-      "knowsAbout": ["Manufacturing Operations", "Lean Manufacturing", "Digital Transformation", "Industrial Automation", "Industry 4.0"]
+/* ================================================================
+   SECTION TITLES — per COMPONENT_LIBRARY.md #3
+   ================================================================ */
+.section-label {
+    font-size: 14px; font-weight: 600; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 2px;
+    text-align: center; margin-bottom: 12px;
+}
+.section-title {
+    font-size: var(--font-section); font-weight: 700; color: var(--primary);
+    text-align: center; margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+.section-desc {
+    font-size: var(--font-body); color: var(--text-secondary);
+    text-align: center; max-width: 600px; margin: 0 auto 48px;
+}
+
+/* ================================================================
+   COMMON SECTION CONTAINER
+   ================================================================ */
+.section {
+    padding: var(--spacing-section) 32px;
+    max-width: var(--max-width); margin: 0 auto;
+}
+
+/* ================================================================
+   EXECUTIVE SUMMARY
+   ================================================================ */
+.summary-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+}
+.summary-text { font-size: var(--font-body); color: var(--text-secondary); line-height: 1.8; }
+.summary-text strong { color: var(--primary); }
+.summary-visual {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: var(--radius-card); padding: 48px; color: white;
+    text-align: center;
+}
+.summary-visual .num { font-size: 56px; font-weight: 800; }
+.summary-visual .num-label { font-size: 16px; opacity: 0.8; margin-top: 8px; }
+
+/* ================================================================
+   CARDS — per COMPONENT_LIBRARY.md #5
+   ================================================================ */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+.card {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 32px; box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+.card-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: #F0F5FF; display: flex; align-items: center;
+    justify-content: center; font-size: 24px; margin-bottom: 20px;
+}
+.card-title { font-size: 20px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+.card-desc { font-size: 15px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ================================================================
+   KPI / STATISTICS BAR — per COMPONENT_LIBRARY.md #6 + #14
+   ================================================================ */
+.stats-bar {
+    background: var(--primary); padding: 48px 32px;
+}
+.stats-inner {
+    max-width: var(--max-width); margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+}
+.stat-item { text-align: center; color: white; }
+.stat-num { font-size: 42px; font-weight: 800; color: var(--accent); }
+.stat-label { font-size: 16px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+/* ================================================================
+   CASE STUDIES — per WIREFRAMES.md + COMPONENT_LIBRARY.md #7
+   ================================================================ */
+.case-study {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    margin-bottom: 64px;
+}
+.case-study.reverse { direction: rtl; }
+.case-study.reverse .case-content { direction: ltr; }
+.case-image {
+    background: linear-gradient(135deg, var(--secondary), #3B82F6);
+    border-radius: var(--radius-card); aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; color: white;
+}
+.case-content { display: flex; flex-direction: column; gap: 16px; }
+.case-badge {
+    display: inline-flex; font-size: 13px; font-weight: 600;
+    color: var(--accent); background: #F0F5FF;
+    padding: 4px 14px; border-radius: 100px; align-self: flex-start;
+}
+.case-title { font-size: 28px; font-weight: 700; color: var(--primary); }
+.case-text { font-size: var(--font-small); color: var(--text-secondary); line-height: 1.7; }
+.case-impact { display: flex; flex-wrap: wrap; gap: 8px; }
+.case-impact-item {
+    font-size: 14px; font-weight: 500; color: var(--success);
+    display: flex; align-items: center; gap: 6px;
+}
+.tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tech-tag {
+    font-size: 13px; font-weight: 500; color: var(--accent);
+    background: #F0F5FF; padding: 4px 12px; border-radius: 6px;
+}
+
+/* ================================================================
+   TIMELINE — redesigned for clean, professional look
+   ================================================================ */
+.timeline { position: relative; max-width: 900px; margin: 0 auto; padding: 20px 0; }
+.timeline::before {
+    content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 2px; background: var(--border); transform: translateX(-50%);
+}
+.timeline-entry {
+    display: flex; align-items: flex-start;
+    margin-bottom: 56px; position: relative;
+}
+.timeline-entry:nth-child(odd) { flex-direction: row; }
+.timeline-entry:nth-child(even) { flex-direction: row-reverse; }
+
+.timeline-content {
+    width: calc(50% - 40px); padding: 0;
+}
+.timeline-content-inner {
+    background: var(--card); border-radius: var(--radius-card);
+    padding: 28px; box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+.timeline-content-inner:hover {
+    transform: translateY(-2px); box-shadow: var(--shadow-md);
+}
+
+.timeline-dot-col {
+    width: 80px; display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0; position: relative; z-index: 1;
+}
+.timeline-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--card); border: 3px solid var(--accent);
+    box-shadow: 0 0 0 4px white; z-index: 1; flex-shrink: 0; margin-top: 32px;
+}
+.timeline-dot.current {
+    background: var(--accent); box-shadow: 0 0 0 4px rgba(37,99,235,0.2);
+}
+
+.timeline-period {
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.timeline-period::after {
+    content: ''; display: block; flex: 1; height: 1px;
+    background: var(--border);
+}
+.timeline-role { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+.timeline-company { font-size: 15px; color: var(--text-secondary); font-weight: 500; margin-bottom: 14px; }
+.timeline-achievements { list-style: none; padding: 0; border-top: 1px solid var(--border); padding-top: 14px; }
+.timeline-achievements li {
+    font-size: 15px; color: var(--text-secondary); margin-bottom: 8px; line-height: 1.5;
+    padding-left: 20px; position: relative;
+}
+.timeline-achievements li::before {
+    content: '▸'; position: absolute; left: 0; top: 0; color: var(--accent); font-size: 14px;
+}
+.timeline-tech-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ================================================================
+   SKILLS — per COMPONENT_LIBRARY.md #9
+   ================================================================ */
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+.skill-card { text-align: center; }
+
+/* ================================================================
+   CONTACT — per WIREFRAMES.md
+   ================================================================ */
+.contact-section {
+    min-height: 80vh; display: flex; align-items: center;
+    background: var(--primary); color: white;
+    margin-top: var(--spacing-section);
+}
+.contact-inner {
+    max-width: var(--max-width); width: 100%; margin: 0 auto;
+    padding: 80px 32px; text-align: center;
+}
+.contact-title { font-size: var(--font-section); font-weight: 700; margin-bottom: 16px; }
+.contact-desc { font-size: var(--font-body); color: rgba(255,255,255,0.7); margin-bottom: 40px; }
+.contact-cards {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    margin-bottom: 32px;
+}
+.contact-card {
+    background: rgba(255,255,255,0.08); border-radius: var(--radius-card);
+    padding: 32px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
+    transition: background var(--transition);
+}
+.contact-card:hover { background: rgba(255,255,255,0.14); }
+.contact-card-icon { font-size: 32px; margin-bottom: 12px; }
+.contact-card-label { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.contact-card-value { font-size: 14px; color: rgba(255,255,255,0.6); }
+
+/* ================================================================
+   FOOTER — per COMPONENT_LIBRARY.md #16
+   ================================================================ */
+.footer {
+    background: var(--primary); border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 48px 32px 24px; color: rgba(255,255,255,0.6); font-size: 14px;
+}
+.footer-inner {
+    max-width: var(--max-width); margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 14px; }
+.footer-links a:hover { color: var(--accent); }
+.footer-social { display: flex; gap: 16px; font-size: 20px; }
+.footer-bottom {
+    max-width: var(--max-width); margin: 24px auto 0; padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.back-to-top {
+    background: none; border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6); cursor: pointer;
+    padding: 8px 16px; border-radius: 8px; font-size: 14px;
+    transition: all var(--transition);
+}
+.back-to-top:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ================================================================
+   SCROLL ANIMATIONS — per UI_UX_GUIDELINES.md #5
+   ================================================================ */
+.animate {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 300ms ease, transform 300ms ease;
+}
+.animate.visible { opacity: 1; transform: translateY(0); }
+.animate-delay-1 { transition-delay: 100ms; }
+.animate-delay-2 { transition-delay: 200ms; }
+.animate-delay-3 { transition-delay: 300ms; }
+@media (prefers-reduced-motion: reduce) {
+    .animate { opacity: 1; transform: none; transition: none; }
+}
+
+/* ================================================================
+   RESPONSIVE BREAKPOINTS — per DESIGN_SYSTEM.md
+   ================================================================ */
+
+/* Tablet: 768px–1024px */
+@media (max-width: 1024px) {
+    :root { --font-hero: 42px; --font-section: 30px; --spacing-section: 80px; }
+    .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 32px; }
+    .avatar-wrapper { margin: 0 auto; width: 140px; height: 140px; }
+    .avatar { width: 140px; height: 140px; font-size: 36px; }
+    .hero-desc { max-width: 100%; }
+    .hero-ctas { justify-content: center; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .case-study { grid-template-columns: 1fr; gap: 24px; }
+    .case-study.reverse { direction: ltr; }
+    .case-image { aspect-ratio: 16/9; }
+    .stats-inner { grid-template-columns: repeat(3, 1fr); }
+    .contact-cards { grid-template-columns: repeat(2, 1fr); }
+    .timeline::before { left: 30px; }
+    .timeline-entry, .timeline-entry:nth-child(odd), .timeline-entry:nth-child(even) { flex-direction: row; }
+    .timeline-content { width: calc(100% - 70px); }
+    .timeline-dot-col { width: 70px; }
+    .timeline-dot { margin-top: 56px; }
+    .header-nav { display: none; }
+    .header-cta { display: none; }
+    .hamburger { display: flex; }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 768px) {
+    :root {
+        --font-hero: 32px; --font-section: 26px;
+        --font-subtitle: 20px; --font-body: 16px;
+        --spacing-section: 60px;
     }
-    </script>
+    .hero { padding: 100px 20px 60px; }
+    .hero-title { font-size: 32px; }
+    .hero-subtitle { font-size: 13px; }
+    .hero-ctas { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: center; text-align: center; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .stats-inner { grid-template-columns: 1fr; gap: 24px; }
+    .contact-cards { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .section { padding-left: 20px; padding-right: 20px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+}
 
+/* Small phones */
+@media (max-width: 480px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
+
 <!-- ================================================================
      HEADER
      ================================================================ -->
@@ -96,7 +531,7 @@
     <div class="hero-inner">
         <div class="avatar-wrapper animate">
             <div class="avatar-ring"></div>
-            <img class="avatar" src="images/Csepregi_Artur.png" alt="Artur Csepregi — Manufacturing Leader" width="180" height="180">
+            <img class="avatar" src="images/Csepregi_Artur.png" alt="Artur Csepregi" style="object-fit:cover;">
         </div>
         <div class="hero-content">
             <div class="hero-subtitle animate animate-delay-1">Manufacturing Leader</div>
@@ -114,21 +549,19 @@
         </div>
     </div>
 </section>
-</main>
 
-<main>
 <!-- ================================================================
      EXECUTIVE SUMMARY
      ================================================================ -->
-<section class="section" id="about" aria-labelledby="about-title">
+<section class="section" id="about">
     <div class="section-label animate">Who I Am</div>
-    <h2 class="section-title animate" id="about-title">Executive Summary</h2>
+    <h2 class="section-title animate">Executive Summary</h2>
     <div class="summary-grid">
         <div class="summary-text animate animate-delay-1">
             <p>I am a <strong>Manufacturing Leader</strong> passionate about improving how factories operate.</p>
-            <p>Throughout my career I have combined <strong>operational leadership</strong> with <strong>digital technologies</strong> to improve productivity, manufacturing visibility and decision-making.</p>
-            <p>Rather than seeing technology as an end goal, I believe it should <strong>enable people</strong> to make faster, better and more informed decisions.</p>
-            <p>This philosophy has driven me to develop internal manufacturing software, automate repetitive processes and support business growth through practical innovation.</p>
+            <p style="margin-top:16px;">Throughout my career I have combined <strong>operational leadership</strong> with <strong>digital technologies</strong> to improve productivity, manufacturing visibility and decision-making.</p>
+            <p style="margin-top:16px;">Rather than seeing technology as an end goal, I believe it should <strong>enable people</strong> to make faster, better and more informed decisions.</p>
+            <p style="margin-top:16px;">This philosophy has driven me to develop internal manufacturing software, automate repetitive processes and support business growth through practical innovation.</p>
         </div>
         <div class="summary-visual animate animate-delay-2">
             <div class="num">15+</div>
@@ -146,9 +579,9 @@
 <!-- ================================================================
      LEADERSHIP PHILOSOPHY
      ================================================================ -->
-<section class="section" id="leadership" aria-labelledby="leadership-title">
+<section class="section" id="leadership">
     <div class="section-label animate">How I Lead</div>
-    <h2 class="section-title animate" id="leadership-title">Leadership Philosophy</h2>
+    <h2 class="section-title animate">Leadership Philosophy</h2>
     <p class="section-desc animate">
         Great manufacturing organizations are built through people, standardized processes and continuous improvement.
     </p>
@@ -188,9 +621,9 @@
 <!-- ================================================================
      MANUFACTURING EXPERTISE
      ================================================================ -->
-<section class="section" id="expertise" aria-labelledby="expertise-title">
+<section class="section" id="expertise">
     <div class="section-label animate">What I Know</div>
-    <h2 class="section-title animate" id="expertise-title">Manufacturing Expertise</h2>
+    <h2 class="section-title animate">Manufacturing Expertise</h2>
     <div class="cards-grid">
         <div class="card animate animate-delay-1">
             <div class="card-icon">🏭</div>
@@ -253,9 +686,9 @@
 <!-- ================================================================
      FEATURED CASE STUDIES
      ================================================================ -->
-<section class="section" id="projects" aria-labelledby="projects-title">
+<section class="section" id="projects">
     <div class="section-label animate">Business Impact</div>
-    <h2 class="section-title animate" id="projects-title">Featured Case Studies</h2>
+    <h2 class="section-title animate">Featured Case Studies</h2>
     <p class="section-desc animate">
         Each project presented as a business case: <strong>Challenge → Solution → Business Impact → Technologies</strong>
     </p>
@@ -494,7 +927,7 @@
         <div class="card animate animate-delay-1">
             <div class="card-icon">🎓</div>
             <div class="card-title">University</div>
-            <div class="card-desc">B.Sc. Automation & Applied Informatics (In Progress)<br><span class="edu-subtitle">Technical University of Cluj-Napoca</span></div>
+            <div class="card-desc">B.Sc. Automation & Applied Informatics (In Progress)<br><span style="font-size:13px;color:var(--text-secondary);">Technical University of Cluj-Napoca</span></div>
         </div>
         <div class="card animate animate-delay-2">
             <div class="card-icon">📜</div>
@@ -554,7 +987,7 @@
      ================================================================ -->
 <section class="contact-section" id="contact">
     <div class="contact-inner">
-        <div class="section-label animate" class="contact-label-light">Get In Touch</div>
+        <div class="section-label animate" style="color:rgba(255,255,255,0.6);">Get In Touch</div>
         <h2 class="contact-title animate">Let's Build Better Manufacturing Together</h2>
         <p class="contact-desc animate">
             I welcome conversations about manufacturing leadership, operational excellence, digital transformation and business development opportunities.
@@ -612,14 +1045,67 @@
 <!-- ================================================================
      JAVASCRIPT
      ================================================================ -->
+<script>
+// --- Header scroll behavior ---
+let lastScroll = 0;
+const header = document.getElementById('header');
 
+window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
 
-</body>
+    // Transparent → solid at 80px
+    if (currentScroll > 80) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
 
-<!-- JavaScript Modules -->
-<script src="js/navigation.js"></script>
-<script src="js/animations.js"></script>
-<script src="js/main.js"></script>
+    // Hide on scroll down, show on scroll up
+    if (currentScroll > lastScroll && currentScroll > 200) {
+        header.style.transform = 'translateY(-100%)';
+    } else {
+        header.style.transform = 'translateY(0)';
+    }
+
+    lastScroll = currentScroll;
+});
+
+// --- Mobile menu ---
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const closeMenu = document.getElementById('closeMenu');
+
+hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
+mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+// --- Scroll animations (IntersectionObserver) ---
+const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // animate once
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+
+// --- Smooth scroll for anchor links ---
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+</script>
 
 </body>
 </html>

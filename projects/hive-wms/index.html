@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIVE Warehouse Management System — Project Showcase</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {--pri:#0F172A;--sec:#1E3A8A;--acc:#2563EB;--suc:#16A34A;--bg:#F8FAFC;--card:#FFF;--txt:#111827;--t2:#6B7280;--brd:#E5E7EB;--r:20px;--tr:250ms ease;--amb:#D97706}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:18px;font-weight:700;color:var(--pri)}
+.header-back{font-size:14px;font-weight:500;color:var(--acc);text-decoration:none}
+.header-back:hover{text-decoration:underline}
+.hero{background:linear-gradient(135deg,#92400E 0%,#D97706 100%);color:#fff;padding:80px 32px;text-align:center}
+.hero-badge{display:inline-block;font-size:13px;font-weight:600;background:rgba(255,255,255,0.15);padding:4px 16px;border-radius:100px;margin-bottom:20px}
+.hero h1{font-size:42px;font-weight:800;margin-bottom:16px;letter-spacing:-0.5px}
+.hero .subtitle{font-size:22px;font-weight:300;opacity:0.9;margin-bottom:12px}
+.hero p{font-size:18px;opacity:0.85;max-width:700px;margin:0 auto;line-height:1.7}
+.container{max-width:1100px;margin:0 auto;padding:0 32px}
+.section{padding:64px 0}
+.section-label{font-size:13px;font-weight:600;color:var(--amb);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--pri);margin-bottom:24px}
+.section-desc{font-size:16px;color:var(--t2);line-height:1.7;margin-bottom:32px}
+
+/* Architecture */
+.arch-diagram{background:var(--card);border-radius:var(--r);padding:40px;box-shadow:0 4px 20px rgba(0,0,0,0.06);margin-bottom:32px}
+.arch-layer{margin-bottom:20px;padding:16px;border-radius:12px;border:1px solid var(--brd)}
+.arch-layer.dark{background:var(--pri);color:#fff;border-color:var(--pri)}
+.arch-layer h4{font-size:15px;margin-bottom:10px;opacity:0.8;text-transform:uppercase;letter-spacing:1px}
+.arch-layer.dark h4{color:var(--amb)}
+.arch-pills{display:flex;flex-wrap:wrap;gap:8px}
+.arch-pill{font-size:13px;padding:6px 14px;border-radius:8px;font-weight:500}
+.arch-pill.light{background:rgba(255,255,255,0.12);color:#fff}
+.arch-pill.amber{background:#FFF7ED;color:var(--amb);border:1px solid #FED7AA}
+
+/* ML Model cards */
+.ml-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.ml-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:0 3px 16px rgba(0,0,0,0.05);border-top:4px solid var(--amb);transition:all var(--tr)}
+.ml-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.ml-card .label{font-size:12px;font-weight:700;color:var(--amb);text-transform:uppercase;letter-spacing:1px}
+.ml-card h3{font-size:18px;font-weight:600;margin:8px 0}
+.ml-card .algo{font-size:13px;color:var(--t2);margin-bottom:8px}
+.ml-card p{font-size:14px;color:var(--t2);line-height:1.6}
+
+/* Feature grid */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.feat-card{background:var(--card);border-radius:var(--r);padding:28px;box-shadow:0 3px 16px rgba(0,0,0,0.05);transition:transform var(--tr),box-shadow var(--tr)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.10)}
+.feat-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.feat-card p{font-size:14px;color:var(--t2);line-height:1.6}
+.feat-icon{font-size:36px;margin-bottom:12px}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;margin-bottom:32px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:28px;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05)}
+.stat-num{font-size:36px;font-weight:800;color:var(--amb);margin-bottom:4px}
+.stat-label{font-size:14px;color:var(--t2)}
+
+/* DB Schema */
+.schema-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.schema-card{background:var(--card);border-radius:var(--r);padding:24px;box-shadow:0 3px 16px rgba(0,0,0,0.05)}
+.schema-card h4{font-size:16px;font-weight:700;margin-bottom:12px;color:var(--amb)}
+.schema-card .tbl{font-size:13px;color:var(--t2);line-height:2}
+
+/* Component tree */
+.comp-tree{background:var(--card);border-radius:var(--r);padding:32px;box-shadow:0 3px 16px rgba(0,0,0,0.05);font-family:'SF Mono','Fira Code',monospace;font-size:13px;line-height:2;color:var(--t2);overflow-x:auto}
+.comp-tree .dir{color:var(--amb);font-weight:600}
+.comp-tree .file{color:var(--acc)}
+
+.tech-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.tech-pill{font-size:13px;font-weight:500;color:var(--amb);background:#FFF7ED;padding:6px 14px;border-radius:6px}
+
+footer{background:var(--pri);color:rgba(255,255,255,0.5);text-align:center;padding:32px;font-size:14px;margin-top:64px}
+footer a{color:var(--amb);text-decoration:none}
+
+@media(max-width:768px){.hero h1{font-size:28px}.container{padding:0 20px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="header-logo">Project Showcase</div>
+    <a href="../../showcase/index.html" class="header-back">← Back to Portfolio</a>
+</header>
+
+<section class="hero">
+    <div class="hero-badge">Advanced Prototype · MVP Complete</div>
+    <div class="subtitle">🐝 HIVE — Busy, Organized, Intelligent Collective</div>
+    <h1>Intelligent Warehouse Management System</h1>
+    <p>Next-generation WMS purpose-built for electronics manufacturing. MES-integrated inventory, optimized pick lists, and a 7-model ML subsystem for predictive operations.</p>
+</section>
+
+<div class="container">
+
+    <!-- Stats -->
+    <div class="section">
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-num">7</div><div class="stat-label">ML Models</div></div>
+            <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">DB Schemas</div></div>
+            <div class="stat-card"><div class="stat-num">12+</div><div class="stat-label">DB Tables</div></div>
+            <div class="stat-card"><div class="stat-num">11+</div><div class="stat-label">API Endpoints</div></div>
+            <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">Export Formats</div></div>
+        </div>
+    </div>
+
+    <!-- Architecture -->
+    <div class="section">
+        <div class="section-label">System Architecture</div>
+        <div class="section-title">🐝 The HIVE Architecture</div>
+        <div class="arch-diagram">
+            <div class="arch-layer" style="background:#FFF7ED;border-color:#FED7AA">
+                <h4 style="color:var(--amb)">🐝 HIVE CONNECTORS — External Integrations</h4>
+                <div class="arch-pills"><span class="arch-pill amber">MES XML Client</span><span class="arch-pill amber">Siplace Pro Setup Parser</span><span class="arch-pill amber">SAP BOM Processor</span><span class="arch-pill amber">Hanel Lift Client</span><span class="arch-pill amber">Import/Export Service</span></div>
+            </div>
+            <div style="text-align:center;font-size:18px;color:var(--amb);margin:8px 0">↓</div>
+            <div class="arch-layer dark">
+                <h4>🐝 HIVE QUEEN — FastAPI Backend :8000</h4>
+                <div class="arch-pills"><span class="arch-pill light">REST API (11+ endpoints)</span><span class="arch-pill light">WebSocket /ws/dashboard</span><span class="arch-pill light">Swagger UI / ReDoc</span><span class="arch-pill light">CORS Middleware</span><span class="arch-pill light">pgAdmin4 Launcher</span></div>
+            </div>
+            <div style="text-align:center;font-size:18px;color:var(--amb);margin:8px 0">↓</div>
+            <div class="arch-layer" style="background:#F0FDF4;border-color:#BBF7D0">
+                <h4 style="color:var(--suc)">🗄️ PostgreSQL 15 — Database: hive_wms</h4>
+                <div class="arch-pills"><span class="arch-pill amber">hive_core (8 tables)</span><span class="arch-pill amber">hive_ml (3 tables)</span><span class="arch-pill amber">hive_analytics (2 tables)</span></div>
+            </div>
+            <div style="text-align:center;font-size:18px;color:var(--amb);margin:8px 0">↓ ↑</div>
+            <div class="arch-layer">
+                <h4 style="color:var(--amb)">🐝 WORKERS & SCOUTS — Background Services</h4>
+                <div class="arch-pills"><span class="arch-pill amber">ML Worker (scheduled training)</span><span class="arch-pill amber">Job Creator Pipeline</span><span class="arch-pill amber">Performance Tracker</span><span class="arch-pill amber">Health Check</span><span class="arch-pill amber">Alert Manager</span></div>
+            </div>
+            <div style="text-align:center;font-size:18px;color:var(--amb);margin:8px 0">↓</div>
+            <div class="arch-layer" style="background:#F0F5FF;border-color:#BFDBFE">
+                <h4 style="color:var(--acc)">🎨 HIVE DASHBOARD — React 19 + TypeScript :5173</h4>
+                <div class="arch-pills"><span class="arch-pill amber">6 KPI Cards</span><span class="arch-pill amber">SVG Warehouse Map</span><span class="arch-pill amber">Alert Panel</span><span class="arch-pill amber">Import Feed</span><span class="arch-pill amber">WebSocket Hook</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7 ML Models -->
+    <div class="section">
+        <div class="section-label">Machine Learning</div>
+        <div class="section-title">7-Model ML Subsystem</div>
+        <div class="ml-grid">
+            <div class="ml-card"><div class="label">Model A</div><h3>Travel Time Prediction</h3><div class="algo">LightGBM · Gradient Boosting</div><p>Predicts travel time for pick operations based on distance, lift position, and time of day. Enables route optimization.</p></div>
+            <div class="ml-card"><div class="label">Model B</div><h3>Kanban Demand Forecasting</h3><div class="algo">Prophet · Time Series</div><p>7-day forward demand forecast per material based on historical consumption patterns and seasonality.</p></div>
+            <div class="ml-card"><div class="label">Model C</div><h3>Job Duration Prediction</h3><div class="algo">RandomForest · GradientBoosting</div><p>Estimates picking job duration from job size, item count, and travel distance. Improves scheduling accuracy.</p></div>
+            <div class="ml-card"><div class="label">Model D</div><h3>Anomaly Detection</h3><div class="algo">IsolationForest · Unsupervised</div><p>Detects unusual transaction patterns in real-time. Flags potential errors, fraud, or system issues.</p></div>
+            <div class="ml-card"><div class="label">Model E</div><h3>Zone Congestion Prediction</h3><div class="algo">Custom · Real-Time</div><p>Predicts warehouse zone congestion based on concurrent active jobs. Enables proactive load balancing.</p></div>
+            <div class="ml-card"><div class="label">Model F</div><h3>KPI Time Series Forecasting</h3><div class="algo">Prophet · 30-Day Trend</div><p>Forward-looking KPI projections for management planning. Accuracy tracking and model refresh.</p></div>
+            <div class="ml-card"><div class="label">Model G</div><h3>Lift Maintenance Prediction</h3><div class="algo">Custom · Cycles/Errors</div><p>Predicts automated lift maintenance needs based on cycle count, error rate, and age. Reduces unplanned downtime.</p></div>
+        </div>
+    </div>
+
+    <!-- Database Schema -->
+    <div class="section">
+        <div class="section-label">Data Model</div>
+        <div class="section-title">3-Schema PostgreSQL Database</div>
+        <div class="schema-grid">
+            <div class="schema-card">
+                <h4>📦 hive_core — Operations</h4>
+                <div class="tbl">materials · inventory · storage_locations<br>lifts · jobs · system_configuration<br>audit_log · mes_sync_history</div>
+            </div>
+            <div class="schema-card">
+                <h4>🧠 hive_ml — Machine Learning</h4>
+                <div class="tbl">model_registry (trained model storage)<br>feature_groups (feature definitions)<br>feature_values (training/inference data)</div>
+            </div>
+            <div class="schema-card">
+                <h4>📊 hive_analytics — KPIs</h4>
+                <div class="tbl">kpi_definitions (formulas & metadata)<br>kpi_observations (historical measurements)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Creation Pipeline -->
+    <div class="section">
+        <div class="section-label">Automation</div>
+        <div class="section-title">Job Creation Pipeline</div>
+        <div class="arch-diagram" style="text-align:center;font-size:15px;line-height:2.2">
+            <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">Siplace Pro Setup XML</span> + <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">SAP BOM CSV</span><br>
+            <span style="font-size:20px;color:var(--amb)">↓</span><br>
+            <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">1. Match Items</span> → <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">2. Resolve Locations</span> → <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">3. Optimize Route</span> → <span class="arch-pill amber" style="font-size:14px;padding:8px 18px">4. Generate Output</span><br>
+            <span style="font-size:20px;color:var(--amb)">↓</span><br>
+            <span class="arch-pill" style="font-size:13px">JSON</span> <span class="arch-pill" style="font-size:13px">CSV</span> <span class="arch-pill" style="font-size:13px">Excel</span> <span class="arch-pill" style="font-size:13px">PDF</span> <span class="arch-pill" style="font-size:13px">TXT</span>
+        </div>
+    </div>
+
+    <!-- Key Features -->
+    <div class="section">
+        <div class="section-label">Capabilities</div>
+        <div class="section-title">Key Features</div>
+        <div class="feat-grid">
+            <div class="feat-card"><div class="feat-icon">🔄</div><h3>MES Synchronization</h3><p>Automated XML parsing and real-time inventory sync with enterprise MES. Batch processing with integrity verification.</p></div>
+            <div class="feat-card"><div class="feat-icon">🗺️</div><h3>SVG Warehouse Map</h3><p>Visual representation of Receiving, Storage ("The Comb"), and Shipping zones. Live lift positions with status colors.</p></div>
+            <div class="feat-card"><div class="feat-icon">⚡</div><h3>WebSocket Live Updates</h3><p>Real-time dashboard via FastAPI WebSocket. Auto-reconnect hook in React. KPI, inventory, and alert streaming.</p></div>
+            <div class="feat-card"><div class="feat-icon">📦</div><h3>Embedded PostgreSQL</h3><p>Auto-installs PostgreSQL 15.8 on first run. Zero external database dependencies for end users.</p></div>
+            <div class="feat-card"><div class="feat-icon">🪟</div><h3>Windows Service Deployment</h3><p>All components deploy as Windows Services. PowerShell installer scripts. No Docker required.</p></div>
+            <div class="feat-card"><div class="feat-icon">🧪</div><h3>Mock Data Generator</h3><p>Realistic electronic component test data: 5,000+ components, 500+ locations, major manufacturers.</p></div>
+        </div>
+    </div>
+
+    <!-- React Components -->
+    <div class="section">
+        <div class="section-label">Frontend</div>
+        <div class="section-title">React Dashboard — Component Tree</div>
+        <div class="comp-tree">
+            <span class="dir">App.tsx</span><br>
+            ├── <span class="file">Header</span> — System status + navigation<br>
+            ├── <span class="file">RealTimeKPIs</span> — 6 KPI cards (Orders, Jobs, Lifts, Inventory, Accuracy, Cycle Time)<br>
+            │   └── Hexagon decorations + live counter animations<br>
+            ├── <span class="file">WarehouseMap</span> — SVG map with live lift positions<br>
+            │   ├── Receiving Zone<br>
+            │   ├── Storage Zone ("The Comb")<br>
+            │   └── Shipping Zone<br>
+            ├── <span class="file">AlertPanel</span> — Severity-coded feed (🛑⚠️ℹ️)<br>
+            ├── <span class="file">RecentImports</span> — Import activity timeline<br>
+            └── <span class="file">Footer</span>
+        </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="section">
+        <div class="section-label">Technology</div>
+        <div class="section-title">Tech Stack</div>
+        <div class="tech-strip">
+            <span class="tech-pill">Python 3.11+</span><span class="tech-pill">FastAPI</span><span class="tech-pill">React 19</span>
+            <span class="tech-pill">TypeScript</span><span class="tech-pill">PostgreSQL 15</span><span class="tech-pill">SQLAlchemy</span>
+            <span class="tech-pill">LightGBM</span><span class="tech-pill">Prophet</span><span class="tech-pill">scikit-learn</span>
+            <span class="tech-pill">TailwindCSS</span><span class="tech-pill">Vite</span><span class="tech-pill">WebSocket</span>
+            <span class="tech-pill">pandas</span><span class="tech-pill">numpy</span><span class="tech-pill">joblib</span>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Artur Csepregi · <a href="../../documents/README.md">Documentation</a> · <a href="https://github.com/CsepregiArtur/HIVE_wms_ML">Source Repository</a>
+</footer>
+
+</body>
+</html>
