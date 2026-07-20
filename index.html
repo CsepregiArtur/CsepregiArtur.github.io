@@ -36,21 +36,27 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
 
-    <!-- Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S2H99HJXDR"></script>
+    <!-- Consent Mode & Analytics -->
     <script>
+        // Consent Mode v2 — default: deny all
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied',
+            'analytics_storage': 'denied',
+            'functionality_storage': 'denied',
+            'personalization_storage': 'denied',
+            'security_storage': 'granted',  // always allowed
+            'wait_for_update': 500,
+            'ads_data_redaction': true,
+            'url_passthrough': true
+        });
+        gtag('set', 'developer_id', true); // Identify dev environment
         gtag('js', new Date());
-        gtag('config', 'G-S2H99HJXDR');
     </script>
-    <script>
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "xphjulewst");
-    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-S2H99HJXDR"></script>
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -713,6 +719,126 @@
 <script src="js/navigation.js"></script>
 <script src="js/animations.js"></script>
 <script src="js/main.js"></script>
+
+<!-- Consent Management & Analytics -->
+<script>
+(function(){
+    'use strict';
+
+    /* --- Consent state --- */
+    const STORAGE_KEY = 'csepregi_consent';
+    const DEFAULT_CONSENT = {
+        analytics_storage: false,
+        ad_storage: false,
+        ad_user_data: false,
+        ad_personalization: false,
+        functionality_storage: false,
+        personalization_storage: false
+    };
+
+    function loadConsent(){
+        try{
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : null;
+        }catch(e){ return null; }
+    }
+
+    function saveConsent(prefs){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    }
+
+    /* --- Apply consent to gtag --- */
+    function applyConsent(prefs){
+        const map = {
+            analytics_storage: prefs.analytics_storage ? 'granted' : 'denied',
+            ad_storage: prefs.ad_storage ? 'granted' : 'denied',
+            ad_user_data: prefs.ad_user_data ? 'granted' : 'denied',
+            ad_personalization: prefs.ad_personalization ? 'granted' : 'denied',
+            functionality_storage: prefs.functionality_storage ? 'granted' : 'denied',
+            personalization_storage: prefs.personalization_storage ? 'granted' : 'denied',
+            security_storage: 'granted'
+        };
+        gtag('consent', 'update', map);
+
+        if(prefs.analytics_storage && !window._clarityLoaded){
+            window._clarityLoaded = true;
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "xphjulewst");
+        }
+
+        if(prefs.analytics_storage && !window._gaConfigured){
+            window._gaConfigured = true;
+            gtag('config', 'G-S2H99HJXDR', {
+                'anonymize_ip': true,
+                'allow_google_signals': false,
+                'allow_ad_personalization_signals': false
+            });
+        }
+    }
+
+    /* --- Banner rendering --- */
+    function showBanner(){
+        const existing = document.getElementById('consent-banner');
+        if(existing) return;
+
+        const banner = document.createElement('div');
+        banner.id = 'consent-banner';
+        banner.setAttribute('role', 'dialog');
+        banner.setAttribute('aria-modal', 'true');
+        banner.setAttribute('aria-label', 'Cookie consent');
+        banner.innerHTML =
+            '<div class="consent-banner-inner">' +
+                '<div class="consent-text">' +
+                    '<strong>🍪 Privacy Notice</strong>' +
+                    '<p>I use Google Analytics and Microsoft Clarity to understand how visitors interact with this portfolio. No personal data is sold or shared. <a href="https://support.google.com/google-ads/answer/10000067" target="_blank" rel="noopener">Learn more about consent mode</a>.</p>' +
+                '</div>' +
+                '<div class="consent-actions">' +
+                    '<button class="consent-btn consent-btn-secondary" data-consent="reject">Reject All</button>' +
+                    '<button class="consent-btn consent-btn-primary"  data-consent="accept">Accept All</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(banner);
+
+        // Animate in
+        requestAnimationFrame(() => banner.classList.add('visible'));
+
+        banner.addEventListener('click', function(e){
+            const btn = e.target.closest('[data-consent]');
+            if(!btn) return;
+            const action = btn.dataset.consent;
+            let prefs;
+            if(action === 'accept'){
+                prefs = {
+                    analytics_storage: true,
+                    ad_storage: false,
+                    ad_user_data: false,
+                    ad_personalization: false,
+                    functionality_storage: true,
+                    personalization_storage: false
+                };
+            }else{
+                prefs = { ...DEFAULT_CONSENT };
+            }
+            saveConsent(prefs);
+            applyConsent(prefs);
+            banner.classList.remove('visible');
+            setTimeout(() => banner.remove(), 400);
+        });
+    }
+
+    /* --- Initialisation --- */
+    const existing = loadConsent();
+    if(existing){
+        applyConsent(existing);
+    }else{
+        // Show banner after a short delay to not interfere with LCP
+        setTimeout(showBanner, 1500);
+    }
+})();
+</script>
 
 </body>
 </html>
