@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="Y2oqUZ_Xn-iWGHfFwIqwiEq9k81315oD7OVfIcDafmA" />
 
     <!-- SEO -->
     <title>Artur Csepregi — Manufacturing Leader | Operational Excellence &amp; Digital Transformation</title>
@@ -35,6 +36,7 @@
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/leadership-redesign.css">
 
     <!-- Consent Mode & Analytics -->
     <script>
@@ -118,7 +120,7 @@
     <div class="hero-inner">
         <div class="avatar-wrapper animate">
             <div class="avatar-ring"></div>
-            <img class="avatar" src="images/Csepregi_Artur.png" alt="Artur Csepregi — Manufacturing Leader" width="180" height="180">
+            <img class="avatar" src="images/Artur_512.webp" alt="Artur Csepregi — Manufacturing Leader" width="180" height="180">
         </div>
         <div class="hero-content">
             <div class="hero-subtitle animate animate-delay-1">Manufacturing Leader</div>
@@ -166,55 +168,134 @@
 </section>
 
 <!-- ================================================================
-     LEADERSHIP PHILOSOPHY
+     LEADERSHIP PHILOSOPHY — Premium Interactive Redesign
      ================================================================ -->
-<section class="section" id="leadership" aria-labelledby="leadership-title">
-    <div class="section-label animate">How I Lead</div>
-    <h2 class="section-title animate" id="leadership-title">Leadership Philosophy</h2>
-    <p class="section-desc animate">
-        <strong>Every manufacturing challenge follows the same leadership cycle: observe reality, understand the problem, think critically, execute with discipline, measure results and continuously improve.</strong>
-    </p>
+<section class="leadership-section" id="leadership" aria-labelledby="leadership-title">
+    <div class="leadership-inner">
 
-    <div class="leadership-cycle animate" aria-label="Leadership cycle">
-        <div class="cycle-step">
-            <div class="cycle-icon">👁</div><h3>See</h3><p>Observe reality.<br>Go to the Gemba. Listen before acting.</p>
+        <!-- Section Header -->
+        <div class="leadership-header">
+            <div class="leadership-label">How I Lead</div>
+            <h2 class="leadership-title" id="leadership-title">Leadership Philosophy</h2>
+            <p class="leadership-subtitle">
+                Every manufacturing challenge follows the same leadership cycle: <strong style="color:#CBD5E1;">observe reality</strong>, understand the problem, think critically, <strong style="color:#CBD5E1;">execute with discipline</strong>, measure results and continuously improve.
+            </p>
         </div>
-        <div class="cycle-arrow" aria-hidden="true">↓</div>
-        <div class="cycle-step">
-            <div class="cycle-icon">🧠</div><h3>Understand</h3><p>Find the real problem.<br>Use data and people to identify root causes.</p>
-        </div>
-        <div class="cycle-arrow" aria-hidden="true">↓</div>
-        <div class="cycle-step">
-            <div class="cycle-icon">💡</div><h3>Think</h3><p>Design the right solution.<br>Balance quality, delivery, cost and risk.</p>
-        </div>
-        <div class="cycle-arrow" aria-hidden="true">↓</div>
-        <div class="cycle-step">
-            <div class="cycle-icon">⚙</div><h3>Act</h3><p>Execute with discipline.<br>Empower teams and remove obstacles.</p>
-        </div>
-        <div class="cycle-arrow" aria-hidden="true">↓</div>
-        <div class="cycle-step">
-            <div class="cycle-icon">📊</div><h3>Measure</h3><p>Validate the outcome.<br>Track performance using meaningful KPIs.</p>
-        </div>
-        <div class="cycle-arrow" aria-hidden="true">↓</div>
-        <div class="cycle-step">
-            <div class="cycle-icon">📈</div><h3>Improve</h3><p>Raise the standard.<br>Capture lessons learned and repeat the cycle.</p>
-        </div>
-    </div>
 
-    <div class="leadership-principles">
-        <p class="leadership-eyebrow animate">What guides every step?</p>
-        <h3 class="leadership-principles-title animate">The Principles That Guide Every Decision</h3>
-        <p class="leadership-principles-intro animate">These are the leadership principles behind the cycle.</p>
-        <div class="leadership-principles-grid">
-            <article class="principle-card animate animate-delay-1"><span>👥</span><h4>People First</h4><p>Great manufacturing performance starts with engaged people. I believe in coaching, trust, accountability and creating an environment where teams can succeed.</p></article>
-            <article class="principle-card animate animate-delay-2"><span>📊</span><h4>Data Before Opinions</h4><p>Decisions should be driven by facts, real-time visibility and measurable outcomes—not assumptions.</p></article>
-            <article class="principle-card animate animate-delay-3"><span>🔄</span><h4>Continuous Improvement</h4><p>Every process can become better. Small improvements, consistently applied, create lasting operational excellence.</p></article>
-            <article class="principle-card animate animate-delay-1"><span>🎯</span><h4>Customer Value</h4><p>Every decision should strengthen quality, delivery, safety and customer satisfaction.</p></article>
-            <article class="principle-card animate animate-delay-2"><span>🤝</span><h4>Cross-functional Collaboration</h4><p>Sustainable improvements happen when Production, Engineering, Quality, Logistics and IT work as one team.</p></article>
-            <article class="principle-card animate animate-delay-3"><span>💻</span><h4>Digital Manufacturing</h4><p>Technology should simplify work, increase visibility and enable better decisions—not add unnecessary complexity.</p></article>
+        <!-- Process Track -->
+        <div class="process-track" id="processTrack" role="list" aria-label="Leadership process: see, understand, think, act, measure, improve">
+
+            <!-- The vertical process line -->
+            <div class="process-line" aria-hidden="true">
+                <div class="process-line-track"></div>
+                <div class="process-line-fill" id="processLineFill"></div>
+            </div>
+
+            <!-- Step 1: See -->
+            <div class="process-step" role="listitem" aria-label="Step 1: See">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <h3 class="step-title">See</h3>
+                    <p class="step-body">Observe reality. <strong>Go to the Gemba.</strong> Listen before acting. Understand the actual situation.</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Understand -->
+            <div class="process-step" role="listitem" aria-label="Step 2: Understand">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.03Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.03Z"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h3 class="step-title">Understand</h3>
+                    <p class="step-body">Find the <strong>real problem.</strong> Use data and people to identify root causes before jumping to solutions.</p>
+                </div>
+            </div>
+
+            <!-- Step 3: Think -->
+            <div class="process-step" role="listitem" aria-label="Step 3: Think">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="M2 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="M12 18v4"/><path d="m19.07 19.07-2.83-2.83"/><path d="M18 12h4"/><path d="m16.24 7.76-2.83 2.83"/><circle cx="12" cy="12" r="4"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <h3 class="step-title">Think</h3>
+                    <p class="step-body">Design the <strong>right solution.</strong> Balance quality, delivery, cost and risk with structured problem-solving.</p>
+                </div>
+            </div>
+
+            <!-- Step 4: Act -->
+            <div class="process-step" role="listitem" aria-label="Step 4: Act">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <h3 class="step-title">Act</h3>
+                    <p class="step-body">Execute with <strong>discipline.</strong> Empower teams, remove obstacles and turn plans into measurable results.</p>
+                </div>
+            </div>
+
+            <!-- Step 5: Measure -->
+            <div class="process-step" role="listitem" aria-label="Step 5: Measure">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">05</div>
+                    <h3 class="step-title">Measure</h3>
+                    <p class="step-body">Validate the outcome. <strong>Track performance</strong> against meaningful KPIs. Let data confirm whether the solution worked.</p>
+                </div>
+            </div>
+
+            <!-- Step 6: Improve -->
+            <div class="process-step" role="listitem" aria-label="Step 6: Improve">
+                <div class="step-icon-col">
+                    <div class="step-icon-bg"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">06</div>
+                    <h3 class="step-title">Improve</h3>
+                    <p class="step-body"><strong>Raise the standard.</strong> Capture lessons learned, embed improvements and begin the cycle again.</p>
+                </div>
+            </div>
+
         </div>
+
+        <!-- Loop Indicator -->
+        <div class="process-loop" id="processLoop" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            Continuous Improvement · Kaizen · PDCA
+        </div>
+
+        <!-- Principles Sub-section -->
+        <div class="leadership-principles-section">
+            <p class="principles-eyebrow">What guides every step?</p>
+            <h3 class="principles-title">The Principles That Guide Every Decision</h3>
+            <p class="principles-subtitle">These are the leadership principles behind the cycle.</p>
+            <div class="principles-grid">
+                <article class="principle-item"><span class="principle-icon">👥</span><h4>People First</h4><p>Great manufacturing performance starts with engaged people. I believe in coaching, trust, accountability and creating an environment where teams can succeed.</p></article>
+                <article class="principle-item"><span class="principle-icon">📊</span><h4>Data Before Opinions</h4><p>Decisions should be driven by facts, real-time visibility and measurable outcomes—not assumptions.</p></article>
+                <article class="principle-item"><span class="principle-icon">🔄</span><h4>Continuous Improvement</h4><p>Every process can become better. Small improvements, consistently applied, create lasting operational excellence.</p></article>
+                <article class="principle-item"><span class="principle-icon">🎯</span><h4>Customer Value</h4><p>Every decision should strengthen quality, delivery, safety and customer satisfaction.</p></article>
+                <article class="principle-item"><span class="principle-icon">🤝</span><h4>Cross-functional Collaboration</h4><p>Sustainable improvements happen when Production, Engineering, Quality, Logistics and IT work as one team.</p></article>
+                <article class="principle-item"><span class="principle-icon">💻</span><h4>Digital Manufacturing</h4><p>Technology should simplify work, increase visibility and enable better decisions—not add unnecessary complexity.</p></article>
+            </div>
+        </div>
+
+        <!-- Quote -->
+        <blockquote class="leadership-quote-redesign">"Leadership is not about managing people. It is about creating systems where people can perform at their best."</blockquote>
+
     </div>
-    <blockquote class="leadership-quote animate">“Leadership is not about managing people. It is about creating systems where people can perform at their best.”</blockquote>
 </section>
 
 <!-- ================================================================
@@ -647,7 +728,7 @@
      ================================================================ -->
 <section class="contact-section" id="contact">
     <div class="contact-inner">
-        <div class="section-label animate" class="contact-label-light">Get In Touch</div>
+        <div class="section-label animate">Get In Touch</div>
         <h2 class="contact-title animate">Let's Build Better Manufacturing Together</h2>
         <p class="contact-desc animate">
             I welcome conversations about manufacturing leadership, operational excellence, digital transformation and business development opportunities.
@@ -725,6 +806,7 @@
 <script src="js/navigation.js"></script>
 <script src="js/animations.js"></script>
 <script src="js/main.js"></script>
+<script src="js/leadership-process.js"></script>
 
 <!-- Consent Management & Analytics -->
 <script>

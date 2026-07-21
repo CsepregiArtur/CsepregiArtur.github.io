@@ -1,0 +1,509 @@
+/* ================================================================
+   LEADERSHIP PHILOSOPHY — Premium Interactive Redesign
+   Light theme · Glassmorphism · Scroll-driven process line
+   ================================================================ */
+
+/* --- Section Container --- */
+.leadership-section {
+    position: relative;
+    padding: 120px 32px;
+    background: #F8FAFC;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+/* --- Inner wrapper --- */
+.leadership-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* --- Section header --- */
+.leadership-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.leadership-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563EB;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 16px;
+}
+
+.leadership-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.leadership-subtitle {
+    font-size: 18px;
+    color: #6B7280;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.leadership-subtitle strong {
+    color: #1E3A8A;
+}
+
+/* ================================================================
+   PROCESS TRACK — the continuous line
+   ================================================================ */
+.process-track {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* Vertical process line */
+.process-line {
+    position: absolute;
+    left: 31px; /* center of icon column */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Track (dim) */
+.process-line-track {
+    position: absolute;
+    inset: 0;
+    background: #E5E7EB;
+    border-radius: 1px;
+}
+
+/* Progress fill (illuminated) */
+.process-line-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg,
+        #60A5FA 0%,
+        #3B82F6 40%,
+        #2563EB 70%,
+        #1D4ED8 100%
+    );
+    border-radius: 1px;
+    transform-origin: top center;
+    transform: scaleY(0);
+    will-change: transform;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
+}
+
+/* Glow pulse at the tip of the progress line */
+.process-line-fill::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #3B82F6;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+}
+
+/* ================================================================
+   PROCESS STEP — glassmorphism card
+   ================================================================ */
+.process-step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 28px;
+    align-items: start;
+    padding: 28px 0;
+    z-index: 1;
+    opacity: 0.35;
+    filter: blur(0px);
+    transform: translateY(32px);
+    transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Revealed: fully visible */
+.process-step.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Active: highlighted */
+.process-step.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* After active: slightly dim */
+.process-step.dimmed {
+    opacity: 0.5;
+}
+
+/* --- Icon column --- */
+.step-icon-col {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Icon background circle */
+.step-icon-bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Active icon glow */
+.process-step.active .step-icon-bg {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.12);
+}
+
+/* Icon SVG */
+.step-icon-col svg {
+    position: relative;
+    z-index: 1;
+    width: 28px;
+    height: 28px;
+    color: #9CA3AF;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.process-step.active .step-icon-col svg {
+    color: #2563EB;
+}
+
+/* --- Card body --- */
+.step-card {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid #E5E7EB;
+    border-radius: 24px;
+    padding: 28px 32px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
+    transition:
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        background 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(0) scale(1);
+}
+
+/* Active card: elevated */
+.process-step.active .step-card {
+    transform: translateY(0) scale(1.03);
+    background: rgba(255, 255, 255, 0.95);
+    border-color: #BFDBFE;
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(37, 99, 235, 0.05);
+}
+
+/* Hover (desktop) */
+@media (hover: hover) {
+    .process-step.revealed .step-card:hover {
+        transform: translateY(-8px);
+        border-color: #93C5FD;
+        box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.1),
+            0 0 0 1px rgba(37, 99, 235, 0.08);
+    }
+
+    .process-step.revealed .step-card:hover .step-title {
+        color: #2563EB;
+    }
+
+    .process-step.revealed:hover .step-icon-col svg {
+        color: #2563EB;
+        transform: scale(1.1);
+    }
+}
+
+/* --- Card typography --- */
+.step-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2563EB;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.step-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
+    transition: color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1.2;
+}
+
+.step-body {
+    font-size: 15px;
+    color: #6B7280;
+    line-height: 1.65;
+    max-width: 520px;
+}
+
+.step-body strong {
+    color: #374151;
+    font-weight: 600;
+}
+
+/* ================================================================
+   LOOP INDICATOR — bottom of process
+   ================================================================ */
+.process-loop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding: 20px;
+    color: #2563EB;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.process-loop.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.process-loop svg {
+    width: 20px;
+    height: 20px;
+    animation: loopSpin 3s linear infinite;
+}
+
+@keyframes loopSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ================================================================
+   PRINCIPLES SUB-SECTION — sleek cards
+   ================================================================ */
+.leadership-principles-section {
+    margin-top: 100px;
+    padding-top: 64px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.principles-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563EB;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.principles-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0F172A;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.principles-subtitle {
+    font-size: 16px;
+    color: #6B7280;
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.principle-item {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+    transition:
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) {
+    .principle-item:hover {
+        transform: translateY(-4px);
+        border-color: #BFDBFE;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+}
+
+.principle-icon {
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.principle-item h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.principle-item p {
+    font-size: 14px;
+    color: #6B7280;
+    line-height: 1.6;
+}
+
+/* ================================================================
+   QUOTE
+   ================================================================ */
+.leadership-quote-redesign {
+    max-width: 660px;
+    margin: 64px auto 0;
+    padding: 28px 32px;
+    border-left: 3px solid #2563EB;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 500;
+    color: #374151;
+    line-height: 1.55;
+    text-align: center;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+    .leadership-section {
+        padding: 80px 20px;
+    }
+
+    .leadership-title {
+        font-size: 32px;
+    }
+
+    .leadership-subtitle {
+        font-size: 16px;
+    }
+
+    .leadership-header {
+        margin-bottom: 56px;
+    }
+
+    .process-step {
+        grid-template-columns: 48px 1fr;
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .step-icon-col {
+        width: 48px;
+        height: 48px;
+    }
+
+    .step-icon-bg {
+        border-radius: 16px;
+    }
+
+    .step-icon-col svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .process-line {
+        left: 23px;
+    }
+
+    .step-card {
+        padding: 20px 20px;
+        border-radius: 20px;
+    }
+
+    .step-title {
+        font-size: 20px;
+    }
+
+    .step-body {
+        font-size: 14px;
+    }
+
+    .process-step.active .step-card {
+        transform: none; /* no scale on mobile */
+    }
+
+    .principles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leadership-quote-redesign {
+        font-size: 17px;
+        padding: 20px 24px;
+    }
+
+    .process-loop {
+        font-size: 12px;
+        gap: 8px;
+    }
+}
+
+/* ================================================================
+   REDUCED MOTION
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .process-step,
+    .process-step.active .step-card,
+    .step-card,
+    .process-line-fill {
+        transition: none !important;
+    }
+
+    .process-loop svg {
+        animation: none;
+    }
+
+    .process-step {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+

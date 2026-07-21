@@ -274,16 +274,16 @@ body {
 
 /* --- Stats Bar --- */
 .stats-bar {
-    background: var(--primary); padding: var(--space-2xl) var(--space-xl);
+    background: #F0F4FF; padding: var(--space-2xl) var(--space-xl);
 }
 .stats-inner {
     max-width: var(--max-width); margin: 0 auto;
     display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl);
 }
-.stat-item { text-align: center; color: white; }
+.stat-item { text-align: center; color: var(--text-primary); }
 .stat-num { font-size: 42px; font-weight: var(--font-weight-extrabold); color: var(--accent); }
-.stat-label { font-size: var(--font-small); color: rgba(255,255,255,0.7); margin-top: var(--space-xs); }
-.stat-context { font-size: var(--font-xs); font-style: italic; color: rgba(255,255,255,0.58); margin-top: 4px; }
+.stat-label { font-size: var(--font-small); color: var(--text-secondary); margin-top: var(--space-xs); }
+.stat-context { font-size: var(--font-xs); font-style: italic; color: var(--text-secondary); margin-top: 4px; }
 
 /* --- Case Studies --- */
 .case-study {
@@ -493,7 +493,7 @@ body {
 /* --- Contact --- */
 .contact-section {
     min-height: 80vh; display: flex; align-items: center;
-    background: var(--primary); color: white;
+    background: var(--bg); color: var(--text-primary);
     margin-top: var(--space-4xl);
 }
 .contact-inner {
@@ -502,10 +502,10 @@ body {
 }
 .contact-title {
     font-size: var(--font-section); font-weight: var(--font-weight-bold);
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-md); color: var(--primary);
 }
 .contact-desc {
-    font-size: var(--font-body); color: rgba(255,255,255,0.7);
+    font-size: var(--font-body); color: var(--text-secondary);
     margin-bottom: 40px;
 }
 .contact-cards {
@@ -513,29 +513,35 @@ body {
     gap: var(--space-lg); margin-bottom: var(--space-xl);
 }
 .contact-card {
-    background: rgba(255,255,255,0.08);
+    background: var(--card);
     border-radius: var(--radius-card); padding: var(--space-xl);
-    text-align: center; border: 1px solid rgba(255,255,255,0.1);
-    transition: background var(--transition);
+    text-align: center; border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
     text-decoration: none; color: inherit; display: block;
 }
-.contact-card:hover { background: rgba(255,255,255,0.14); }
+.contact-card:hover {
+    background: #FFFFFF;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
 .contact-card-icon { display: flex; justify-content: center; margin-bottom: 12px; }
-.contact-card-icon svg { width: 32px; height: 32px; fill: currentColor; }
+.contact-card-icon svg { width: 32px; height: 32px; fill: currentColor; color: var(--accent); }
 .linkedin-icon { color: #0A66C2; }
 .contact-card-label {
     font-size: 18px; font-weight: var(--font-weight-semibold); margin-bottom: 6px;
+    color: var(--primary);
 }
 .contact-card-value {
-    font-size: var(--font-xs); color: rgba(255,255,255,0.6);
+    font-size: var(--font-xs); color: var(--text-secondary);
 }
 
 /* --- Footer --- */
 .footer {
-    background: var(--primary);
-    border-top: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg);
+    border-top: 1px solid var(--border);
     padding: var(--space-2xl) var(--space-xl) var(--space-lg);
-    color: rgba(255,255,255,0.6); font-size: var(--font-xs);
+    color: var(--text-secondary); font-size: var(--font-xs);
 }
 .footer-inner {
     max-width: var(--max-width); margin: 0 auto;
@@ -544,30 +550,32 @@ body {
 }
 .footer-links { display: flex; gap: var(--space-lg); }
 .footer-links a {
-    color: rgba(255,255,255,0.6); text-decoration: none; font-size: var(--font-xs);
+    color: var(--text-secondary); text-decoration: none; font-size: var(--font-xs);
 }
 .footer-links a:hover { color: var(--accent); }
 .footer-social { display: flex; gap: var(--space-md); }
 .footer-social a {
     display: grid; place-items: center;
     width: 36px; height: 36px;
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 50%; color: rgba(255,255,255,0.78);
+    border: 1px solid var(--border);
+    border-radius: 50%; color: var(--text-secondary);
     transition: color var(--transition), background var(--transition), border-color var(--transition);
+    background: var(--card);
 }
 .footer-social a:hover { color: white; background: var(--accent); border-color: var(--accent); }
 .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
-.footer-social .linkedin-link { color: #0A66C2; background: white; border-color: white; }
+.footer-social .linkedin-link { color: #0A66C2; background: white; border-color: #BFDBFE; }
 .footer-social .linkedin-link:hover { color: white; background: #0A66C2; border-color: #0A66C2; }
 .footer-bottom {
     max-width: var(--max-width); margin: var(--space-lg) auto 0;
     padding-top: var(--space-lg);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid var(--border);
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    color: var(--text-secondary);
 }
 .back-to-top {
-    background: none; border: 1px solid rgba(255,255,255,0.2);
-    color: rgba(255,255,255,0.6); cursor: pointer;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text-secondary); cursor: pointer;
     padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm);
     font-size: var(--font-xs); transition: all var(--transition);
     font-family: var(--font-family);
