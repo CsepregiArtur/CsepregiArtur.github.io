@@ -28,15 +28,60 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 
-    <!-- Fonts -->
+    <!-- Fonts (reduced weights: 300 removed — hero uses 400+, no visual change) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/leadership-redesign.css">
+    <!-- Preload LCP image -->
+    <link rel="preload" as="image" href="images/Artur_512.webp" fetchpriority="high">
+
+    <!-- Prefetch likely next pages -->
+    <link rel="prefetch" href="/connect">
+    <link rel="prefetch" href="documents/Artur_Csepregi_Head_of_SMT_Operations.pdf" as="document">
+
+    <!-- ================================================================
+         CRITICAL CSS — Inlined design tokens + above-fold styles
+         Eliminates render-blocking CSS requests.
+         Full stylesheets load async after first paint.
+         ================================================================ -->
+    <style>
+:root{--primary:#0F172A;--secondary:#1E3A8A;--accent:#2563EB;--success:#16A34A;--bg:#F8FAFC;--card:#FFFFFF;--text-primary:#111827;--text-secondary:#6B7280;--border:#E5E7EB;--shadow-sm:0 4px 20px rgba(0,0,0,0.06);--shadow-md:0 8px 30px rgba(0,0,0,0.10);--shadow-lg:0 12px 40px rgba(0,0,0,0.14);--radius-card:20px;--radius-btn:12px;--radius-chip:100px;--radius-sm:8px;--max-width:1200px;--header-height:72px;--space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:32px;--space-2xl:48px;--space-3xl:64px;--space-4xl:100px;--font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;--font-hero:56px;--font-section:36px;--font-subtitle:24px;--font-body:18px;--font-small:16px;--font-xs:14px;--font-weight-light:300;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--font-weight-extrabold:800;--transition-fast:200ms ease;--transition:250ms ease;--transition-slow:300ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+button,a,.btn,.contact-card,.card,.header-cta,.hamburger{-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-family);background:var(--bg);color:var(--text-primary);line-height:1.6;overflow-x:hidden}
+.header{position:fixed;top:0;left:0;right:0;z-index:1000;height:var(--header-height);display:flex;align-items:center;padding-left:calc(var(--space-xl) + env(safe-area-inset-left));padding-right:calc(var(--space-xl) + env(safe-area-inset-right));transition:background var(--transition-slow),box-shadow var(--transition-slow);background:transparent}
+.header-inner{max-width:var(--max-width);width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:20px;font-weight:var(--font-weight-bold);color:var(--primary);flex-shrink:0}
+.header-nav{display:flex;gap:var(--space-sm);align-items:center}
+.header-nav a{font-size:var(--font-small);font-weight:var(--font-weight-medium);color:var(--text-secondary);text-decoration:none;padding:var(--space-sm) var(--space-md);border-radius:var(--radius-sm)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px var(--space-xl) 80px;position:relative;overflow:hidden;background:linear-gradient(180deg,#F0F4FF 0%,var(--bg) 100%)}
+.hero-inner{max-width:var(--max-width);width:100%;margin:0 auto;display:grid;grid-template-columns:auto 1fr;gap:var(--space-3xl);align-items:center}
+.hero-content{display:flex;flex-direction:column;gap:20px}
+.hero-subtitle{font-size:var(--font-xs);font-weight:var(--font-weight-semibold);color:var(--accent);text-transform:uppercase;letter-spacing:2px}
+.hero-title{font-size:clamp(28px,7.5vw,48px);font-weight:var(--font-weight-extrabold);color:var(--primary);line-height:1.12;letter-spacing:-0.5px}
+.hero-desc{font-size:var(--font-body);color:var(--text-secondary);line-height:1.7;max-width:560px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:var(--space-sm)}
+.avatar-wrapper{position:relative;width:180px;height:180px;flex-shrink:0}
+.avatar-ring{position:absolute;inset:-8px;border-radius:50%;background:conic-gradient(from 0deg,var(--accent),var(--secondary),var(--accent));animation:ringSpin 12s linear infinite;opacity:0.4}
+@keyframes ringSpin{to{transform:rotate(360deg)}}
+.avatar{position:relative;width:180px;height:180px;border-radius:50%;border:4px solid white;z-index:1;object-fit:cover;background:linear-gradient(135deg,#E2E8F0,#CBD5E1)}
+.btn{display:inline-flex;align-items:center;gap:var(--space-sm);padding:14px 28px;border-radius:var(--radius-btn);font-size:var(--font-small);font-weight:var(--font-weight-semibold);text-decoration:none;cursor:pointer;transition:all var(--transition);border:none;font-family:var(--font-family)}
+.btn-primary{background:var(--accent);color:white}
+.btn-secondary{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn-ghost{background:transparent;color:var(--text-secondary);padding:12px 24px}
+.header-cta{font-size:var(--font-xs);font-weight:var(--font-weight-semibold);color:var(--accent);text-decoration:none;padding:8px 20px;border:2px solid var(--accent);border-radius:var(--radius-btn);flex-shrink:0;margin-left:var(--space-md)}
+.animate{opacity:0;transform:translateY(30px);transition:opacity 0.5s cubic-bezier(0.16,1,0.3,1),transform 0.5s cubic-bezier(0.16,1,0.3,1)}
+.animate.visible{opacity:1;transform:translateY(0)}
+@media(max-width:767px){.header-nav{display:none}.header-cta{display:none}.hamburger{display:flex;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:var(--space-sm)}.hamburger span{display:block;width:24px;height:2px;background:var(--primary);border-radius:2px}.hero{padding:80px 24px 60px}.hero-inner{grid-template-columns:1fr;gap:var(--space-lg);text-align:center;justify-items:center}.avatar-wrapper{width:140px;height:140px}.avatar-wrapper .avatar{width:140px;height:140px}.hero-title{font-size:clamp(24px,8vw,36px)}.hero-ctas{flex-direction:column;align-items:center;width:100%}.hero-ctas .btn{width:100%;max-width:320px;justify-content:center;min-height:48px}}
+@media(prefers-reduced-motion:reduce){.animate{opacity:1;transform:none;transition:none}.avatar-ring{animation:none}}
+    </style>
+
+    <!-- Full stylesheets: load async after first paint. noscript fallback for no-JS. -->
+    <link rel="stylesheet" href="css/style.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="css/leadership-redesign.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/leadership-redesign.css"></noscript>
 
     <!-- Consent Mode & Analytics (deferred — does not block rendering) -->
     <script>
@@ -131,25 +176,27 @@
      ================================================================ -->
 <section class="hero">
     <div class="hero-inner">
-        <div class="avatar-wrapper animate">
+        <!-- Avatar: .visible class — renders instantly, no JS dependency -->
+        <div class="avatar-wrapper animate visible">
             <div class="avatar-ring"></div>
-            <img class="avatar" src="images/Artur_512.webp" alt="Artur Csepregi — Manufacturing Leader" width="180" height="180">
+            <img class="avatar" src="images/Artur_512.webp" alt="Artur Csepregi — Manufacturing Leader" width="180" height="180" fetchpriority="high" decoding="async">
         </div>
+        <!-- Hero content: all .animate elements have .visible — appears on first paint -->
         <div class="hero-content">
-            <div class="hero-subtitle animate animate-delay-1">Manufacturing Leader</div>
-            <h1 class="hero-title animate animate-delay-2">
+            <div class="hero-subtitle animate visible">Manufacturing Leader</div>
+            <h1 class="hero-title animate visible">
                 Leading Manufacturing Through Operational Excellence and Digital Innovation
             </h1>
-            <p class="hero-desc animate animate-delay-3">
+            <p class="hero-desc animate visible">
                 Manufacturing Leader with 15+ years of experience transforming manufacturing operations through Lean Manufacturing, Industrial Automation and Industry 4.0.
             </p>
-            <div class="hero-ctas animate animate-delay-3">
+            <div class="hero-ctas animate visible">
                 <a href="documents/Artur_Csepregi_Head_of_SMT_Operations.pdf" class="btn btn-primary" download>Download CV</a>
                 <a href="#projects" class="btn btn-secondary">View Projects</a>
                 <a href="https://www.linkedin.com/in/csepregi-artur" target="_blank" class="btn btn-ghost">LinkedIn</a>
             </div>
             <!-- Mobile stats row — compact, visible only on mobile via CSS -->
-            <div class="hero-stats animate animate-delay-3">
+            <div class="hero-stats animate visible">
                 <div class="hero-stat"><span class="hero-stat-num">15+</span> Years Experience</div>
                 <div class="hero-stat"><span class="hero-stat-num">600+</span> Team Leadership</div>
                 <div class="hero-stat"><span class="hero-stat-num">4.0</span> Industry 4.0</div>
@@ -399,7 +446,7 @@
             <span class="case-badge">Production-Ready</span>
             <h3 class="case-title">Manufacturing Operations Dashboard</h3>
             <div class="case-image case-demo-preview">
-                <iframe src="projects/manufacturing-dashboard/live_demo.html" title="Manufacturing Operations Dashboard preview" loading="lazy" tabindex="-1"></iframe>
+                <img src="images/case-manufacturing-dashboard.webp" alt="Manufacturing Operations Dashboard preview" loading="lazy" width="800" height="600">
                 <a class="case-preview-link" href="projects/manufacturing-dashboard/live_demo.html" aria-label="Open Manufacturing Operations Dashboard live demo">
                     <span>Live preview <b>↗</b></span>
                 </a>
@@ -431,7 +478,7 @@
             <span class="case-badge">Production-Ready</span>
             <h3 class="case-title">SMT Line Monitoring & Verification</h3>
             <div class="case-image case-demo-preview">
-                <iframe src="projects/smt-production-monitoring/live_demo.html" title="SMT Line Monitoring and Verification preview" loading="lazy" tabindex="-1"></iframe>
+                <img src="images/case-smt-monitoring.webp" alt="SMT Line Monitoring and Verification preview" loading="lazy" width="800" height="600">
                 <a class="case-preview-link" href="projects/smt-production-monitoring/live_demo.html" aria-label="Open SMT Line Monitoring and Verification live demo">
                     <span>Live preview <b>↗</b></span>
                 </a>
@@ -464,7 +511,7 @@
             <span class="case-badge" style="color:#D97706; background:#FFF7ED;">Advanced Prototype</span>
             <h3 class="case-title">Intelligent Warehouse Management System</h3>
             <div class="case-image case-demo-preview">
-                <iframe src="projects/hive-wms/live_demo.html" title="Intelligent Warehouse Management System preview" loading="lazy" tabindex="-1"></iframe>
+                <img src="images/case-hive-wms.webp" alt="Intelligent Warehouse Management System preview" loading="lazy" width="800" height="600">
                 <a class="case-preview-link" href="projects/hive-wms/live_demo.html" aria-label="Open Intelligent Warehouse Management System live demo">
                     <span>Live preview <b>↗</b></span>
                 </a>
@@ -497,7 +544,7 @@
             <span class="case-badge">Production-Ready</span>
             <h3 class="case-title">Automated Inventory Data Extraction</h3>
             <div class="case-image case-demo-preview">
-                <iframe src="projects/inventory-export/live_demo.html" title="Automated Inventory Data Extraction preview" loading="lazy" tabindex="-1"></iframe>
+                <img src="images/case-inventory-export.webp" alt="Automated Inventory Data Extraction preview" loading="lazy" width="800" height="600">
                 <a class="case-preview-link" href="projects/inventory-export/live_demo.html" aria-label="Open Automated Inventory Data Extraction live demo">
                     <span>Live preview <b>↗</b></span>
                 </a>
@@ -821,10 +868,29 @@
 
 </body>
 
-<!-- JavaScript Modules -->
-<script src="js/navigation.js"></script>
-<script src="js/animations.js"></script>
-<script src="js/leadership-process.js"></script>
+<!--
+     JavaScript — scheduled by priority:
+     1. navigation.js (defer): header scroll + mobile menu — interactive-ready
+     2. animations.js (defer): IntersectionObserver for below-fold reveals
+     3. leadership-process.js: loaded on browser idle (scroll-driven animation)
+-->
+<script src="js/navigation.js" defer></script>
+<script src="js/animations.js" defer></script>
+<script>
+(function(){
+    function loadLeadershipJS(){
+        var s=document.createElement('script');
+        s.src='js/leadership-process.js';
+        s.defer=true;
+        document.body.appendChild(s);
+    }
+    if('requestIdleCallback' in window){
+        requestIdleCallback(loadLeadershipJS,{timeout:4000});
+    }else{
+        setTimeout(loadLeadershipJS,500);
+    }
+})();
+</script>
 
 <!-- Consent Management & Analytics -->
 <script>
