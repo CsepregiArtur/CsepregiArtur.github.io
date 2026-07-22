@@ -1,3 +1,11 @@
 # Archive — cleaned files no longer needed in the active repository
 /archive/
 *.md
+measure-performance.js
+perf-package.json
+performance-suite.js
+regression-analysis.js
+package.json
+perf-package.json
+package.json
+quick-baseline
