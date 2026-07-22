@@ -6,6 +6,7 @@
     <meta name="google-site-verification" content="Y2oqUZ_Xn-iWGHfFwIqwiEq9k81315oD7OVfIcDafmA" />
     <meta name="description" content="Digital business card for Artur Csepregi — Manufacturing Executive specializing in Operational Excellence, Lean Manufacturing, Industry 4.0, and Digital Transformation.">
     <meta name="author" content="Artur Csepregi">
+    <title>Artur Csepregi — Executive Digital Business Card | Manufacturing Executive</title>
     <link rel="canonical" href="https://csepregiartur.github.io/connect">
     <meta property="og:title" content="Artur Csepregi — Executive Digital Business Card">
     <meta property="og:description" content="Turning manufacturing complexity into operational excellence. Manufacturing Executive | Industry 4.0 | Digital Transformation">
@@ -94,7 +95,8 @@
         @keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
         .hero-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-elevated),0 0 0 1px rgba(255,255,255,0.06) inset;border-color:var(--glass-border-hover)}
         .portrait-wrapper{position:relative;display:inline-block;margin-bottom:28px;cursor:pointer}
-        .portrait-ring{position:absolute;inset:-6px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(59,130,246,0.6),rgba(96,165,250,0.8),rgba(59,130,246,0.6),transparent);animation:ringSpin 8s linear infinite;mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 1px));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 1px))}
+        .portrait-ring{position:absolute;inset:-6px;border-radius:50%}
+        .portrait-ring::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(59,130,246,0.6),rgba(96,165,250,0.8),rgba(59,130,246,0.6),transparent);animation:ringSpin 8s linear infinite;will-change:transform;mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 1px));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 1px))}
         .portrait-ring::after{content:'';position:absolute;inset:2px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.08);animation:ringPulse 3s ease-in-out infinite}
         @keyframes ringSpin{to{transform:rotate(360deg)}}
         @keyframes ringPulse{0%,100%{border-color:rgba(255,255,255,0.08)}50%{border-color:rgba(255,255,255,0.18)}}
@@ -123,8 +125,8 @@
         .action-btn--primary:hover{background:#2563EB;border-color:#2563EB;box-shadow:0 8px 28px rgba(37,99,235,0.4)}
         .action-btn--linkedin{background:rgba(10,102,194,0.25);border-color:rgba(10,102,194,0.3);color:#60A5FA}
         .action-btn--linkedin:hover{background:var(--linkedin);border-color:var(--linkedin);color:#fff;box-shadow:0 8px 28px rgba(10,102,194,0.4)}
-        .sticky-cta{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:10px;background:rgba(15,23,42,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-full);padding:6px 6px 6px 20px;box-shadow:0 8px 40px rgba(0,0,0,0.5);animation:slideUpFade 0.5s ease 0.3s forwards;opacity:0}
-        @keyframes slideUpFade{to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        .sticky-cta{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:flex;align-items:center;gap:10px;background:rgba(15,23,42,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-full);padding:6px 6px 6px 20px;box-shadow:0 8px 40px rgba(0,0,0,0.5);animation:stickyFadeIn 0.5s ease 0.3s forwards;opacity:0}
+        @keyframes stickyFadeIn{to{opacity:1}}
         .sticky-cta__label{font-size:13px;font-weight:500;color:var(--text-secondary);white-space:nowrap}
         .sticky-cta__btn{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-full);padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:all var(--transition-fast)}
         .sticky-cta__btn:hover{background:#2563EB;box-shadow:0 4px 16px rgba(37,99,235,0.4)}
@@ -220,9 +222,15 @@
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
         @media(max-width:380px){.main-container{padding:24px 12px 60px}.hero-card{padding:36px 20px 28px}.quick-actions{gap:10px}.action-btn{width:48px;height:48px}.action-btn svg{width:18px;height:18px}.philosophy-flow::before{left:19px}.philosophy-step__node{width:40px;height:40px;font-size:11px}}
         @media(min-width:768px){.main-container{padding:60px 20px 100px}.hero-card{padding:56px 48px 44px}.quick-actions{gap:16px}.metrics-grid{grid-template-columns:repeat(4,1fr)}.glass-card{padding:32px 28px}.philosophy-flow{flex-direction:row;gap:0}.philosophy-flow::before{left:0;top:23px;bottom:auto;right:0;width:auto;height:2px;background:linear-gradient(90deg,rgba(59,130,246,0.4),rgba(59,130,246,0.6),rgba(96,165,250,0.6),rgba(96,165,250,0.4),rgba(34,197,94,0.4),rgba(34,197,94,0.2))}.philosophy-step{flex-direction:column;align-items:center;text-align:center;flex:1;padding:0 8px;transform:translateY(20px)}.philosophy-step.visible{transform:translateY(0)}.philosophy-step__content{padding-top:8px}}
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important}html{scroll-behavior:auto}}
+        @media(prefers-reduced-motion:reduce){.section-divider,.hero-card,.quick-actions,.section,.philosophy-step,.footer,.portfolio-cta-section,.toast,.metric-card{opacity:1!important;transform:none!important;transition:none!important}.sticky-cta{opacity:1!important;transition:none!important}.portrait-ring::after,.bg-blob,.bg-blob--1,.bg-blob--2,.bg-blob--3,.hero-availability__dot{animation-name:none!important;animation-duration:0s!important}html{scroll-behavior:auto}}
         :focus-visible{outline:2px solid var(--accent-soft);outline-offset:3px;border-radius:4px}
         .action-btn:focus-visible,.sticky-cta__btn:focus-visible,.resume-card__download:focus-visible,.linkedin-card__cta:focus-visible{border-radius:var(--radius-full)}
+        .portfolio-cta-section{text-align:center;padding:24px 20px 0;opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s cubic-bezier(0.4,0,0.2,1)}
+        .portfolio-cta-section.visible{opacity:1;transform:translateY(0)}
+        .portfolio-cta{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;border-radius:var(--radius-full);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:var(--text-secondary);font-size:15px;font-weight:600;text-decoration:none;transition:all var(--transition-smooth);font-family:var(--font)}
+        .portfolio-cta:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--text-primary);transform:translateY(-2px);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+        .portfolio-cta svg{width:20px;height:20px;transition:transform 0.3s ease}
+        .portfolio-cta:hover svg{transform:translateX(-3px)}
     </style>
 </head>
 <body>
@@ -253,7 +261,16 @@
 <a href="https://github.com/CsepregiArtur" target="_blank" rel="noopener" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>GitHub</a>
 <button class="contact-item" onclick="downloadVCard()" style="width:100%;font-family:var(--font);cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="14" height="14" rx="2"/><line x1="17" y1="5" x2="20" y2="8"/><line x1="17" y1="9" x2="21" y2="13"/><circle cx="10" cy="12" r="2"/><line x1="7" y1="12" x2="3" y2="12"/></svg>Save Contact (vCard)</button>
 </div></div></section>
-<footer class="footer" role="contentinfo"><p class="footer__name">Artur Csepregi</p><p class="footer__title">Manufacturing Executive</p><p class="footer__motto">Turning manufacturing complexity into operational excellence.</p><a href="/" class="footer__back"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>Back to Portfolio</a></footer>
+
+<!-- Visit Portfolio CTA -->
+<section class="section portfolio-cta-section" aria-label="Visit portfolio">
+    <a href="/" class="portfolio-cta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Visit Portfolio
+    </a>
+</section>
+
+<footer class="footer" role="contentinfo"><p class="footer__name">Artur Csepregi</p><p class="footer__title">Manufacturing Executive</p><p class="footer__motto">Turning manufacturing complexity into operational excellence.</p></footer>
 </main>
 <div class="sticky-cta" id="stickyCta" aria-label="Quick save contact"><span class="sticky-cta__label">Save my contact</span><button class="sticky-cta__btn" onclick="downloadVCard()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>vCard</button></div>
 <div class="toast" id="toast" aria-live="polite"></div>

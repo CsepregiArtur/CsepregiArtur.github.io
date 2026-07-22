@@ -16,6 +16,19 @@
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* ------------------------------------------------------------------
+     * CACHED RECTS — avoid layout thrashing on every scroll frame
+     * ------------------------------------------------------------------ */
+    let stepRects = [];
+
+    function cacheStepRects() {
+        stepRects = steps.map(function (step) {
+            return step.getBoundingClientRect();
+        });
+    }
+
+    window.addEventListener('resize', cacheStepRects, { passive: true });
+
+    /* ------------------------------------------------------------------
      * REVEAL ON SCROLL — fade in + slide up when entering viewport
      * ------------------------------------------------------------------ */
     const observerOptions = {
@@ -28,7 +41,6 @@
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('revealed');
-                // Don't unobserve — we need to track active state for the process line
             }
         });
     }, observerOptions);
@@ -39,6 +51,7 @@
 
     /* ------------------------------------------------------------------
      * ACTIVE STEP DETECTION — find which step is closest to viewport center
+     * Uses cached rects to avoid layout thrashing during scroll.
      * ------------------------------------------------------------------ */
     function getActiveIndex() {
         const viewportCenter = window.innerHeight / 2;
@@ -46,7 +59,7 @@
         let closestDistance = Infinity;
 
         steps.forEach(function (step, i) {
-            const rect = step.getBoundingClientRect();
+            const rect = stepRects[i] || step.getBoundingClientRect();
             const stepCenter = rect.top + rect.height / 2;
             const distance = Math.abs(stepCenter - viewportCenter);
             if (distance < closestDistance) {
@@ -117,6 +130,8 @@
     /* ------------------------------------------------------------------
      * INIT
      * ------------------------------------------------------------------ */
+    // Cache initial positions
+    cacheStepRects();
     // Initial run
     update();
 
