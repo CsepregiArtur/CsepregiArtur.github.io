@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://api.qrserver.com; connect-src 'self' https://www.google-analytics.com https://www.clarity.ms; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'none';">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="google-site-verification" content="Y2oqUZ_Xn-iWGHfFwIqwiEq9k81315oD7OVfIcDafmA" />
     <meta name="description" content="Digital business card for Artur Csepregi — Manufacturing Executive specializing in Operational Excellence, Lean Manufacturing, Industry 4.0, and Digital Transformation.">
     <meta name="author" content="Artur Csepregi">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <title>Artur Csepregi — Executive Digital Business Card | Manufacturing Executive</title>
     <link rel="canonical" href="https://csepregiartur.github.io/connect">
     <meta property="og:title" content="Artur Csepregi — Executive Digital Business Card">
@@ -97,22 +100,7 @@ body{font-family:var(--font);background:var(--bg-deep);color:var(--text-primary)
         }
     </script>
 
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Artur Csepregi",
-      "jobTitle": "Manufacturing Executive",
-      "url": "https://csepregiartur.github.io/connect",
-      "sameAs": [
-        "https://www.linkedin.com/in/csepregi-artur",
-        "https://github.com/CsepregiArtur",
-        "https://csepregiartur.github.io"
-      ],
-      "knowsAbout": ["Manufacturing Operations", "Lean Manufacturing", "Digital Transformation", "Industrial Automation", "Industry 4.0", "Operational Excellence"]
-    }
-    </script>
+    <!-- Structured Data removed — /connect is noindex, JSON-LD contradicts privacy directive -->
 
 </head>
 <body>
@@ -126,8 +114,8 @@ body{font-family:var(--font);background:var(--bg-deep);color:var(--text-primary)
 <p class="hero-availability"><span class="hero-availability__dot" aria-hidden="true"></span>Open to Executive Opportunities</p>
 <p class="hero-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Romania</p>
 <nav class="quick-actions" aria-label="Quick actions">
-<a href="tel:+40773357805" class="action-btn" aria-label="Call" title="Call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></a>
-<a href="mailto:csepregi.artur@gmail.com" class="action-btn" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg></a>
+            <a href="https://calendly.com/csepregi-arthur/30min" target="_blank" rel="noopener" class="action-btn" aria-label="Schedule Meeting" title="Schedule Meeting"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></a>
+<a href="#" class="action-btn email-reveal" aria-label="Click to reveal email" title="Click to reveal email" data-user="csepregi.artur" data-domain="gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg></a>
 <a href="https://www.linkedin.com/in/csepregi-artur" target="_blank" rel="noopener" class="action-btn action-btn--linkedin" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
 </nav>
 </section>
@@ -135,9 +123,8 @@ body{font-family:var(--font);background:var(--bg-deep);color:var(--text-primary)
 <div class="section-divider"><span class="section-divider__line"></span><span class="section-divider__label">Let's Connect</span><span class="section-divider__line"></span></div>
 <section class="section" aria-labelledby="contact-heading"><div class="glass-card"><h2 class="glass-card__title" id="contact-heading">Get in Touch</h2><div class="contact-grid">
 <a href="https://calendly.com/csepregi-arthur/30min" target="_blank" rel="noopener" class="contact-item contact-item--schedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule a Meeting</a>
-<a href="mailto:csepregi.artur@gmail.com" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>csepregi.artur@gmail.com</a>
-<a href="https://wa.me/40773357805" target="_blank" rel="noopener" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>WhatsApp</a>
-<a href="tel:+40773357805" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>+40 773 357 805</a>
+<a href="#" class="contact-item email-reveal" data-user="csepregi.artur" data-domain="gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>Click to reveal email</a>
+            <a href="#" class="contact-item" id="reveal-phone" data-country="+40" data-number="(773) 357 805"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>Click to Reveal Phone</a>
 <a href="https://www.linkedin.com/in/csepregi-artur" target="_blank" rel="noopener" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>LinkedIn</a>
 <a href="https://github.com/CsepregiArtur" target="_blank" rel="noopener" class="contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>GitHub</a>
 </div></div></section>
@@ -156,6 +143,7 @@ body{font-family:var(--font);background:var(--bg-deep);color:var(--text-primary)
     <p class="footer__motto">Turning manufacturing complexity into operational excellence.</p>
     <div class="footer__bottom">
         <span>© 2026 Artur Csepregi · v1.4-202607221423</span>
+        <span style="margin-left:16px"><a href="/privacy" style="color:var(--text-tertiary);text-decoration:none;font-size:11px">Privacy Notice</a></span>
     </div>
 </footer>
 </main>
@@ -189,9 +177,12 @@ var metObs=new IntersectionObserver(function(entries){entries.forEach(function(e
 document.querySelectorAll('.metric-card').forEach(function(el){metObs.observe(el)});
 var pw=document.getElementById('portraitWrapper');var eet=document.getElementById('easterEggToast');var eetTimer;
 pw.addEventListener('dblclick',function(){pw.classList.add('easter-egg');eet.textContent='Building the factories of tomorrow.';eet.classList.add('show');clearTimeout(eetTimer);eetTimer=setTimeout(function(){pw.classList.remove('easter-egg');eet.classList.remove('show')},2800)});
-window.downloadVCard=function(){var v=['BEGIN:VCARD','VERSION:3.0','FN:Artur Csepregi','N:Csepregi;Artur;;;','ORG:Zollner','TITLE:Manufacturing Executive','TEL;TYPE=CELL;TYPE=VOICE:+40 773 357 805','TEL;TYPE=WORK;TYPE=VOICE:+40 790 303 858','EMAIL;TYPE=WORK:artur.csepregi@zollner.de','EMAIL;TYPE=HOME:csepregi.artur@gmail.com','URL;TYPE=Home:https://csepregiartur.github.io','URL;TYPE=LinkedIn:https://www.linkedin.com/in/csepregi-artur','URL;TYPE=GitHub:https://github.com/CsepregiArtur','X-SOCIALPROFILE;TYPE=Revolut:https://revolut.me/csepre7kqx','NOTE:Turning manufacturing complexity into operational excellence.','END:VCARD'].join('\n');var b=new Blob([v],{type:'text/vcard;charset=utf-8'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='Artur_Csepregi.vcf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);if(typeof gtag!=='undefined')gtag('event','vcard_download',{event_category:'engagement'})};
+window.downloadVCard=function(){var v=['BEGIN:VCARD','VERSION:3.0','FN:Artur Csepregi','N:Csepregi;Artur;;;','TITLE:Manufacturing Executive','EMAIL;TYPE=HOME:csepregi.artur@gmail.com','URL;TYPE=Home:https://csepregiartur.github.io','URL;TYPE=LinkedIn:https://www.linkedin.com/in/csepregi-artur','NOTE:Turning manufacturing complexity into operational excellence.','END:VCARD'].join('\n');var b=new Blob([v],{type:'text/vcard;charset=utf-8'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='Artur_Csepregi.vcf';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);if(typeof gtag!=='undefined')gtag('event','vcard_download',{event_category:'engagement'})};
 window.showQRCode=function(){var modal=document.getElementById('qrModal');var img=document.getElementById('qrImage');img.src='https://api.qrserver.com/v1/create-qr-code/?size=280x280&data='+encodeURIComponent('https://csepregiartur.github.io/connect');modal.classList.add('qr-modal--visible');if(typeof gtag!=='undefined')gtag('event','qr_code_view',{event_category:'engagement'})};
 window.hideQRCode=function(){document.getElementById('qrModal').classList.remove('qr-modal--visible')};
+// Phone number click-to-reveal
+var phoneBtn=document.getElementById('reveal-phone');
+if(phoneBtn){phoneBtn.addEventListener('click',function(e){e.preventDefault();var c=this.dataset.country,n=this.dataset.number;var full='+40773357805';this.href='tel:'+full;this.innerHTML=this.innerHTML.replace('Click to Reveal Phone',c+' '+n);this.removeAttribute('id');if(typeof gtag!=='undefined')gtag('event','phone_reveal',{event_category:'contact'})})}
 var tt;
 var sc=document.getElementById('stickyCta');var ls=0;var st;
 function usc(){var sy=window.scrollY;var vh=window.innerHeight;if(sy<vh*0.6){sc.style.opacity='1';sc.style.pointerEvents='auto'}else if(sy>ls){sc.style.opacity='0.3';sc.style.pointerEvents='none'}else{sc.style.opacity='1';sc.style.pointerEvents='auto'}ls=sy;clearTimeout(st);st=setTimeout(function(){sc.style.opacity='1';sc.style.pointerEvents='auto'},3000)}
@@ -199,6 +190,8 @@ window.addEventListener('scroll',usc,{passive:true});
 document.addEventListener('mousemove',function(e){var x=(e.clientX/window.innerWidth-0.5)*20;var y=(e.clientY/window.innerHeight-0.5)*20;document.querySelectorAll('.bg-blob').forEach(function(b,i){var f=(i+1)*0.3;b.style.transform='translate('+(x*f)+'px, '+(y*f)+'px)'})},{passive:true});
 document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('a[href*="linkedin.com"]').forEach(function(l){l.addEventListener('click',function(){if(typeof gtag!=='undefined')gtag('event','linkedin_click',{event_category:'social'})})});document.querySelectorAll('a[href^="mailto:"]').forEach(function(l){l.addEventListener('click',function(){if(typeof gtag!=='undefined')gtag('event','email_click',{event_category:'contact'})})});document.querySelectorAll('a[download]').forEach(function(l){l.addEventListener('click',function(){if(typeof gtag!=='undefined')gtag('event','cv_download',{event_category:'engagement'})})})});
 // Consent Management & Analytics
+// Email click-to-reveal
+(function(){var els=document.querySelectorAll('.email-reveal');for(var i=0;i<els.length;i++){els[i].addEventListener('click',function(e){e.preventDefault();var u=this.dataset.user,d=this.dataset.domain;var em=u+'@'+d;this.href='mailto:'+em;if(this.classList.contains('contact-item')){this.innerHTML=this.innerHTML.replace('Click to reveal email',em)}this.style.textDecoration='none';if(typeof gtag!=='undefined')gtag('event','email_reveal',{event_category:'contact'})})}})();
 function loadConsent(){try{var raw=localStorage.getItem('csepregi_consent');return raw?JSON.parse(raw):null}catch(e){return null}}
 function saveConsent(prefs){localStorage.setItem('csepregi_consent',JSON.stringify(prefs))}
 function applyConsent(prefs){var map={analytics_storage:prefs.analytics_storage?'granted':'denied',ad_storage:prefs.ad_storage?'granted':'denied',ad_user_data:prefs.ad_user_data?'granted':'denied',ad_personalization:prefs.ad_personalization?'granted':'denied',functionality_storage:prefs.functionality_storage?'granted':'denied',personalization_storage:prefs.personalization_storage?'granted':'denied',security_storage:'granted'};gtag('consent','update',map);if(prefs.analytics_storage&&!window._clarityLoaded){window._clarityLoaded=true;(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script","xphjulewst")}if(prefs.analytics_storage&&!window._gaConfigured){window._gaConfigured=true;gtag('config','G-S2H99HJXDR',{anonymize_ip:true,allow_google_signals:false,allow_ad_personalization_signals:false})}}
