@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Attendance — Attendance Control Live Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#14191f;--panel:#1c242d;--nav:#10151a;--alt:#212c37;
+  --grid:#34414d;--hdr:#263542;--border:#2e3c4a;--field:#222d36;--field-brd:#425464;
+  --accent:#2374ab;--accent-hi:#318bc4;--accent-lt:#55a9d8;
+  --text:#e8edf2;--muted:#9fb3c4;--dim:#7d93a6;
+  --green:#55d68a;--red:#e05f5f;--amber:#f5b942;
+  --r:8px;--mono:'Cascadia Mono',Consolas,'SF Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit;color:var(--text)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#33414f;border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- window frame ---------- */
+#win{max-width:1280px;margin:0 auto;height:100vh;display:flex;flex-direction:column;box-shadow:0 0 0 1px #22303b,0 18px 60px rgba(0,0,0,.5)}
+.titlebar{background:#0d1217;border-bottom:1px solid #22303b;padding:8px 16px;display:flex;align-items:center;gap:10px;flex:0 0 auto;user-select:none}
+.titlebar .dots{display:flex;gap:6px}
+.titlebar .dot{width:12px;height:12px;border-radius:50%}
+.dot.close{background:#ef4444}.dot.min{background:#f59e0b}.dot.max{background:#16a34a}
+.brand-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand-name .tag{font-size:10px;font-weight:600;background:#102b41;color:var(--accent-lt);padding:2px 8px;border-radius:100px;border:1px solid #1d4b6e}
+.titlebar .spacer{flex:1}
+.titlebar .session-chip{font-size:11px;color:var(--dim)}
+.hintbar{background:#0f151b;color:var(--dim);font-size:11px;padding:5px 16px;border-bottom:1px solid #1c2933;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.hintbar b{color:var(--accent-lt);font-weight:600}
+
+/* ---------- main shell ---------- */
+#shell{flex:1;display:flex;overflow:hidden}
+#nav{width:196px;background:var(--nav);border-right:1px solid #1c2831;display:none;flex-direction:column;flex:0 0 auto}
+#nav.open{display:flex}
+.nav-brand{padding:14px 12px 6px;text-align:center;color:var(--accent-lt);font-weight:800;font-size:14px;letter-spacing:.3px;line-height:1.25}
+.nav-brand small{display:block;color:var(--dim);font-size:10px;font-weight:500;letter-spacing:1px;margin-top:3px}
+.nav-scroll{flex:1;overflow-y:auto;padding:8px}
+.nav-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:9px 12px;background:transparent;border:none;border-radius:6px;color:var(--muted);font-size:12.5px;font-weight:500;margin-bottom:2px}
+.nav-item:hover{background:#1a2530;color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff;font-weight:600}
+.nav-item.active .nav-ic{opacity:1}
+.nav-item .nav-ic{opacity:.6;font-size:14px}
+#pages{flex:1;overflow-y:auto;background:var(--bg)}
+.page{display:none;padding:18px 22px 28px;max-width:1040px}
+.page.active{display:block;animation:fade .25s ease}
+.page[data-page="Kiosk"]{max-width:none;padding:0;height:100%}
+.page[data-page="Kiosk"].active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page h2{font-size:21px;font-weight:800;letter-spacing:.2px;margin-bottom:4px}
+.page .sub{color:var(--muted);font-size:12px;margin-bottom:16px}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.card .val{font-size:24px;font-weight:800;color:var(--accent-lt)}
+.card .cap{font-size:11.5px;color:var(--muted);margin-top:2px}
+.card .val.g{color:var(--green)}.card .val.r{color:var(--red)}.card .val.a{color:var(--amber)}
+
+/* ---------- tables ---------- */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+.panel-head{padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);background:#1a232c}
+.panel-head h3{font-size:13px;font-weight:700}
+.panel-head .grow{flex:1}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{position:sticky;top:0;background:var(--hdr);color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:.6px;text-align:left;padding:7px 10px;border-bottom:1px solid var(--grid);white-space:nowrap}
+.tbl td{padding:7px 10px;border-bottom:1px solid #222d37;white-space:nowrap;font-size:12px}
+.tbl tbody tr:nth-child(even){background:var(--alt)}
+.tbl tbody tr:hover{background:#26313c}
+.tbl .wrap{white-space:normal}
+.tbl .num{text-align:right;font-family:var(--mono)}
+.mono{font-family:var(--mono);font-size:11.5px}
+.dim{color:var(--dim)}
+.tbl .scroll{max-height:300px;overflow:auto}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;letter-spacing:.3px}
+.badge.ok{background:#0f2e1d;color:var(--green);border:1px solid #1d5035}
+.badge.bad{background:#331a1a;color:var(--red);border:1px solid #5a2b2b}
+.badge.warn{background:#332a12;color:var(--amber);border:1px solid #5a4a1d}
+.badge.info{background:#0f2840;color:var(--accent-lt);border:1px solid #1d4b6e}
+.badge.neutral{background:#26323c;color:var(--muted);border:1px solid #34414d}
+.tok{font-family:var(--mono);font-size:10.5px;background:#0f1a22;padding:1px 6px;border-radius:4px;border:1px solid #22303b;color:#9fc4e2}
+
+/* ---------- buttons / forms ---------- */
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600}
+.btn:hover{background:var(--accent-hi)}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn.ghost:hover{color:var(--text);border-color:#4a5c6d;background:#1a2530}
+.btn.green{background:#1f7a45}.btn.green:hover{background:#2a9a58}
+.btn.red{background:#8a2f2f}.btn.red:hover{background:#b03a3a}
+.btn.sm{padding:5px 10px;font-size:11px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+select,input[type=text],input[type=number]{background:var(--field);border:1px solid var(--field-brd);padding:7px 9px;border-radius:6px;font-size:12px}
+select:focus,input:focus{outline:none;border-color:var(--accent-lt)}
+.field{display:grid;gap:4px}
+.field label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.row .grow{flex:1;min-width:120px}
+
+/* ---------- kiosk ---------- */
+#kioskPage{height:100%;display:flex;flex-direction:column}
+.kiosk-top{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;gap:2px;text-align:center}
+.kiosk-date{font-size:16px;color:var(--muted);letter-spacing:.4px}
+.kiosk-clock{font-size:64px;font-weight:800;letter-spacing:1px;color:#fff;font-variant-numeric:tabular-nums;line-height:1.05}
+.kiosk-shift{font-size:12px;color:var(--dim);margin-bottom:6px}
+.kiosk-status{font-size:17px;font-weight:700;margin-top:14px;white-space:pre-line;min-height:52px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.kiosk-status .ok{color:var(--green)}
+.kiosk-status .bad{color:var(--red)}
+.kiosk-status .idline{font-size:13px;color:var(--muted);font-weight:500;font-family:var(--mono)}
+.kiosk-status .sys{color:var(--green);font-weight:700}
+.pulse{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.kiosk-foot{display:flex;justify-content:flex-end;padding:12px 16px;border-top:1px solid #1c2933;background:#0f151b}
+
+/* simulator panel (docked right of kiosk) */
+#kioskLayout{flex:1;display:grid;grid-template-columns:1.6fr 1fr;gap:12px;padding:12px 16px;min-height:0}
+@media(max-width:900px){#kioskLayout{grid-template-columns:1fr}}
+.sim-panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.sim-panel h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--accent-lt)}
+.clock-sel{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:#16222c;color:var(--muted);border:1px solid var(--border);padding:4px 9px;border-radius:100px;font-size:10.5px;font-weight:600}
+.chip:hover{color:var(--text);border-color:#4a5c6d}
+.chip.on{background:#0f2840;color:var(--accent-lt);border-color:#1d4b6e}
+.note{font-size:10.5px;color:var(--dim);line-height:1.45}
+.note b{color:var(--muted)}
+.feed{flex:1;overflow-y:auto;max-height:220px;display:flex;flex-direction:column;gap:4px}
+.feedline{display:flex;gap:8px;align-items:baseline;font-family:var(--mono);font-size:10.5px;padding:3px 6px;border-radius:4px;background:#0f1a22}
+.feedline .t{color:var(--dim)}
+.feedline .who{color:#c7d6e2}
+.feedline.ok{border-left:2px solid var(--green)}
+.feedline.bad{border-left:2px solid var(--red)}
+.feedline .act{font-weight:700}
+
+/* demo time banner */
+#demoBanner{display:none;background:#332a12;color:var(--amber);font-size:11px;padding:4px 12px;border-bottom:1px solid #5a4a1d}
+#demoBanner.show{display:block}
+
+/* ---------- modal ---------- */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,12,.72);display:none;align-items:center;justify-content:center;z-index:50;backdrop-filter:blur(2px)}
+.modal-back.show{display:flex}
+.modal{background:#151c24;border:1px solid #2a3a49;border-radius:10px;width:340px;padding:20px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.modal h3{font-size:15px;margin-bottom:4px}
+.modal .msub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.modal .field{margin-bottom:10px}
+.modal .err{color:var(--red);font-size:11px;min-height:14px;margin:6px 0}
+.modal .row{justify-content:flex-end}
+
+/* summary line */
+.summary{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent-lt);border-radius:6px;padding:8px 12px;font-size:11.5px;color:var(--muted);margin-bottom:12px;display:flex;gap:16px;flex-wrap:wrap}
+.summary b{color:var(--text)}
+.summary .g{color:var(--green)}.summary .r{color:var(--red)}
+</style>
+</head>
+<body>
+<div id="win">
+
+  <!-- demo-time banner -->
+  <div id="demoBanner">⏱ Demo time set — validation runs against this clock. Press <b>Live</b> to follow the real time.</div>
+
+  <!-- title bar -->
+  <div class="titlebar">
+    <div class="dots"><span class="dot close"></span><span class="dot min"></span><span class="dot max"></span></div>
+    <div class="brand-name">Attendance Control <span class="tag">v1.0.0 · Demo</span></div>
+    <div class="spacer"></div>
+    <div class="session-chip" id="sessionChip">Session: not logged in</div>
+  </div>
+
+  <!-- hint bar -->
+  <div class="hintbar">
+    <span>🎯 <b>Digital attendance kiosk</b> — employees scan a Code&nbsp;128 badge; the engine validates every scan against shift rules.</span>
+    <span>Simulate a scan below, or <b>log in as administrator</b> to explore the dashboard.</span>
+  </div>
+
+  <!-- shell -->
+  <div id="shell">
+    <!-- left navigation -->
+    <aside id="nav">
+      <div class="nav-brand">ATTENDANCE<br>CONTROL<small>v1.0.0 · DEMO</small></div>
+      <div class="nav-scroll" id="navList"></div>
+    </aside>
+
+    <!-- content / pages -->
+    <main id="pages"></main>
+  </div>
+</div>
+
+<!-- login modal -->
+<div class="modal-back" id="loginModal">
+  <div class="modal">
+    <h3>Administrator login</h3>
+    <div class="msub">First run creates the admin · demo: username <b>admin</b> / password <b>admin</b></div>
+    <div class="field"><label>Username</label><input type="text" id="lgUser" value="admin" autocomplete="off"></div>
+    <div class="field"><label>Password</label><input type="password" id="lgPass" value="admin"></div>
+    <div class="err" id="lgErr"></div>
+    <div class="row">
+      <button class="btn ghost" onclick="closeLogin()">Cancel</button>
+      <button class="btn" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   Attendance Control — interactive demo
+   Faithful re-creation of the real desktop app (PySide6) in the browser.
+   All data below is SAMPLE data mirroring the real data model.
+   ========================================================================= */
+'use strict';
+
+/* ---------- tiny i18n (English / Română) for the most visible labels ---------- */
+var LANG='en';
+var I18N={
+ 'Dashboard':['Dashboard','Panou'],'Employees':['Employees','Angajați'],'Shifts':['Shifts','Ture'],
+ 'Attendance':['Attendance','Pontaj'],'Live Scans':['Live Scans','Scanări live'],'Exceptions':['Exceptions','Excepții'],
+ 'Terminals & Scanners':['Terminals & Scanners','Terminale și scanere'],'Settings':['Settings','Setări'],
+ 'Kiosk':['Kiosk','Chioșc'],'SYSTEM ONLINE':['SYSTEM ONLINE','SISTEM ONLINE'],'READY TO SCAN':['READY TO SCAN','GATA DE SCANARE'],
+ 'CLOCK IN':['CLOCK IN','INTRARE'],'CLOCK OUT':['CLOCK OUT','IEȘIRE'],
+ 'Employees (total)':['Employees','Angajați'],'Present now':['Present now','Prezenți acum'],
+ 'Missing clock-out':['Missing clock-out','Fără ieșire'],'Exceptions today':['Exceptions today','Excepții azi'],
+ 'Scans today':['Scans today','Scanări azi'],'Accepted scans':['Accepted scans','Scanări acceptate'],
+ 'Terminals':['Terminals','Terminale'],'Scanners':['Scanners','Scanere'],
+ 'Sign out':['Log out → Kiosk','Deconectare → Chioșc'],'Close App':['Close App','Închide aplicația'],
+ 'not logged in':['not logged in','nu sunteți autentificat']
+};
+function T(k){return (I18N[k]?I18N[k][LANG==='ro'?1:0]:k);}
+var REASONS_RO={'UNKNOWN_BARCODE':'COD DE BARE NECUNOSCUT','INACTIVE_EMPLOYEE':'ANGAJAT INACTIV','INVALID_SHIFT':'TURĂ INVALIDĂ','DUPLICATE_SCAN':'SCANARE DUPLICAT','CLOCK_IN_TOO_EARLY':'INTRARE PREA DEVREME','CLOCK_OUT_NOT_ALLOWED':'IEȘIRE PREA DEVREME','REJECTED':'RESPINS'};
+function reasonText(r){ if(LANG!=='ro'||!r)return r||''; var c=r.split(';')[0].trim(); return REASONS_RO[c]?r.replace(c,REASONS_RO[c],1):r; }
+
+/* =========================================================================
+   SEED DATA  (mirrors the real SQLite schema: employees, shifts, sessions,
+   scan_events, exceptions, terminals, scanners)
+   ========================================================================= */
+var today=new Date(); today.setHours(0,0,0,0);
+var yest=new Date(today); yest.setDate(yest.getDate()-1);
+
+function at(base,h,m){var d=new Date(base);d.setHours(h,m,0,0);return d;}
+
+var SHIFTS=[
+ {id:1,name:'Schimb 1',start:'06:00',end:'14:00',early:60,outMin:10,active:true},
+ {id:2,name:'Schimb 2',start:'14:00',end:'22:00',early:60,outMin:10,active:true},
+ {id:3,name:'Schimb 3',start:'22:00',end:'06:00',early:60,outMin:10,active:true,overnight:true},
+ {id:4,name:'Târziu (Admin)',start:'10:00',end:'18:00',early:30,outMin:15,active:true}
+];
+
+/* rotation: ordered cycle; members advance one step every Monday */
+var ROTATIONS={ rot3:{name:'Rotatie 3 ture',ids:[1,2,3]} };
+
+var EMPLOYEES=[
+ {id:'EMP000001',first:'Ana',last:'Popescu',dept:'SMT Production',pos:'Solder Machine Operator',active:true,shiftId:1},
+ {id:'EMP000002',first:'Maria',last:'Ionescu',dept:'SMT Production',pos:'AOI Inspector',active:true,shiftId:1},
+ {id:'EMP000003',first:'Andrei',last:'Dumitru',dept:'Final Assembly',pos:'Line Technician',active:true,shiftId:1},
+ {id:'EMP000004',first:'Ioana',last:'Stan',dept:'Quality',pos:'QC Inspector',active:true,shiftId:2},
+ {id:'EMP000005',first:'Mihai',last:'Georgescu',dept:'Logistics',pos:'Warehouse Coordinator',active:true,shiftId:2},
+ {id:'EMP000006',first:'Elena',last:'Radu',dept:'Maintenance',pos:'Electrician',active:true,shiftId:3},
+ {id:'EMP000007',first:'Cristian',last:'Moldovan',dept:'Final Assembly',pos:'Team Lead',active:true,shiftId:1,rotation:{name:'rot3',start:yest,startShiftId:1}},
+ {id:'EMP000008',first:'Vlad',last:'Petrescu',dept:'SMT Production',pos:'Operator',active:false,shiftId:1}
+];
+var TERMINALS=[
+ {id:1,name:'Main Gate'},
+ {id:2,name:'Exit Gate'},
+ {id:3,name:'Canteen'}
+];
+var SCANNERS=[
+ {id:'SC-GATE-01',term:1,port:'COM3',baud:9600,enabled:true,desc:'Main gate'},
+ {id:'SC-GATE-02',term:1,port:'COM4',baud:9600,enabled:true,desc:'Main gate (spare)'},
+ {id:'SC-EXIT-01',term:2,port:'COM5',baud:9600,enabled:true,desc:'Exit gate'},
+ {id:'SC-CANT-01',term:3,port:'COM6',baud:9600,enabled:false,desc:'Canteen'}
+];
+
+/* sessions: {employeeId, shiftId, clockIn(Date), clockOut(Date|null), termIn, termOut} */
+var SESSIONS=[
+ {employeeId:'EMP000001',shiftId:1,clockIn:at(yest,6,2),clockOut:at(yest,14,5),termIn:1,termOut:2},
+ {employeeId:'EMP000002',shiftId:1,clockIn:at(yest,6,5),clockOut:at(yest,14,1),termIn:1,termOut:1},
+ {employeeId:'EMP000003',shiftId:1,clockIn:at(yest,5,58),clockOut:at(yest,14,12),termIn:1,termOut:1},
+ {employeeId:'EMP000004',shiftId:2,clockIn:at(yest,14,0),clockOut:at(yest,22,3),termIn:1,termOut:2},
+ {employeeId:'EMP000005',shiftId:2,clockIn:at(yest,13,56),clockOut:at(yest,21,58),termIn:1,termOut:1},
+ {employeeId:'EMP000006',shiftId:3,clockIn:at(yest,21,58),clockOut:null,termIn:1,termOut:null},   // still open -> missing clock-out
+/* today — EMP000003 has not arrived yet so a valid clock-in can be demonstrated */
+   {employeeId:'EMP000001',shiftId:1,clockIn:at(today,6,3),clockOut:null,termIn:1,termOut:null},
+   {employeeId:'EMP000002',shiftId:1,clockIn:at(today,6,1),clockOut:null,termIn:1,termOut:null},
+ {employeeId:'EMP000007',shiftId:1,clockIn:at(today,6,0),clockOut:null,termIn:1,termOut:null}
+];
+
+/* scan events: {t:Date, employeeId|null, action, term, scanner, accepted, reason} */
+function ev(t,employeeId,action,term,scanner,accepted,reason){
+  return {t:t,employeeId:employeeId,action:action,term:term,scanner:scanner,accepted:accepted,reason:reason};
+}
+var EVENTS=[
+ ev(at(today,6,3),'EMP000001','IN',1,'SC-GATE-01',true,null),
+ ev(at(today,6,1),'EMP000002','IN',1,'SC-GATE-01',true,null),
+ ev(at(today,6,0),'EMP000007','IN',1,'SC-GATE-01',true,null),
+ ev(at(today,7,44),null,'UNKNOWN',1,'SC-GATE-01',false,'UNKNOWN_BARCODE'),
+ ev(at(today,7,50),'EMP000008','REJECTED',1,'SC-GATE-01',false,'INACTIVE_EMPLOYEE'),
+ ev(at(today,7,52),'EMP000002','REJECTED',1,'SC-GATE-01',false,'CLOCK_OUT_NOT_ALLOWED; earliest 13:50')
+];
+
+/* exceptions = rejected scans stored as records */
+function buildExceptions(){ return EVENTS.filter(function(e){return !e.accepted;}).map(function(e){return e;}); }
+
+/* =========================================================================
+   ENGINE — faithful port of app/attendance/engine.py rules
+   ========================================================================= */
+var DUP_SECONDS=5;
+function currentShiftFor(emp,onDate){
+  /* weekly rotation: member moves one shift along the cycle every Monday */
+  if(emp.rotation){
+    var r=ROTATIONS[emp.rotation.name]; if(!r) return byId(SHIFTS,emp.shiftId);
+    var anchor=emp.rotation.start; var on=new Date(onDate);
+    var weeks=Math.floor(Math.round((new Date(on.getFullYear(),on.getMonth(),on.getDate())-new Date(anchor.getFullYear(),anchor.getMonth(),anchor.getDate()))/(86400000*7)));
+    var idx=(r.ids.indexOf(emp.rotation.startShiftId)+weeks)%r.ids.length;
+    if(idx<0) idx+=r.ids.length;
+    return byId(SHIFTS,r.ids[idx]);
+  }
+  return byId(SHIFTS,emp.shiftId);
+}
+function byId(arr,id){ for(var i=0;i<arr.length;i++) if(arr[i].id===id) return arr[i]; return null; }
+function hmToMin(s){ var p=s.split(':'); return (+p[0])*60+(+p[1]); }
+function fmtHM(d){ var h=d.getHours(),m=d.getMinutes(); return (h<10?'0':'')+h+':'+(m<10?'0':'')+m; }
+function fmtStamp(d){ var p=function(n){return (n<10?'0':'')+n;}; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
+
+function shiftWindow(now,shift){
+  /* returns [startMin, endMin] as minutes relative to the day of `now`; overnight rolls into next day */
+  var start=hmToMin(shift.start), end=hmToMin(shift.end);
+  if(end<=start) end+=1440;                       // overnight shift crosses midnight
+  var nowMin=now.getHours()*60+now.getMinutes();
+  if(shift.overnight && nowMin < start-shift.early) { start-=1440; end-=1440; } // pre-start window belongs to previous day
+  return [start,end];
+}
+
+function evaluate(emp,now,term,scannerId){
+  var action='IN',reason=null,shift=null;
+  var active=null;
+  if(emp){ active=findOpen(emp.id); }
+  if(!emp){ action='UNKNOWN'; reason='UNKNOWN_BARCODE'; }
+  else if(!emp.active){ action='REJECTED'; reason='INACTIVE_EMPLOYEE'; }
+  else{
+    shift = active? byId(SHIFTS,active.shiftId) : currentShiftFor(emp,now);
+    if(!shift || !shift.active){ action='REJECTED'; reason='INVALID_SHIFT'; }
+    else{
+      var last=lastScan(emp.id);
+      if(last && (now-last.t)/1000 < DUP_SECONDS){ action='REJECTED'; reason='DUPLICATE_SCAN'; }
+      else{
+        var w=shiftWindow(now,shift); var nowMin=now.getHours()*60+now.getMinutes();
+        if(!active && nowMin < w[0]-shift.early){
+          action='REJECTED'; reason='CLOCK_IN_TOO_EARLY; allowed from '+fmtHMin(w[0]-shift.early);
+        } else if(active && nowMin < w[1]-shift.outMin){
+          action='REJECTED'; reason='CLOCK_OUT_NOT_ALLOWED; earliest '+fmtHMin(w[1]-shift.outMin);
+        }
+      }
+    }
+  }
+  var accepted=reason===null;
+  if(!accepted && emp){ action='REJECTED'; }
+  else if(!emp){ action='UNKNOWN'; }
+  else { action = active? 'OUT' : 'IN'; }
+  return {accepted:accepted,employee:emp,action:action,shift:shift,reason:reason,now:new Date(now)};
+}
+function fmtHMin(m){ m=((m%1440)+1440)%1440; var h=Math.floor(m/60),mm=m%60; return (h<10?'0':'')+h+':'+(mm<10?'0':'')+mm; }
+function findOpen(eid){ for(var i=0;i<SESSIONS.length;i++) if(SESSIONS[i].employeeId===eid && !SESSIONS[i].clockOut) return SESSIONS[i]; return null; }
+function lastScan(eid){ for(var i=EVENTS.length-1;i>=0;i--) if(EVENTS[i].employeeId===eid) return EVENTS[i]; return null; }
+
+function applyResult(res,term,scannerId){
+  var ts=new Date(res.now);
+  var employeeId=res.employee?res.employee.id:null;
+  EVENTS.unshift(ev(ts,employeeId,res.action,term,scannerId,res.accepted,res.reason));
+  if(res.accepted && res.action==='IN' && res.employee){
+    SESSIONS.push({employeeId:res.employee.id,shiftId:res.shift.id,clockIn:new Date(ts),clockOut:null,termIn:term,termOut:null});
+  } else if(res.accepted && res.action==='OUT' && res.employee){
+    var open=findOpen(res.employee.id); if(open){ open.clockOut=new Date(ts); open.termOut=term; }
+  }
+  // cap list length
+  if(EVENTS.length>400) EVENTS.length=400;
+}
+
+/* =========================================================================
+   DEMO CLOCK
+   ========================================================================= */
+var demoNow=new Date();           // live real-time clock by default
+var liveMode=true;
+var tick=null;
+function clockTick(){ if(liveMode){ demoNow=new Date(); renderClock(); } }
+function fmtClock(d){ var p=function(n){return (n<10?'0':'')+n;}; return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
+function fmtDate(d){ var wd=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()];
+  var mo=['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()];
+  return wd+', '+('0'+d.getDate()).slice(-2)+' '+mo+' '+d.getFullYear(); }
+
+/* =========================================================================
+   UI RENDERING
+   ========================================================================= */
+var ADMIN=false, currentPage='Dashboard';
+var NAV=['Dashboard','Employees','Shifts','Attendance','Live Scans','Exceptions','Terminals & Scanners','Settings','Kiosk'];
+var PAGES=[];
+var resultTimer=null;
+
+function el(html){ var d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+
+function boot(){
+  buildShell();
+  renderNav();
+  showKiosk();
+  tick=setInterval(clockTick,1000);
+  renderClock();
+  $('#demoBanner').classList.remove('show'); // live clock by default
+}
+
+function $(id){ return document.getElementById(String(id).replace(/^#/,'')); }
+
+function buildShell(){
+  var pages=$('#pages');
+  pages.innerHTML='';
+  NAV.forEach(function(label){ pages.appendChild(el('<section class="page" data-page="'+label+'"></section>')); });
+  buildKioskPage();
+  buildDashboardPage();
+  buildEmployeesPage();
+  buildShiftsPage();
+  buildAttendancePage();
+  buildLiveScansPage();
+  buildExceptionsPage();
+  buildHardwarePage();
+  buildSettingsPage();
+}
+
+function showPage(name,forceKiosk){
+  if(name==='Kiosk'){ showKiosk(); return; }
+  ADMIN=true; $('#nav').classList.add('open'); $('#pages').style.display='block';
+  if(forceKiosk===false){} 
+  currentPage=name;
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var page=document.querySelector('.page[data-page="'+name+'"]');
+  if(page){ page.classList.add('active'); renderInto(page,name); }
+  refreshNav();
+  if(name==='Dashboard') refreshCards();
+  else if(name==='Employees') renderEmp();
+  else if(name==='Shifts') renderShiftRows();
+}
+
+function renderInto(page,name){
+  /* hook to re-render dynamic content of the page on navigation */
+  if(name==='Dashboard') refreshCards();
+  if(name==='Attendance') renderAttendance();
+  if(name==='Live Scans') renderLiveScans();
+  if(name==='Exceptions') renderExceptions();
+  if(name==='Settings') renderSettingsValues();
+}
+
+function showKiosk(){
+  ADMIN=false;
+  $('#pages').style.display='block';
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  $('#nav').classList.remove('open');
+  var page=document.querySelector('.page[data-page="Kiosk"]');
+  if(page) page.classList.add('active');
+  refreshSession();
+  refreshNav();
+}
+
+function refreshNav(){
+  document.querySelectorAll('#navList .nav-item').forEach(function(b){
+    var label=b.getAttribute('data-page');
+    b.classList.toggle('active',ADMIN && label===currentPage);
+  });
+}
+
+function refreshSession(){
+  $('#sessionChip').textContent= (ADMIN? 'Administrator: admin':'Session: '+T('not logged in'));
+}
+
+/* ---------- NAV ---------- */
+function renderNav(){
+  var list=$('#navList'); list.innerHTML='';
+  var icons={'Dashboard':'▦','Employees':'👤','Shifts':'🕒','Attendance':'📋','Live Scans':'📡','Exceptions':'⚠','Terminals & Scanners':'🖥','Settings':'⚙','Kiosk':'🖥️'};
+  NAV.forEach(function(label){
+    if(!ADMIN && label!=='Kiosk') return;
+    var b=document.createElement('button');
+    b.className='nav-item'; b.setAttribute('data-page',label);
+    b.innerHTML='<span class="nav-ic">'+(icons[label]||'•')+'</span><span class="lbl">'+T(label)+'</span>';
+    b.onclick=function(){ showPage(label); };
+    list.appendChild(b);
+  });
+  // admin-only footer nav extras hidden pages removed from list is enough
+}
+
+/* ---------- KIOSK PAGE ---------- */
+function buildKioskPage(){
+  var page=document.querySelector('.page[data-page="Kiosk"]');
+  page.innerHTML=
+  '<div id="kioskPage">'+
+   '<div id="kioskLayout">'+
+    '<div class="kiosk-top">'+
+      '<div class="kiosk-date" id="kDate"></div>'+
+      '<div class="kiosk-clock" id="kClock">--:--:--</div>'+
+      '<div class="kiosk-shift" id="kShiftLine"></div>'+
+      '<div class="kiosk-status" id="kStatus"><span class="sys">SYSTEM ONLINE<br>READY TO SCAN</span></div>'+
+    '</div>'+
+    '<div class="sim-panel">'+
+      '<h4>🧪 Scanner simulator</h4>'+
+      '<div class="note">Replicates a Honeywell scanner in USB-Serial mode. Pick an employee, choose the demo time, then press <b>Simulate Scan</b>.</div>'+
+      '<div class="field"><label>Demo clock</label>'+
+        '<div class="clock-sel">'+
+          '<button class="chip on" data-t="live" onclick="setClockPreset(this)">● Live</button>'+
+          '<button class="chip" data-t="0600" onclick="setClockPreset(this)">06:00</button>'+
+          '<button class="chip" data-t="0942" onclick="setClockPreset(this)">09:42</button>'+
+          '<button class="chip" data-t="0559" onclick="setClockPreset(this)">05:59 · early</button>'+
+          '<button class="chip" data-t="1355" onclick="setClockPreset(this)">13:55 · end A</button>'+
+          '<button class="chip" data-t="2130" onclick="setClockPreset(this)">21:30 · night</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="field"><label>Employee / badge</label>'+
+        '<select id="scanEmp"></select></div>'+
+      '<div class="field"><label>Terminal · Scanner</label>'+
+        '<div class="row">'+
+          '<select id="scanTerm" class="grow"></select>'+
+          '<select id="scanScanner" class="grow"></select>'+
+        '</div></div>'+
+      '<div class="row">'+
+        '<button class="btn green grow" onclick="simulateScan()">📟 Simulate Scan</button>'+
+      '</div>'+
+      '<h4>🎯 Scenarios</h4>'+
+      '<div class="row" style="gap:6px">'+
+        '<button class="chip" onclick="scenario(\'in\')">Valid clock-in</button>'+
+        '<button class="chip" onclick="scenario(\'tooEarly\')">Too early</button>'+
+        '<button class="chip" onclick="scenario(\'dup\')">Duplicate</button>'+
+        '<button class="chip" onclick="scenario(\'unknown\')">Unknown badge</button>'+
+        '<button class="chip" onclick="scenario(\'inactive\')">Inactive</button>'+
+        '<button class="chip" onclick="scenario(\'overnightOut\')">Night OUT</button>'+
+      '</div>'+
+      '<div class="note" id="scenarioHint"></div>'+
+      '<h4>📡 Scan feed · today</h4>'+
+      '<div class="feed" id="scanFeed"></div>'+
+    '</div>'+
+   '</div>'+
+   '<div class="kiosk-foot">'+
+     '<button class="btn ghost" onclick="openLogin()">🔐 Administrator login</button>'+
+   '</div>'+
+  '</div>';
+  // populate dropdowns
+  var sel=$('scanEmp'); sel.innerHTML='';
+  EMPLOYEES.forEach(function(e){ sel.appendChild(new Option((e.active?'':'[INACTIVE] ')+e.id+' — '+e.first+' '+e.last+' · '+shiftName(e),e.id)); });
+  sel.appendChild(new Option('(unknown badge) — scan raw text','__UNKNOWN__'));
+  fillTermScanners();
+  renderClock();
+  renderFeed();
+}
+
+function shiftName(e){ var s=currentShiftFor(e,new Date()); return s? s.name : '—'; }
+function setClockPreset(btn){
+  document.querySelectorAll('.clock-sel .chip').forEach(function(c){c.classList.remove('on');});
+  btn.classList.add('on');
+  var t=btn.getAttribute('data-t');
+  if(t==='live'){ liveMode=true; demoNow=new Date(); $('#demoBanner').classList.remove('show'); }
+  else{ liveMode=false; demoNow=at(today,Math.floor(t/100),t%100); $('#demoBanner').classList.add('show'); }
+  renderClock();
+  setKioskReady();
+}
+
+function fillTermScanners(){
+  var term=$('scanTerm'), sc=$('scanScanner');
+  term.innerHTML=''; sc.innerHTML='';
+  TERMINALS.forEach(function(t){ term.appendChild(new Option(t.name,t.id)); });
+  paintScanners();
+  term.onchange=paintScanners;
+}
+function paintScanners(){
+  var term=+($('scanTerm').value), sc=$('scanScanner');
+  sc.innerHTML='';
+  SCANNERS.filter(function(s){return s.term===term;}).forEach(function(s){
+    sc.appendChild(new Option(s.id+' · '+s.port+' ('+s.baud+')'+(s.enabled?'':' · OFF'),s.id));
+  });
+}
+function currentScannerId(){ return $('scanScanner').value; }
+
+function renderClock(){
+  var k=$('kClock'); if(!k) return;
+  k.textContent=fmtClock(demoNow);
+  $('kDate').textContent=fmtDate(demoNow);
+  var d=fmtHM(demoNow);
+  $('kShiftLine').textContent= liveMode?'(following the live clock)':'Demo time '+d+' · Schimb 1 06–14 · Schimb 2 14–22 · Schimb 3 22–06';
+}
+
+function setKioskReady(){
+  if(resultTimer) clearTimeout(resultTimer);
+  var st=$('kStatus');
+  st.innerHTML='<span class="sys">'+T('SYSTEM ONLINE')+'<br>'+T('READY TO SCAN')+'</span>';
+}
+
+/* kiosk status flash like the real present(): auto-reset after 2.5 s */
+function present(res){
+  if(resultTimer) clearTimeout(resultTimer);
+  var st=$('kStatus');
+  var who= res.employee? res.employee.id : T('Unknown badge');
+  if(res.accepted){
+    st.innerHTML='<span class="ok">✓ '+T('CLOCK ' + (res.action==='IN'?'IN':'OUT'))+'</span><span class="idline">'+who+'</span>';
+  } else {
+    st.innerHTML='<span class="bad">⚠ '+reasonText(res.reason||'REJECTED')+'</span><span class="idline">'+who+'</span>';
+  }
+  resultTimer=setTimeout(setKioskReady,2500);
+}
+
+function feedLineHtml(res){
+  var emp=res.employee?res.employee.first+' '+res.employee.last:(res.employeeId||'Unknown');
+  var extra=res.employeeIdLine||'';
+  return '<span class="t">'+fmtStamp(res.now).slice(11)+'</span>'+
+    '<span class="who">'+emp+'</span>'+
+    '<span class="act">'+(res.accepted?'✓ '+res.action:'✗ '+(res.action||'REJECTED'))+'</span>'+
+    '<span class="t">'+(res.accepted?'':reasonText(res.reason))+extra+'</span>';
+}
+function renderFeed(){
+  var feed=$('scanFeed'); if(!feed) return;
+  feed.innerHTML='';
+  var todayEvents=EVENTS.filter(function(e){ return sameDay(e.t,today); }).slice(0,30);
+  todayEvents.reverse().forEach(function(e){
+    var emp=e.employeeId?byEmp(e.employeeId):null;
+    var line=document.createElement('div');
+    line.className='feedline '+(e.accepted?'ok':'bad');
+    line.innerHTML=feedLineHtml({employee:emp,employeeId:e.employeeId,action:e.action,accepted:e.accepted,reason:e.reason,now:e.t,employeeIdLine:''});
+    feed.appendChild(line);
+  });
+}
+function sameDay(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+function pushFeed(res){
+  var feed=$('scanFeed'); if(!feed) return;
+  var line=document.createElement('div');
+  line.className='feedline '+(res.accepted?'ok':'bad');
+  line.innerHTML=feedLineHtml(res);
+  feed.insertBefore(line,feed.firstChild);
+  while(feed.children.length>40) feed.removeChild(feed.lastChild);
+}
+
+function simulateScan(empId,term,scannerId){
+  term=term||+($('scanTerm').value);
+  scannerId=scannerId||currentScannerId();
+  empId=empId||$('scanEmp').value;
+  var emp=null;
+  if(empId!=='__UNKNOWN__') emp=byEmp(empId);
+  var res=evaluate(emp,demoNow,term,scannerId);
+  res.employeeIdLine= empId==='__UNKNOWN__' ? ' (raw: 9Z1K7Q4T)' : '';
+  applyResult(res,term,scannerId);
+  res.employeeIdLine=res.employeeIdLine||'';
+  present(res);
+  pushFeed(res);
+  if(ADMIN){ refreshCards(); if(currentPage==='Live Scans') renderLiveScans(); if(currentPage==='Exceptions') renderExceptions(); if(currentPage==='Attendance') renderAttendance(); }
+  return res;
+}
+function byEmp(id){ for(var i=0;i<EMPLOYEES.length;i++) if(EMPLOYEES[i].id===id) return EMPLOYEES[i]; return null; }
+
+/* predefined scenarios demonstrate each rule (clock holds at the set demo time) */
+function scenario(kind){
+  var map={
+    in:{t:'0942',emp:'EMP000003',hint:'EMP000003 (Schimb 1, 06–14) has not clocked in yet → scanning at 09:42 is a valid CLOCK IN (late arrivals are allowed).'},
+    tooEarly:{t:'0942',emp:'EMP000005',hint:'EMP000005 is on Schimb 2 (14–22) with 60 min early entry → earliest clock-in is 13:00, so 09:42 is rejected as CLOCK_IN_TOO_EARLY.'},
+    dup:{t:'0942',emp:'EMP000003',hint:'Run “Valid clock-in” first, then this — a second scan on the same open employee inside the duplicate window → DUPLICATE_SCAN.'},
+    unknown:{t:'0942',emp:'__UNKNOWN__',hint:'A badge that matches no employee → UNKNOWN_BARCODE, retained as an exception (raw text is used as the barcode).'},
+    inactive:{t:'0942',emp:'EMP000008',hint:'EMP000008 is deactivated in the system → INACTIVE_EMPLOYEE.'},
+    overnightOut:{t:'0942',emp:'EMP000006',hint:'EMP000006 worked the overnight Schimb 3 (22–06) but never clocked out — a scan after 05:50 closes the session (missing clock-out resolved).'}
+  };
+  var s=map[kind]; if(!s) return;
+  setPreset(s.t);
+  $('scanEmp').value=s.emp;
+  $('scenarioHint').textContent=s.hint;
+  simulateScan();
+}
+function setPreset(t){
+  var chips=document.querySelectorAll('.clock-sel .chip');
+  chips.forEach(function(c){ c.classList.toggle('on',c.getAttribute('data-t')===t); });
+  liveMode=false; demoNow=at(today,Math.floor(t/100),t%100); $('#demoBanner').classList.add('show');
+  renderClock();
+}
+
+/* ---------- DASHBOARD ---------- */
+function summary(){
+  var open=SESSIONS.filter(function(x){return !x.clockOut;});
+  var sameDay=function(a,b){ return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); };
+  var present=open.filter(function(x){return sameDay(x.clockIn,today);}).length;
+  var missing=open.filter(function(x){return x.clockIn<today && x.clockIn.toDateString()!=today.toDateString();}).length;
+  var scansT=EVENTS.filter(function(e){return sameDay(e.t,today);}).length;
+  var accT=EVENTS.filter(function(e){return sameDay(e.t,today)&&e.accepted;}).length;
+  var excT=EVENTS.filter(function(e){return !e.accepted&&sameDay(e.t,today);}).length;
+  var actEmp=EMPLOYEES.filter(function(e){return e.active;}).length;
+  var enScan=SCANNERS.filter(function(s){return s.enabled;}).length;
+  return {total_employees:EMPLOYEES.length,active_employees:actEmp,present_now:present,missing_out:missing,open_sessions:open.length,
+    terminals:TERMINALS.length,scanners:SCANNERS.length,enabled_scanners:enScan,scans_today:scansT,accepted_today:accT,exceptions_today:excT};
+}
+
+function buildDashboardPage(){
+  var page=document.querySelector('.page[data-page="Dashboard"]');
+  page.innerHTML=
+   '<h2>'+T('Dashboard')+'</h2><div class="sub">ATTENDANCE CONTROL — DASHBOARD · live summary, refreshed as scans arrive</div>'+
+   '<div class="cards" id="dashCards"></div>'+
+   '<div class="panel"><div class="panel-head"><h3>📡 Live scans</h3><div class="grow"></div><span class="badge info">auto-refresh 3 s</span></div>'+
+     '<div class="scroll"><table class="tbl"><thead><tr><th>Timestamp</th><th>Employee</th><th>Action</th><th>Terminal</th><th>Scanner</th><th>Accepted</th><th>Reason</th></tr></thead><tbody id="dashRows"></tbody></table></div></div>';
+}
+function refreshCards(){
+  var c=summary();
+  var cards=$('dashCards'); if(!cards) return;
+  var defs=[['total_employees',T('Employees (total)')],['present_now',T('Present now')],['missing_out',T('Missing clock-out')],['exceptions_today',T('Exceptions today')],
+            ['scans_today',T('Scans today')],['accepted_today',T('Accepted scans')],['terminals',T('Terminals')],['scanners',T('Scanners')]];
+  cards.innerHTML=defs.map(function(d){
+    var val=c[d[0]];
+    var cls= d[0]==='present_now'||d[0]==='accepted_today' ? 'g' : (d[0]==='missing_out'||d[0]==='exceptions_today'? (val>0?'r':'') : '');
+    return '<div class="card"><div class="val '+cls+'">'+val+'</div><div class="cap">'+d[1]+'</div></div>';
+  }).join('');
+  renderDashRows();
+}
+function dashRowsHtml(){
+  var rows=EVENTS.slice(0,20).map(function(e){
+    var emp=e.employeeId?byEmp(e.employeeId):null;
+    var who= emp? emp.first+' '+emp.last : (e.employeeId||'Unknown');
+    return '<tr><td class="mono">'+fmtStamp(e.t).slice(5)+'</td><td>'+who+'</td><td><span class="tok">'+e.action+'</span></td><td>'+termName(e.term)+'</td><td class="mono">'+(e.scanner||'—')+'</td>'+
+      '<td>'+(e.accepted?'<span class="badge ok">YES</span>':'<span class="badge bad">NO</span>')+'</td><td class="wrap">'+(e.reason?reasonText(e.reason):'—')+'</td></tr>';
+  }).join('');
+  return rows;
+}
+function renderDashRows(){ var t=$('dashRows'); if(t) t.innerHTML=dashRowsHtml(); }
+function termName(id){ var t=TERMINALS.find(function(x){return x.id===id;}); return t? t.name : ('T'+id); }
+
+/* ---------- EMPLOYEES ---------- */
+function buildEmployeesPage(){
+  var page=document.querySelector('.page[data-page="Employees"]');
+  page.innerHTML='<h2>'+T('Employees')+'</h2><div class="sub">Sequential employee IDs (EMP000001…), barcode = employee ID · 8 sample employees</div>'+
+   '<div class="panel"><div class="scroll" style="max-height:420px"><table class="tbl"><thead><tr><th>Employee ID</th><th>Name</th><th>Department</th><th>Position</th><th>Shift (this week)</th><th>Status</th></tr></thead><tbody id="empRows"></tbody></table></div></div>';
+  $('empRows').innerHTML=empRowsHtml();
+}
+function renderEmployees(){}
+function empRowsHtml(){
+  return EMPLOYEES.map(function(e){
+    return '<tr><td class="mono">'+e.id+'</td><td>'+e.first+' '+e.last+'</td><td>'+e.dept+'</td><td>'+e.pos+'</td><td>'+shiftName(e)+'</td>'+
+      '<td>'+(e.active?'<span class="badge ok">ACTIVE</span>':'<span class="badge bad">INACTIVE</span>')+'</td></tr>';
+  }).join('');
+}
+function renderEmp(){ var t=$('empRows'); if(t) t.innerHTML=empRowsHtml(); }
+
+
+/* ---------- SHIFTS ---------- */
+function buildShiftsPage(){
+  var page=document.querySelector('.page[data-page="Shifts"]');
+  page.innerHTML='<h2>'+T('Shifts')+'</h2><div class="sub">Shift rules drive every scan decision · overnight when end ≤ start</div>'+
+   '<div class="panel"><div class="scroll"><table class="tbl"><thead><tr><th>Shift</th><th>Start</th><th>End</th><th>Early clock-in</th><th>Earliest clock-out</th><th>Window</th><th>Active</th></tr></thead><tbody id="shiftRows"></tbody></table></div></div>'+
+   '<div class="panel"><div class="panel-head"><h3>🔄 Weekly rotation · Rotatie 3 ture</h3></div><div class="scroll"><table class="tbl"><thead><tr><th>Week</th><th>EMP000007 (Team Lead)</th></tr></thead><tbody id="rotRows"></tbody></table></div>'+
+   '<div style="padding:8px 14px;font-size:11.5px;color:var(--muted)">Rotation members advance one shift every Monday. Past sessions keep the shift recorded when they clocked in.</div></div>';
+  $('shiftRows').innerHTML=shiftRowsHtml();
+  $('rotRows').innerHTML=rotRowsHtml();
+}
+function renderShiftRows(){ var t=$('shiftRows'); if(t) t.innerHTML=shiftRowsHtml(); }
+function shiftRowsHtml(){
+  return SHIFTS.map(function(s){
+    var o=s.overnight?' · overnight':'';
+    return '<tr><td><b>'+s.name+'</b></td><td class="mono">'+s.start+'</td><td class="mono">'+s.end+'</td>'+
+      '<td>'+s.early+' min <span class="dim">→ '+fmtHMin(hmToMin(s.start)-s.early)+'</span></td>'+
+      '<td>'+s.outMin+' min <span class="dim">→ '+fmtHMin(hmToMin(s.end)-s.outMin)+'</span></td>'+
+      '<td class="mono" style="font-size:10.5px">'+s.start+'–'+s.end+(o?' (+1d)':'')+'</td>'+
+      '<td>'+(s.active?'<span class="badge ok">ACTIVE</span>':'<span class="badge bad">OFF</span>')+'</td></tr>';
+  }).join('');
+}
+function rotRowsHtml(){
+  var names={1:'Schimb 1 (06–14)',2:'Schimb 2 (14–22)',3:'Schimb 3 (22–06)'};
+  var emp=byEmp('EMP000007'); var r=ROTATIONS[emp.rotation.name];
+  var startIdx=r.ids.indexOf(emp.rotation.startShiftId);
+  var rows=[];
+  for(var w=0;w<4;w++){
+    var idx=(startIdx+w)%r.ids.length;
+    rows.push('<tr><td>Week '+(w+1)+'</td><td>'+names[r.ids[idx]]+'</td></tr>');
+  }
+  return rows.join('');
+}
+
+/* ---------- ATTENDANCE ---------- */
+function buildAttendancePage(){
+  var page=document.querySelector('.page[data-page="Attendance"]');
+  page.innerHTML='<h2>'+T('Attendance')+'</h2><div class="sub">Completed &amp; open sessions with totals by shift</div>'+
+   '<div class="row" style="margin-bottom:12px">'+
+    '<div class="field"><label>From</label><input type="date" id="attFrom"></div>'+
+    '<div class="field"><label>To</label><input type="date" id="attTo"></div>'+
+    '<div class="field"><label>Employee</label><select id="attEmp"><option value="">All employees</option></select></div>'+
+    '<button class="btn" onclick="renderAttendance()">Apply filters</button>'+
+   '</div>'+
+   '<div class="summary" id="attSummary"></div>'+
+   '<div class="panel"><div class="scroll" style="max-height:340px"><table class="tbl"><thead><tr><th>Employee</th><th>Shift</th><th>Clock In</th><th>Clock Out</th><th>Worked</th><th>Status</th></tr></thead><tbody id="attRows"></tbody></table></div></div>'+
+   '<div class="panel"><div class="panel-head"><h3>Totals by shift</h3></div><table class="tbl"><thead><tr><th>Shift</th><th>Sessions</th><th>Worked hours</th></tr></thead><tbody id="attTotals"></tbody></table></div>';
+  var from=$('attFrom'), to=$('attTo');
+  var f=new Date(today); f.setDate(f.getDate()-7);
+  from.value=fmtDateInput(f); to.value=fmtDateInput(today);
+  var se=$('attEmp');
+  EMPLOYEES.forEach(function(e){ se.appendChild(new Option(e.id+' — '+e.first+' '+e.last,e.id)); });
+}
+function fmtDateInput(d){ return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+function workedMin(s){
+  var end=s.clockOut||new Date(); 
+  var ms=end-s.clockIn; if(ms<0) ms=0; return Math.round(ms/60000);
+}
+function renderAttendance(){
+  var from=new Date($('attFrom').value+'T00:00:00');
+  var to=new Date($('attTo').value+'T23:59:59');
+  var eid=$('attEmp').value;
+  var rows=SESSIONS.filter(function(s){ return s.clockIn>=from && s.clockIn<=to && (!eid || s.employeeId===eid); })
+   .sort(function(a,b){ return b.clockIn-a.clockIn; });
+  var body=$('attRows');
+  var okCount=0,missCount=0,totalHours=0;
+  body.innerHTML=rows.map(function(s){
+    var emp=byEmp(s.employeeId);
+    var open=!s.clockOut;
+    var mins=workedMin(s); totalHours+=mins;
+    if(open) missCount++; else okCount++;
+    var sh=byId(SHIFTS,s.shiftId);
+    var hh=Math.floor(mins/60), mm=mins%60;
+    var wh=(hh+'.'+(mm<10?'0':'')+mm+' h');
+    var st= open?'<span class="badge warn">MISSING OUT</span>':'<span class="badge ok">OK</span>';
+    return '<tr><td class="mono">'+emp.id+'</td><td>'+emp.first+' '+emp.last+'</td><td>'+(sh?sh.name:'—')+'</td>'+
+      '<td class="mono">'+fmtStamp(s.clockIn)+'</td><td class="mono">'+(s.clockOut?fmtStamp(s.clockOut):'—')+'</td>'+
+      '<td class="mono num">'+(open?'—':wh)+'</td><td>'+st+'</td></tr>';
+  }).join('')||'<tr><td colspan="7" style="color:var(--dim);padding:14px">No sessions in range</td></tr>';
+  var totWorked=Math.round(totalHours/60);
+  $('attSummary').innerHTML=
+    '<span>Sessions: <b>'+rows.length+'</b></span>'+
+    '<span>Distinct employees: <b>'+new Set(rows.map(function(s){return s.employeeId;})).size+'</b></span>'+
+    '<span>Completed: <b class="g">'+okCount+'</b></span>'+
+    '<span>Missing clock-out: <b class="r">'+missCount+'</b></span>';
+  // totals by shift
+  var totals={};
+  rows.forEach(function(s){ var sh=byId(SHIFTS,s.shiftId); var k=sh?sh.name:'—'; if(!totals[k])totals[k]=[0,0]; totals[k][0]++; if(s.clockOut)totals[k][1]+=workedMin(s)/60; });
+  var tb=$('attTotals');
+  tb.innerHTML=Object.keys(totals).sort().map(function(k){
+    return '<tr><td>'+k+'</td><td class="num">'+totals[k][0]+'</td><td class="num">'+totals[k][1].toFixed(2)+' h</td></tr>';
+  }).join('');
+}
+
+/* ---------- LIVE SCANS ---------- */
+function buildLiveScansPage(){
+  var page=document.querySelector('.page[data-page="Live Scans"]');
+  page.innerHTML='<h2>'+T('Live Scans')+'</h2><div class="sub">Every scan attempt is retained — accepted and rejected</div>'+
+   '<div class="panel"><div class="scroll" style="max-height:500px"><table class="tbl"><thead><tr><th>Timestamp</th><th>Employee</th><th>Action</th><th>Terminal</th><th>Scanner</th><th>Accepted</th><th>Reason</th></tr></thead><tbody id="lsRows"></tbody></table></div></div>';
+}
+function renderLiveScans(){ var t=$('lsRows'); if(t) t.innerHTML=dashRowsHtml(); }
+
+/* ---------- EXCEPTIONS ---------- */
+function buildExceptionsPage(){
+  var page=document.querySelector('.page[data-page="Exceptions"]');
+  page.innerHTML='<h2>'+T('Exceptions')+'</h2><div class="sub">Rejected scans recorded with problem + details (never silently dropped)</div>'+
+   '<div class="panel"><div class="scroll" style="max-height:500px"><table class="tbl"><thead><tr><th>Timestamp</th><th>Employee</th><th>Problem</th><th>Terminal</th><th>Scanner</th><th>Details</th></tr></thead><tbody id="exRows"></tbody></table></div></div>';
+}
+function renderExceptions(){
+  var t=$('exRows'); if(!t) return;
+  var list=EVENTS.filter(function(e){return !e.accepted;}).map(function(e){
+    var emp=e.employeeId?byEmp(e.employeeId):null;
+    var problem=(e.reason||'REJECTED').split(';')[0];
+    return '<tr><td class="mono">'+fmtStamp(e.t)+'</td><td class="mono">'+(emp?e.employeeId+' · '+emp.first+' '+emp.last:(e.employeeId||'—'))+'</td>'+
+      '<td><span class="badge bad">'+problem+'</span></td><td>'+termName(e.term)+'</td><td class="mono">'+(e.scanner||'—')+'</td>'+
+      '<td class="wrap">'+(e.reason?reasonText(e.reason):'—')+'</td></tr>';
+  }).join('')||'<tr><td colspan="6" style="color:var(--dim);padding:14px">No exceptions yet — try a “too early” or “unknown badge” scan.</td></tr>';
+  t.innerHTML=list;
+}
+
+/* ---------- TERMINALS & SCANNERS ---------- */
+function buildHardwarePage(){
+  var page=document.querySelector('.page[data-page="Terminals & Scanners"]');
+  page.innerHTML='<h2>'+T('Terminals & Scanners')+'</h2><div class="sub">Honeywell-style scanners on USB-Serial / COM ports (9600 baud)</div>'+
+   '<div class="panel"><div class="scroll"><table class="tbl"><thead><tr><th>Terminal</th><th>Scanner ID</th><th>COM</th><th>Baud</th><th>Enabled</th></tr></thead><tbody id="hwRows"></tbody></table></div></div>';
+  var tb=$('hwRows');
+  tb.innerHTML=SCANNERS.map(function(s){
+    return '<tr><td>'+termName(s.term)+'</td><td class="mono">'+s.id+'</td><td class="mono">'+s.port+'</td><td class="mono">'+s.baud+'</td>'+
+      '<td>'+(s.enabled?'<span class="badge ok">Enabled</span>':'<span class="badge neutral">Disabled</span>')+'</td></tr>';
+  }).join('');
+}
+
+/* ---------- SETTINGS ---------- */
+function buildSettingsPage(){
+  var page=document.querySelector('.page[data-page="Settings"]');
+  page.innerHTML='<h2>'+T('Settings')+'</h2><div class="sub">Local configuration only — attendance data always lives in SQLite</div>'+
+   '<div class="panel" style="padding:16px"><div class="row">'+
+    '<div class="field grow"><label>Site name</label><input type="text" id="siteName" value="Company"></div>'+
+    '<div class="field"><label>Language</label><select id="langSel"><option value="en">English</option><option value="ro">Română</option></select></div>'+
+    '<div class="field"><label>Duplicate scan (s)</label><input type="number" id="dupSec" value="5" min="1" max="60" style="width:90px"></div>'+
+    '<button class="btn" onclick="saveSettings()">Save Settings</button>'+
+   '</div>'+
+   '<div class="note" style="margin-top:12px">🔒 Passwords use <b>PBKDF2-SHA256</b> with a random salt. Backups, logs and exports may contain personal attendance data.</div></div>';
+}
+function renderSettingsValues(){
+  var ls=$('langSel'); if(ls) ls.value=LANG;
+}
+function saveSettings(){
+  $('dupSec').value=Math.max(1,Math.min(60,parseInt($('dupSec').value)||5));
+  DUP_SECONDS=parseInt($('dupSec').value);
+  $('siteName').value=$('siteName').value.trim()||'Company';
+  var lang=$('langSel').value;
+  if(lang!==LANG){ LANG=lang; renderNav(); applyLangToStatic(); renderClock(); setKioskReady(); }
+  showToast('Saved · duplicate window '+DUP_SECONDS+' s');
+}
+function applyLangToStatic(){
+  // re-render current admin page title + dashboard captions
+  if(ADMIN){ if(currentPage==='Dashboard'){ refreshCards(); } }
+  refreshSession();
+  var hd=document.querySelector('.page.active h2'); if(hd && I18N[hd.textContent]) hd.textContent=T(hd.textContent);
+}
+
+/* toast */
+var toastEl=null;
+function showToast(msg){
+  if(!toastEl){ toastEl=el('<div style="position:fixed;bottom:18px;right:18px;background:#0f2840;border:1px solid #1d4b6e;color:#cfe6fb;padding:10px 16px;border-radius:8px;font-size:12px;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.4)"></div>'); document.body.appendChild(toastEl); }
+  toastEl.textContent=msg; toastEl.style.opacity='1';
+  setTimeout(function(){ toastEl.style.opacity='0'; },1800);
+}
+
+/* ---------- LOGIN ---------- */
+function openLogin(){ $('loginModal').classList.add('show'); $('lgErr').textContent=''; setTimeout(function(){$('lgUser').focus();},50); }
+function closeLogin(){ $('loginModal').classList.remove('show'); }
+function doLogin(){
+  var u=$('lgUser').value.trim(), p=$('lgPass').value;
+  if(u==='admin' && p==='admin'){ closeLogin(); enterAdmin(); }
+  else $('lgErr').textContent='Invalid username or password';
+  $('lgPass').value='';
+}
+function enterAdmin(){
+  ADMIN=true; renderNav(); showPage('Dashboard'); refreshSession();
+  showToast('Logged in as admin');
+}
+
+/* ---------- top actions ---------- */
+document.addEventListener('click',function(ev){
+  if(ev.target.closest && ev.target.closest('#loginModal')){ return; }
+});
+window.logout=function(){ showKiosk(); showToast('Logged out → kiosk'); };
+
+/* init */
+window.addEventListener('DOMContentLoaded',boot);
+</script>
+</body>
+</html>

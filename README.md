@@ -39,7 +39,7 @@ open index.html
 ├── images/                  # Photo and image assets
 ├── assets/                  # Favicon, OG images
 ├── documents/               # Strategy docs, CV PDF
-├── projects/                # 4 project case studies
+├── projects/                # 5 project case studies
 ├── sitemap.xml / robots.txt # SEO
 └── showcase/                # Portfolio overview page
 ```

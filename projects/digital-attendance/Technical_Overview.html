@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Attendance at the Workplace — Attendance Control Technical Overview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {--pri:#0F172A;--sec:#1E3A8A;--acc:#2563EB;--suc:#16A34A;--bg:#F8FAFC;--card:#FFF;--txt:#111827;--t2:#6B7280;--brd:#E5E7EB;--r:20px;--tr:250ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--brd);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-size:18px;font-weight:700;color:var(--pri)}
+.header-back{font-size:14px;font-weight:500;color:var(--acc);text-decoration:none}
+.header-back:hover{text-decoration:underline}
+.hero{background:linear-gradient(135deg,#0f2027 0%,#203a43 45%,#2c5364 100%);color:#fff;padding:78px 32px;text-align:center}
+.hero-badge{display:inline-block;font-size:13px;font-weight:600;background:rgba(255,255,255,0.14);padding:4px 16px;border-radius:100px;margin-bottom:20px;letter-spacing:.4px}
+.hero h1{font-size:40px;font-weight:800;margin-bottom:14px;letter-spacing:-0.5px}
+.hero .version{font-size:13px;font-weight:600;color:#9bd1e0;background:rgba(0,0,0,.25);display:inline-block;padding:3px 12px;border-radius:100px;margin-bottom:16px}
+.hero p{font-size:17px;opacity:.9;max-width:760px;margin:0 auto;line-height:1.7}
+.hero .cta{margin-top:28px}
+.hero .btn{display:inline-block;text-decoration:none;font-weight:600;font-size:14px;padding:12px 26px;border-radius:10px;margin:6px}
+.btn-primary{background:#0e7490;color:#fff}
+.btn-primary:hover{background:#155e75}
+.btn-ghost{border:1px solid rgba(255,255,255,.5);color:#fff}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.container{max-width:1120px;margin:0 auto;padding:0 32px}
+.section{padding:60px 0;border-bottom:1px solid var(--brd)}
+.section:last-child{border-bottom:none}
+.section-label{font-size:13px;font-weight:600;color:#0e7490;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.section-title{font-size:28px;font-weight:700;color:var(--pri);margin-bottom:22px}
+.section-desc{font-size:16px;color:var(--t2);line-height:1.75;margin-bottom:30px;max-width:900px}
+
+/* stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin-bottom:26px}
+.stat-card{background:var(--card);border-radius:var(--r);padding:26px 22px;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05);border:1px solid var(--brd)}
+.stat-num{font-size:34px;font-weight:800;color:#0e7490;margin-bottom:4px;line-height:1.1}
+.stat-label{font-size:13px;color:var(--t2)}
+.stat-sub{font-size:11.5px;color:var(--t2);opacity:.75;margin-top:6px}
+
+/* architecture flow */
+.arch-flow{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:14px}
+.arch-row-box{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.arch-box{background:var(--card);border:2px solid var(--brd);border-radius:14px;padding:16px 22px;font-size:13.5px;font-weight:600;text-align:center;box-shadow:0 3px 16px rgba(0,0,0,0.05);min-width:150px}
+.arch-box.teal{background:#ECFEFF;border-color:#A5F3FC;color:#0e7490}
+.arch-box.blue{background:#EFF6FF;border-color:#BFDBFE;color:var(--acc)}
+.arch-box.green{background:#F0FDF4;border-color:#BBF7D0;color:#15803d}
+.arch-box.slate{background:#F1F5F9;border-color:#CBD5E1;color:#334155}
+.arch-box small{display:block;font-weight:500;color:var(--t2);font-size:11px;margin-top:3px}
+.arch-arrow{font-size:22px;color:#94a3b8}
+
+/* feature cards */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.feat-card{background:var(--card);border-radius:var(--r);padding:26px;box-shadow:0 3px 16px rgba(0,0,0,0.05);border:1px solid var(--brd);transition:transform var(--tr),box-shadow var(--tr)}
+.feat-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,0.09)}
+.feat-icon{font-size:34px;margin-bottom:10px}
+.feat-card h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.feat-card p{font-size:13.5px;color:var(--t2);line-height:1.6}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin-bottom:26px;border:1px solid var(--brd);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:#fff;min-width:560px}
+th,td{padding:11px 16px;text-align:left;border-bottom:1px solid var(--brd);vertical-align:top}
+th{background:#F1F5F9;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#475569}
+tr:last-child td{border-bottom:none}
+td code{background:#F1F5F9;border-radius:5px;padding:1px 6px;font-size:12px}
+.mono{font-family:Consolas,Menlo,monospace;font-size:12.5px}
+
+/* two-col */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}}
+
+/* version timeline */
+.ver-timeline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ver-chip{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:14px 20px;font-size:13px;font-weight:600;flex:1;min-width:200px;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
+.ver-chip .ver{font-size:17px;display:block;color:#0e7490;margin-bottom:2px}
+.ver-chip .desc{font-size:12px;color:var(--t2);font-weight:400}
+.ver-arrow{color:#94a3b8;font-size:20px}
+
+.tech-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tech-tag{background:#fff;border:1px solid var(--brd);color:#334155;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.check-list{list-style:none;margin-top:8px}
+.check-list li{padding:7px 0 7px 30px;position:relative;font-size:14px;color:#374151;border-bottom:1px dashed var(--brd)}
+.check-list li:last-child{border-bottom:none}
+.check-list li::before{content:'✓';position:absolute;left:4px;color:#0e7490;font-weight:800}
+.callout{background:#ECFEFF;border-left:4px solid #06b6d4;border-radius:10px;padding:16px 20px;font-size:14px;color:#164e63;margin:20px 0}
+.footer{padding:40px 32px;text-align:center;color:var(--t2);font-size:13px}
+@media(max-width:720px){.hero h1{font-size:30px}.hero p{font-size:15px}.section-title{font-size:23px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">Artur Csepregi · Portfolio</div>
+  <a class="header-back" href="../index.html">← Back to portfolio</a>
+</header>
+
+<section class="hero">
+  <span class="hero-badge">Advanced Prototype</span>
+  <h1>Digital Attendance at the Workplace</h1>
+  <span class="version">Attendance Control · v1.0.0</span>
+  <p>A local, offline kiosk time-tracking system. Employees scan a Code&nbsp;128 badge at the door; the application validates every scan against shift rules, records clock-in / clock-out sessions in a local SQLite database, and hands administrators a full management shell — all without any cloud dependency.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="live_demo.html">▶ Launch Interactive Demo</a>
+    <a class="btn btn-ghost" href="#architecture">See the architecture</a>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- Quick facts -->
+  <section class="section">
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">17</div><div class="stat-label">Management screens</div><div class="stat-sub">dashboard to kiosk, one shell</div></div>
+      <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">Dashboard KPI cards</div><div class="stat-sub">live, auto-refreshed every 3&nbsp;s</div></div>
+      <div class="stat-card"><div class="stat-num">EMP000001</div><div class="stat-label">Sequential employee IDs</div><div class="stat-sub">barcode = employee ID (Code 128)</div></div>
+      <div class="stat-card"><div class="stat-num">5&nbsp;s</div><div class="stat-label">Duplicate-scan guard</div><div class="stat-sub">configurable window</div></div>
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Languages</div><div class="stat-sub">English &amp; Română, switchable</div></div>
+      <div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Cloud required</div><div class="stat-sub">100% local data by default</div></div>
+    </div>
+    <p class="section-desc" style="margin-bottom:0">
+      <b>Why it exists.</b> Many small and mid-size plants still track presence with paper sign-in sheets or shared spreadsheets — error-prone, easy to manipulate, and disconnected from shift planning. The goal of this project was a single, self-hosted application that treats the <b>barcode badge scan</b> as the source of truth, applies the plant's real working-time rules automatically, and keeps a fully auditable record of every scan attempt — accepted or not.
+    </p>
+  </section>
+
+  <!-- Architecture -->
+  <section class="section" id="architecture">
+    <div class="section-label">System design</div>
+    <h2 class="section-title">Architecture &amp; data flow</h2>
+    <div class="arch-flow">
+      <div class="arch-row-box">
+        <div class="arch-box teal">📟 Kiosk (employee)<br><small>big clock · scan result · admin login</small></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">🖥 Admin shell (Qt)<br><small>17 pages · PySide6 desktop UI</small></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-row-box">
+        <div class="arch-box slate">📡 Scanner layer<br><small>Honeywell USB-Serial · COM · 9600 baud</small></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box teal">⚙ Attendance Engine<br><small>shift windows · rotation · validation</small></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box green">🗄 SQLite<br><small>attendance.db · SQLAlchemy ORM</small></div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-row-box">
+        <div class="arch-box slate">📅 Scheduler</div>
+        <div class="arch-box slate">📤 Excel Export</div>
+        <div class="arch-box slate">🕓 Offline queue</div>
+        <div class="arch-box slate">🔁 LAN sync (optional)</div>
+        <div class="arch-box slate">🔐 Auth · Audit</div>
+      </div>
+    </div>
+    <p class="section-desc" style="margin-bottom:0">
+      One scanner thread is started per enabled scanner with automatic reconnects. Every scan flows through a single <span class="mono">AttendanceEngine.process()</span> decision point, so validation is identical whether it arrives from a real serial scanner, the bundled simulator, or a manual test. Rejected events are never dropped — they are stored as scan events <i>and</i> as exception records for review.
+    </p>
+  </section>
+
+  <!-- Capabilities -->
+  <section class="section">
+    <div class="section-label">Capabilities</div>
+    <h2 class="section-title">What the system actually does</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">📟</div><h3>Touch kiosk mode</h3><p>Full-screen, employee-facing screen with a large live clock, readiness status and a clear ✓ / ⚠ result after every scan. No records or settings are exposed; the only action is an administrator login.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏷</div><h3>Code 128 badge barcodes</h3><p>Employees are created with sequential IDs (EMP000001, EMP000002…) and each gets a barcode image containing only their ID — plus bulk import from an Excel/CSV template with a built-in template generator.</p></div>
+      <div class="feat-card"><div class="feat-icon">🕒</div><h3>Real shift rules engine</h3><p>Regular and overnight shifts, early-arrival windows, earliest-permitted clock-out, duplicate-scan blocking, and IN/OUT decided from the employee's open session — ported faithfully into the interactive demo.</p></div>
+      <div class="feat-card"><div class="feat-icon">🔁</div><h3>Weekly rotating shifts</h3><p>Ordered rotation cycles (e.g. Schimb 1 → 2 → 3) that advance every Monday, with staggered start shifts per member. Current-week shift drives validation; past sessions keep the shift recorded at clock-in.</p></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><h3>Admin dashboard &amp; reports</h3><p>Eight live KPI cards (present now, missing clock-out, exceptions, scans…), filterable attendance with totals by shift, a full scan-event log and an exceptions view — Excel export with optional scheduled jobs.</p></div>
+      <div class="feat-card"><div class="feat-icon">📡</div><h3>Terminals &amp; scanners</h3><p>Configure terminals and per-port scanners (COM port, baud), test a port, or test a scan input end-to-end. The repo even ships a Honeywell scanner simulator for full offline testing.</p></div>
+      <div class="feat-card"><div class="feat-icon">🕓</div><h3>Offline-first + optional sync</h3><p>A durable offline queue preserves events the primary store could not accept, and optional LAN/server synchronization lets several kiosks share a central database.</p></div>
+      <div class="feat-card"><div class="feat-icon">🔒</div><h3>Security &amp; audit</h3><p>PBKDF2-SHA256 password hashing with a random salt (no plain text), role separation between kiosk and administrator, timestamped database backups and a full audit log of administrator actions.</p></div>
+    </div>
+  </section>
+
+  <!-- Validation rules -->
+  <section class="section">
+    <div class="section-label">Domain logic</div>
+    <h2 class="section-title">Scan validation rules</h2>
+    <p class="section-desc">Each badge scan is classified and, if rejected, the reason is stored. The same decision logic drives the interactive demo.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Outcome</th><th>Meaning</th><th>Recorded as</th></tr></thead>
+        <tbody>
+          <tr><td><code>CLOCK IN</code></td><td>Valid IN for the employee's current shift (early arrival window respected, late arrivals allowed)</td><td>Session opened</td></tr>
+          <tr><td><code>CLOCK OUT</code></td><td>Valid OUT closes the open session (earliest clock-out respected)</td><td>Session closed</td></tr>
+          <tr><td><code>UNKNOWN_BARCODE</code></td><td>Badge matches no employee</td><td>Exception</td></tr>
+          <tr><td><code>INACTIVE_EMPLOYEE</code></td><td>Employee exists but is deactivated</td><td>Exception</td></tr>
+          <tr><td><code>INVALID_SHIFT</code></td><td>No active shift applies to the employee</td><td>Exception</td></tr>
+          <tr><td><code>DUPLICATE_SCAN</code></td><td>Second scan by the same employee inside the duplicate window (default 5&nbsp;s)</td><td>Exception</td></tr>
+          <tr><td><code>CLOCK_IN_TOO_EARLY</code></td><td>Before start − early-arrival minutes (e.g. 06:00 shift, 60&nbsp;min → earliest 05:00)</td><td>Exception</td></tr>
+          <tr><td><code>CLOCK_OUT_NOT_ALLOWED</code></td><td>Before end − earliest-clock-out minutes (e.g. 14:00 shift, 10&nbsp;min → earliest 13:50)</td><td>Exception</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">💡 Overnight shifts work automatically: an end time ≤ start time (e.g. 22:00 → 06:00) is treated as crossing midnight, and scans near the pre-start window are validated against the previous day's shift.</div>
+  </section>
+
+  <!-- Rotation example -->
+  <section class="section">
+    <div class="section-label">Weekly rotation</div>
+    <h2 class="section-title">Rotating shifts — every Monday</h2>
+    <p class="section-desc">A rotation is an ordered cycle of shifts. Members move one step along the cycle each Monday; members can start staggered on different shifts. Example cycle <b>Schimb 1 → Schimb 2 → Schimb 3</b> with members A, B, C starting on shifts 1, 2 and 3:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Week</th><th>Member A</th><th>Member B</th><th>Member C</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Schimb 1 (06–14)</td><td>Schimb 2 (14–22)</td><td>Schimb 3 (22–06)</td></tr>
+          <tr><td>2</td><td>Schimb 3 (22–06)</td><td>Schimb 1 (06–14)</td><td>Schimb 2 (14–22)</td></tr>
+          <tr><td>3</td><td>Schimb 2 (14–22)</td><td>Schimb 3 (22–06)</td><td>Schimb 1 (06–14)</td></tr>
+          <tr><td>4</td><td colspan="3" style="color:#64748b">…cycle repeats</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="two-col">
+      <div>
+        <h3 style="font-size:16px;margin-bottom:10px">Why it matters</h3>
+        <ul class="check-list">
+          <li>Fairly distributes morning, evening and night work</li>
+          <li>Validation always uses the shift that applies to the current week</li>
+          <li>Past sessions keep the shift recorded when the employee actually clocked in</li>
+          <li>No manual shift reassignment each week</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:16px;margin-bottom:10px">Data model (SQLite)</h3>
+        <ul class="check-list">
+          <li><span class="mono">employees</span> · shifts · shift_rotations</li>
+          <li><span class="mono">attendance_sessions</span> (clock-in / clock-out)</li>
+          <li><span class="mono">scan_events</span> — every attempt retained</li>
+          <li><span class="mono">exceptions</span> · terminals · scanners</li>
+          <li><span class="mono">export_jobs</span> · audit_log</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack & delivery -->
+  <section class="section">
+    <div class="section-label">Build &amp; delivery</div>
+    <h2 class="section-title">Technology stack</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="font-size:16px;margin-bottom:12px">Desktop application</h3>
+        <div class="tech-tags">
+          <span class="tech-tag">Python 3.12</span>
+          <span class="tech-tag">PySide6 (Qt 6)</span>
+          <span class="tech-tag">SQLAlchemy 2.0</span>
+          <span class="tech-tag">SQLite</span>
+          <span class="tech-tag">pyserial</span>
+          <span class="tech-tag">python-barcode</span>
+          <span class="tech-tag">openpyxl</span>
+          <span class="tech-tag">Pillow</span>
+          <span class="tech-tag">tzdata</span>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:16px;margin-bottom:12px">Engineering practice</h3>
+        <div class="tech-tags">
+          <span class="tech-tag">pytest suite</span>
+          <span class="tech-tag">SQLite temp-db tests</span>
+          <span class="tech-tag">UI smoke tests</span>
+          <span class="tech-tag">PyInstaller packaging</span>
+          <span class="tech-tag">Code-signing cert</span>
+        </div>
+      </div>
+    </div>
+    <p class="section-desc" style="margin-top:24px;margin-bottom:0">
+      An automated test suite verifies the domain rules against isolated temporary databases — employee creation, early IN, too-early OUT, valid OUT, duplicate scans, unknown / inactive barcodes, overnight shifts, scanner identity, authentication and backups. The application is packaged to a Windows executable with a signed distribution build and a bilingual (EN/RO) user guide included alongside it.
+    </p>
+  </section>
+
+  <!-- Delivery timeline -->
+  <section class="section">
+    <div class="section-label">Delivery</div>
+    <h2 class="section-title">From prototype to signed distribution</h2>
+    <div class="ver-timeline">
+      <div class="ver-chip"><span class="ver">v1.0.0</span><span class="desc">Full desktop app · kiosk + 17-screen admin shell</span></div>
+      <div class="ver-arrow">→</div>
+      <div class="ver-chip"><span class="ver">Tested</span><span class="desc">Domain rules, imports, rotation &amp; UI smoke suites</span></div>
+      <div class="ver-arrow">→</div>
+      <div class="ver-chip"><span class="ver">Packaged</span><span class="desc">Standalone Windows .exe + code-signing certificate</span></div>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      📌 <b>Try it yourself:</b> the <a href="live_demo.html" style="color:#0e7490;font-weight:600">interactive demo</a> recreates the real kiosk and dashboard in the browser with the actual validation rules — scan sample badges, watch rejected scans become exceptions, and log in as <b>admin&nbsp;/&nbsp;admin</b> to explore the management shell.
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section" style="text-align:center">
+    <div class="section-label">Next step</div>
+    <h2 class="section-title">Launch the demo</h2>
+    <p class="section-desc" style="margin:0 auto 20px;max-width:620px">Watch the kiosk validate a real morning shift in seconds, then explore the administrator dashboard.</p>
+    <a class="btn btn-primary" href="live_demo.html" style="text-decoration:none">▶ Launch Interactive Demo</a>
+  </section>
+
+</div>
+
+<footer class="footer">
+  Digital Attendance at the Workplace — Attendance Control v1.0.0 · © 2026 Csepregi Artur · <a href="../index.html" style="color:#0e7490">Back to portfolio</a>
+</footer>
+
+</body>
+</html>
