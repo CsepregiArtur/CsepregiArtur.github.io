@@ -372,40 +372,32 @@ body {
     font-size: 64px;
 }
 
-/* Desktop: extract case-image from content to participate in parent grid */
+/* Desktop: image and text live in two independent, equal-height columns.
+   (Previously the text was spread across grid rows shared with the tall demo
+   image, which produced a large empty gap under the badge. This layout keeps
+   the text stacked tightly while the demo preview fills its whole column.) */
 @media (min-width: 768px) {
-    .case-study .case-content {
-        display: contents;
+    .case-study {
+        align-items: stretch;
     }
     .case-study .case-image {
         grid-column: 1;
         grid-row: 1;
+        align-self: stretch;
+        aspect-ratio: auto;
+        min-height: 300px;
     }
-    .case-study .case-badge,
-    .case-study .case-title,
-    .case-study .case-text,
-    .case-study .case-impact,
-    .case-study .tech-tags,
-    .case-study > .case-content > div:not(.case-image):not(.case-badge):not(.case-title):not(.case-text):not(.case-impact):not(.tech-tags) {
+    .case-study .case-content {
         grid-column: 2;
+        grid-row: 1;
+        justify-content: center;
     }
-    .case-study .case-badge { grid-row: 1; }
-    .case-study .case-title { grid-row: 2; }
-    .case-study .case-text { grid-row: 3; }
-    .case-study .case-impact { grid-row: 4; }
-    .case-study .tech-tags { grid-row: 5; }
-    .case-study > .case-content > div:not(.case-image):not(.case-badge):not(.case-title):not(.case-text):not(.case-impact):not(.tech-tags) { grid-row: 6; }
-    
+
     /* Reverse layout: image on right */
     .case-study.reverse .case-image {
         grid-column: 2;
     }
-    .case-study.reverse .case-badge,
-    .case-study.reverse .case-title,
-    .case-study.reverse .case-text,
-    .case-study.reverse .case-impact,
-    .case-study.reverse .tech-tags,
-    .case-study.reverse > .case-content > div:not(.case-image):not(.case-badge):not(.case-title):not(.case-text):not(.case-impact):not(.tech-tags) {
+    .case-study.reverse .case-content {
         grid-column: 1;
     }
 }
