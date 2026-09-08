@@ -1,5 +1,6 @@
 # Archive — cleaned files no longer needed in the active repository
 /archive/
+/cleanup/
 *.md
 measure-performance.js
 perf-package.json
