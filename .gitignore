@@ -10,3 +10,4 @@ package.json
 perf-package.json
 package.json
 quick-baseline
+.codegraphy/*
