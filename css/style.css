@@ -13,6 +13,14 @@ button, a, .btn, .contact-card, .card, .header-cta, .hamburger {
 }
 html {
     scroll-behavior: smooth;
+    /* Offset in-page anchor targets so the fixed header never covers section
+       titles. Without this, #about/#projects/etc. land flush at viewport top
+       and the 72px header overlaps the heading. */
+    scroll-padding-top: calc(var(--header-height) + var(--space-lg));
+}
+/* Belt-and-braces for browsers/edge cases where scroll-padding isn't applied */
+section[id], div[id]:not([id=""]) {
+    scroll-margin-top: calc(var(--header-height) + var(--space-lg));
 }
 body {
     font-family: var(--font-family);
@@ -174,10 +182,28 @@ body {
 /* --- Hero --- */
 .hero {
     min-height: 100vh;
+    /* Prefer svh so mobile browser chrome (URL bar) doesn't force overflow */
+    min-height: 100svh;
     display: flex; align-items: center;
     padding: 120px var(--space-xl) 80px;
     position: relative; overflow: hidden;
     background: linear-gradient(180deg, #F0F4FF 0%, var(--bg) 100%);
+}
+/* Short viewports (laptops in landscape, small windows): reduce vertical
+   padding so avatar + heading + CTAs all fit without clipping the CTAs. */
+@media (max-height: 760px) {
+    .hero {
+        padding-top: calc(var(--header-height) + var(--space-xl));
+        padding-bottom: var(--space-xl);
+        min-height: auto;
+    }
+}
+@media (max-height: 620px) {
+    .hero {
+        padding-top: calc(var(--header-height) + var(--space-lg));
+        padding-bottom: var(--space-lg);
+    }
+    .hero-content { gap: 12px; }
 }
 .hero-inner {
     max-width: var(--max-width); width: 100%; margin: 0 auto;
